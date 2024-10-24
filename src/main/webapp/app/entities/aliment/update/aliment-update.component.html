@@ -1,0 +1,173 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-aliment-heading" data-cy="AlimentCreateUpdateHeading" jhiTranslate="ecomApp.aliment.home.createOrEditLabel">
+        Create or edit a Aliment
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          @let idRef = editForm.get('id')!;
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="ecomApp.aliment.id">Id</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+            @if (idRef.invalid && (idRef.dirty || idRef.touched)) {
+              <div>
+                <small class="form-text text-danger" [hidden]="!editForm.get('id')?.errors?.number" jhiTranslate="entity.validation.number"
+                  >This field should be a number.</small
+                >
+              </div>
+            }
+          </div>
+        }
+
+        @let nameRef = editForm.get('name')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_name" jhiTranslate="ecomApp.aliment.name">Name</label>
+          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
+          @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
+            <div>
+              @if (editForm.get('name')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let originRef = editForm.get('origin')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_origin" jhiTranslate="ecomApp.aliment.origin">Origin</label>
+          <select class="form-control" name="origin" formControlName="origin" id="field_origin" data-cy="origin">
+            <option [ngValue]="null">{{ 'ecomApp.EnumOrigin.null' | translate }}</option>
+            @for (enumOrigin of enumOriginValues; track $index) {
+              <option [value]="enumOrigin">{{ 'ecomApp.EnumOrigin.' + enumOrigin | translate }}</option>
+            }
+          </select>
+          @if (originRef.invalid && (originRef.dirty || originRef.touched)) {
+            <div>
+              @if (editForm.get('origin')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let seasonRef = editForm.get('season')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_season" jhiTranslate="ecomApp.aliment.season">Season</label>
+          <input type="number" class="form-control" name="season" id="field_season" data-cy="season" formControlName="season" />
+          @if (seasonRef.invalid && (seasonRef.dirty || seasonRef.touched)) {
+            <div>
+              @if (editForm.get('season')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('season')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let colorRef = editForm.get('color')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_color" jhiTranslate="ecomApp.aliment.color">Color</label>
+          <select class="form-control" name="color" formControlName="color" id="field_color" data-cy="color">
+            <option [ngValue]="null">{{ 'ecomApp.EnumColor.null' | translate }}</option>
+            @for (enumColor of enumColorValues; track $index) {
+              <option [value]="enumColor">{{ 'ecomApp.EnumColor.' + enumColor | translate }}</option>
+            }
+          </select>
+          @if (colorRef.invalid && (colorRef.dirty || colorRef.touched)) {
+            <div>
+              @if (editForm.get('color')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let weightRef = editForm.get('weight')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_weight" jhiTranslate="ecomApp.aliment.weight">Weight</label>
+          <input type="number" class="form-control" name="weight" id="field_weight" data-cy="weight" formControlName="weight" />
+          @if (weightRef.invalid && (weightRef.dirty || weightRef.touched)) {
+            <div>
+              @if (editForm.get('weight')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('weight')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let stockQuantityRef = editForm.get('stockQuantity')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_stockQuantity" jhiTranslate="ecomApp.aliment.stockQuantity">Stock Quantity</label>
+          <input
+            type="number"
+            class="form-control"
+            name="stockQuantity"
+            id="field_stockQuantity"
+            data-cy="stockQuantity"
+            formControlName="stockQuantity"
+          />
+          @if (stockQuantityRef.invalid && (stockQuantityRef.dirty || stockQuantityRef.touched)) {
+            <div>
+              @if (editForm.get('stockQuantity')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('stockQuantity')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let priceRef = editForm.get('price')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_price" jhiTranslate="ecomApp.aliment.price">Price</label>
+          <input type="number" class="form-control" name="price" id="field_price" data-cy="price" formControlName="price" />
+          @if (priceRef.invalid && (priceRef.dirty || priceRef.touched)) {
+            <div>
+              @if (editForm.get('price')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small class="form-text text-danger" [hidden]="!editForm.get('price')?.errors?.number" jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

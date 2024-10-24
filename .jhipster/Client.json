@@ -1,0 +1,36 @@
+{
+  "annotations": {
+    "changelogDate": "20241024142217"
+  },
+  "applications": "*",
+  "documentation": "ConnectedClient heritage of Client",
+  "fields": [
+    {
+      "fieldName": "preferedDay",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "address",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Client",
+  "relationships": [
+    {
+      "otherEntityName": "clientOrder",
+      "otherEntityRelationshipName": "client",
+      "relationshipName": "orders",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "user",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
+    }
+  ]
+}

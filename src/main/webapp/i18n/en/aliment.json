@@ -1,0 +1,33 @@
+{
+  "ecomApp": {
+    "aliment": {
+      "home": {
+        "title": "Aliments",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Aliment",
+        "createOrEditLabel": "Create or edit a Aliment",
+        "search": "Search for Aliment",
+        "notFound": "No Aliments found"
+      },
+      "created": "A new Aliment is created with identifier {{ param }}",
+      "updated": "A Aliment is updated with identifier {{ param }}",
+      "deleted": "A Aliment is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Aliment {{ id }}?"
+      },
+      "detail": {
+        "title": "Aliment"
+      },
+      "id": "Id",
+      "name": "Name",
+      "origin": "Origin",
+      "season": "Season",
+      "color": "Color",
+      "weight": "Weight",
+      "stockQuantity": "Stock Quantity",
+      "price": "Price",
+      "clientOrders": "Client Orders",
+      "images": "Images"
+    }
+  }
+}

@@ -1,0 +1,115 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-order-line-heading" data-cy="OrderLineCreateUpdateHeading" jhiTranslate="ecomApp.orderLine.home.createOrEditLabel">
+        Create or edit a Order Line
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="ecomApp.orderLine.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let quantityRef = editForm.get('quantity')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_quantity" jhiTranslate="ecomApp.orderLine.quantity">Quantity</label>
+          <input type="number" class="form-control" name="quantity" id="field_quantity" data-cy="quantity" formControlName="quantity" />
+          @if (quantityRef.invalid && (quantityRef.dirty || quantityRef.touched)) {
+            <div>
+              @if (editForm.get('quantity')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('quantity')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let purchasePriceRef = editForm.get('purchasePrice')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_purchasePrice" jhiTranslate="ecomApp.orderLine.purchasePrice">Purchase Price</label>
+          <input
+            type="number"
+            class="form-control"
+            name="purchasePrice"
+            id="field_purchasePrice"
+            data-cy="purchasePrice"
+            formControlName="purchasePrice"
+          />
+          @if (purchasePriceRef.invalid && (purchasePriceRef.dirty || purchasePriceRef.touched)) {
+            <div>
+              @if (editForm.get('purchasePrice')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('purchasePrice')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_clientOrder" jhiTranslate="ecomApp.orderLine.clientOrder">Client Order</label>
+          <select
+            class="form-control"
+            id="field_clientOrder"
+            data-cy="clientOrder"
+            name="clientOrder"
+            formControlName="clientOrder"
+            [compareWith]="compareClientOrder"
+          >
+            <option [ngValue]="null"></option>
+            @for (clientOrderOption of clientOrdersSharedCollection; track $index) {
+              <option [ngValue]="clientOrderOption">{{ clientOrderOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_aliment" jhiTranslate="ecomApp.orderLine.aliment">Aliment</label>
+          <select
+            class="form-control"
+            id="field_aliment"
+            data-cy="aliment"
+            name="aliment"
+            formControlName="aliment"
+            [compareWith]="compareAliment"
+          >
+            <option [ngValue]="null"></option>
+            @for (alimentOption of alimentsSharedCollection; track $index) {
+              <option [ngValue]="alimentOption">{{ alimentOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

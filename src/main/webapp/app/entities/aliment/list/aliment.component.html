@@ -1,0 +1,181 @@
+<div>
+  <h2 id="page-heading" data-cy="AlimentHeading">
+    <span jhiTranslate="ecomApp.aliment.home.title">Aliments</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="ecomApp.aliment.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-aliment"
+        [routerLink]="['/aliment/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span class="hidden-sm-down" jhiTranslate="ecomApp.aliment.home.createLabel">Create a new Aliment</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="ecomApp.aliment.home.search">Search for Aliment</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'ecomApp.aliment.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
+
+  @if (aliments?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="ecomApp.aliment.home.notFound">No Aliments found</span>
+    </div>
+  }
+
+  @if (aliments && aliments.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="ecomApp.aliment.id">Id</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="name">
+              <div class="d-flex">
+                <span jhiTranslate="ecomApp.aliment.name">Name</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="origin">
+              <div class="d-flex">
+                <span jhiTranslate="ecomApp.aliment.origin">Origin</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="season">
+              <div class="d-flex">
+                <span jhiTranslate="ecomApp.aliment.season">Season</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="color">
+              <div class="d-flex">
+                <span jhiTranslate="ecomApp.aliment.color">Color</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="weight">
+              <div class="d-flex">
+                <span jhiTranslate="ecomApp.aliment.weight">Weight</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="stockQuantity">
+              <div class="d-flex">
+                <span jhiTranslate="ecomApp.aliment.stockQuantity">Stock Quantity</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="price">
+              <div class="d-flex">
+                <span jhiTranslate="ecomApp.aliment.price">Price</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (aliment of aliments; track trackId(aliment)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/aliment', aliment.id, 'view']">{{ aliment.id }}</a>
+              </td>
+              <td>{{ aliment.name }}</td>
+              <td [jhiTranslate]="'ecomApp.EnumOrigin.' + (aliment.origin ?? 'null')">
+                {{ { null: '', FRANCE: 'FRANCE', ESPAGNE: 'ESPAGNE', ITALIE: 'ITALIE' }[aliment.origin ?? 'null'] }}
+              </td>
+              <td>{{ aliment.season }}</td>
+              <td [jhiTranslate]="'ecomApp.EnumColor.' + (aliment.color ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    RED: 'Rouge',
+                    ORANGE: 'Orange',
+                    YELLOW: 'Jaune',
+                    GREEN: 'Vert',
+                    BLUE: 'Bleu',
+                    PURPLE: 'Violet',
+                    PINK: 'Rose',
+                    BROWN: 'Marron',
+                    WHITE: 'Blanc',
+                    BLACK: 'Noir',
+                  }[aliment.color ?? 'null']
+                }}
+              </td>
+              <td>{{ aliment.weight }}</td>
+              <td>{{ aliment.stockQuantity }}</td>
+              <td>{{ aliment.price }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/aliment', aliment.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/aliment', aliment.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(aliment)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

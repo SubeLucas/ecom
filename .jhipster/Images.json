@@ -1,0 +1,15 @@
+{
+  "annotations": {
+    "changelogDate": "20241024142218"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "url",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Images",
+  "relationships": []
+}

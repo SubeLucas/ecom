@@ -1,0 +1,31 @@
+{
+  "ecomApp": {
+    "clientOrder": {
+      "home": {
+        "title": "ClientOrders",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Client Order",
+        "createOrEditLabel": "Créer ou éditer un Client Order",
+        "search": "Recherche pour Client Order",
+        "notFound": "Aucun Client Order trouvé"
+      },
+      "created": "Un nouveau Client Order a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Client Order avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Client Order avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Client Order {{ id }} ?"
+      },
+      "detail": {
+        "title": "Client Order"
+      },
+      "id": "Id",
+      "orderDate": "Order Date",
+      "deliveryDate": "Delivery Date",
+      "deliveryAddress": "Delivery Address",
+      "status": "Status",
+      "totalPrice": "Total Price",
+      "orderLines": "Order Lines",
+      "client": "Client"
+    }
+  }
+}

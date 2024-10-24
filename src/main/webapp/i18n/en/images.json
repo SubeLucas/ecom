@@ -1,0 +1,26 @@
+{
+  "ecomApp": {
+    "images": {
+      "home": {
+        "title": "Images",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Images",
+        "createOrEditLabel": "Create or edit a Images",
+        "search": "Search for Images",
+        "notFound": "No Images found"
+      },
+      "created": "A new Images is created with identifier {{ param }}",
+      "updated": "A Images is updated with identifier {{ param }}",
+      "deleted": "A Images is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Images {{ id }}?"
+      },
+      "detail": {
+        "title": "Images"
+      },
+      "id": "ID",
+      "url": "Url",
+      "aliment": "Aliment"
+    }
+  }
+}

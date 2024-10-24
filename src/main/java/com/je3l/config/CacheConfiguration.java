@@ -50,6 +50,15 @@ public class CacheConfiguration {
             createCache(cm, com.je3l.domain.User.class.getName());
             createCache(cm, com.je3l.domain.Authority.class.getName());
             createCache(cm, com.je3l.domain.User.class.getName() + ".authorities");
+            createCache(cm, com.je3l.domain.Aliment.class.getName());
+            createCache(cm, com.je3l.domain.Aliment.class.getName() + ".clientOrders");
+            createCache(cm, com.je3l.domain.Aliment.class.getName() + ".images");
+            createCache(cm, com.je3l.domain.Client.class.getName());
+            createCache(cm, com.je3l.domain.Client.class.getName() + ".orders");
+            createCache(cm, com.je3l.domain.Images.class.getName());
+            createCache(cm, com.je3l.domain.ClientOrder.class.getName());
+            createCache(cm, com.je3l.domain.ClientOrder.class.getName() + ".orderLines");
+            createCache(cm, com.je3l.domain.OrderLine.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

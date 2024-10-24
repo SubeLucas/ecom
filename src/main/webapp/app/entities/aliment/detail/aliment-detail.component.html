@@ -1,0 +1,74 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (aliment(); as alimentRef) {
+      <div>
+        <h2 data-cy="alimentDetailsHeading"><span jhiTranslate="ecomApp.aliment.detail.title">Aliment</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="ecomApp.aliment.id">Id</span></dt>
+          <dd>
+            <span>{{ alimentRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.aliment.name">Name</span></dt>
+          <dd>
+            <span>{{ alimentRef.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.aliment.origin">Origin</span></dt>
+          <dd>
+            <span [jhiTranslate]="'ecomApp.EnumOrigin.' + (alimentRef.origin ?? 'null')">{{
+              { null: '', FRANCE: 'FRANCE', ESPAGNE: 'ESPAGNE', ITALIE: 'ITALIE' }[alimentRef.origin ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.aliment.season">Season</span></dt>
+          <dd>
+            <span>{{ alimentRef.season }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.aliment.color">Color</span></dt>
+          <dd>
+            <span [jhiTranslate]="'ecomApp.EnumColor.' + (alimentRef.color ?? 'null')">{{
+              {
+                null: '',
+                RED: 'Rouge',
+                ORANGE: 'Orange',
+                YELLOW: 'Jaune',
+                GREEN: 'Vert',
+                BLUE: 'Bleu',
+                PURPLE: 'Violet',
+                PINK: 'Rose',
+                BROWN: 'Marron',
+                WHITE: 'Blanc',
+                BLACK: 'Noir',
+              }[alimentRef.color ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.aliment.weight">Weight</span></dt>
+          <dd>
+            <span>{{ alimentRef.weight }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.aliment.stockQuantity">Stock Quantity</span></dt>
+          <dd>
+            <span>{{ alimentRef.stockQuantity }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.aliment.price">Price</span></dt>
+          <dd>
+            <span>{{ alimentRef.price }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/aliment', alimentRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

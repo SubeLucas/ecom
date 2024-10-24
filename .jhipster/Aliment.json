@@ -1,0 +1,66 @@
+{
+  "annotations": {
+    "changelogDate": "20241024142216"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "Long",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "origin",
+      "fieldType": "EnumOrigin",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "FRANCE,ESPAGNE,ITALIE"
+    },
+    {
+      "fieldName": "season",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "color",
+      "fieldType": "EnumColor",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "RED (Rouge),ORANGE (Orange),YELLOW (Jaune),GREEN (Vert),BLUE (Bleu),PURPLE (Violet),PINK (Rose),BROWN (Marron),WHITE (Blanc),BLACK (Noir)"
+    },
+    {
+      "fieldName": "weight",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "stockQuantity",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Aliment",
+  "relationships": [
+    {
+      "otherEntityName": "orderLine",
+      "otherEntityRelationshipName": "aliment",
+      "relationshipName": "clientOrders",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "images",
+      "relationshipName": "images",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (clientOrder(); as clientOrderRef) {
+      <div>
+        <h2 data-cy="clientOrderDetailsHeading"><span jhiTranslate="ecomApp.clientOrder.detail.title">Client Order</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="ecomApp.clientOrder.id">Id</span></dt>
+          <dd>
+            <span>{{ clientOrderRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.clientOrder.orderDate">Order Date</span></dt>
+          <dd>
+            <span>{{ clientOrderRef.orderDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.clientOrder.deliveryDate">Delivery Date</span></dt>
+          <dd>
+            <span>{{ clientOrderRef.deliveryDate | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.clientOrder.deliveryAddress">Delivery Address</span></dt>
+          <dd>
+            <span>{{ clientOrderRef.deliveryAddress }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.clientOrder.status">Status</span></dt>
+          <dd>
+            <span [jhiTranslate]="'ecomApp.EnumStatus.' + (clientOrderRef.status ?? 'null')">{{
+              { null: '', IN_PROGRESS: 'IN_PROGRESS', SHIPPED: 'SHIPPED', CANCELLED: 'CANCELLED' }[clientOrderRef.status ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.clientOrder.totalPrice">Total Price</span></dt>
+          <dd>
+            <span>{{ clientOrderRef.totalPrice }}</span>
+          </dd>
+          <dt><span jhiTranslate="ecomApp.clientOrder.client">Client</span></dt>
+          <dd>
+            @if (clientOrder()!.client) {
+              <div>
+                <a [routerLink]="['/client', clientOrder()!.client?.id, 'view']">{{ clientOrderRef.client?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/client-order', clientOrderRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

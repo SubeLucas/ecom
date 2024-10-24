@@ -1,0 +1,10 @@
+{
+  "ecomApp": {
+    "EnumOrigin": {
+      "null": "",
+      "FRANCE": "FRANCE",
+      "ESPAGNE": "ESPAGNE",
+      "ITALIE": "ITALIE"
+    }
+  }
+}

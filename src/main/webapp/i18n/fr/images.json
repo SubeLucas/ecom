@@ -1,0 +1,26 @@
+{
+  "ecomApp": {
+    "images": {
+      "home": {
+        "title": "Images",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Images",
+        "createOrEditLabel": "Créer ou éditer un Images",
+        "search": "Recherche pour Images",
+        "notFound": "Aucun Images trouvé"
+      },
+      "created": "Un nouveau Images a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Images avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Images avec l'identifiant {{ param }} a été supprimé",
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Images {{ id }} ?"
+      },
+      "detail": {
+        "title": "Images"
+      },
+      "id": "ID",
+      "url": "Url",
+      "aliment": "Aliment"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "annotations": {
+    "changelogDate": "20241024142220"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "quantity",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "purchasePrice",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "OrderLine",
+  "relationships": [
+    {
+      "otherEntityName": "clientOrder",
+      "otherEntityRelationshipName": "orderLines",
+      "relationshipName": "clientOrder",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "aliment",
+      "otherEntityRelationshipName": "clientOrders",
+      "relationshipName": "aliment",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ]
+}

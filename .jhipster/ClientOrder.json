@@ -1,0 +1,56 @@
+{
+  "annotations": {
+    "changelogDate": "20241024142219"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "id",
+      "fieldType": "Long",
+      "fieldValidateRules": ["unique"]
+    },
+    {
+      "fieldName": "orderDate",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "deliveryDate",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "deliveryAddress",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "EnumStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "IN_PROGRESS,SHIPPED,CANCELLED"
+    },
+    {
+      "fieldName": "totalPrice",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "ClientOrder",
+  "relationships": [
+    {
+      "otherEntityName": "orderLine",
+      "otherEntityRelationshipName": "clientOrder",
+      "relationshipName": "orderLines",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "client",
+      "otherEntityRelationshipName": "orders",
+      "relationshipName": "client",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ]
+}
