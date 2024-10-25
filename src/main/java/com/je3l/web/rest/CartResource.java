@@ -72,9 +72,7 @@ public class CartResource {
             LOG.debug("Quantité insuffisante ou aliment nul " + existingAliment + ", quantité : " + quantity);
             return false;
         }
-
         LOG.debug("DEBUG : " + aliment.toString() + " Ajouté au cart");
-
         items.put(aliment, quantity);
         return true;
     }
@@ -86,30 +84,13 @@ public class CartResource {
 
     @GetMapping("/validate")
     public boolean validateCart() throws Exception {
-        /*
-        Optional<User> opt_user = userService.getUserWithAuthorities();
-        if (opt_user.isEmpty()) {
-            return false;
-        }
-        User u = opt_user.get();
-        */
         Client c = clientService.getCurrentClient();
 
         if (items.isEmpty()) {
             System.err.println("Le panier est vide");
             return false;
         }
-
         orderService.addOrder(items, c);
-
-        /*for (Map.Entry<Aliment, Integer> alimentIntegerEntry : items.entrySet()) {
-            Map.Entry orderLine = (Map.Entry) alimentIntegerEntry;
-            Aliment aliment = (Aliment) orderLine.getKey();
-            int quantity = (int) orderLine.getValue();
-            System.out.println("Add " + aliment.toString() + " " + quantity);
-            //orderService.addOrder(aliment)
-        }*/
-
         return true;
     }
 }
