@@ -12,6 +12,7 @@ import com.je3l.service.dto.CartDTO;
 import com.je3l.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -26,11 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class CartResource {
 
     private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(CartResource.class);
-    private HashMap<Aliment, Integer> items = new HashMap<>();
     private static final String ENTITY_NAME = "cart";
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private AlimentRepository alimentRepository;
@@ -41,56 +38,31 @@ public class CartResource {
     @Autowired
     private ClientService clientService;
 
-    @Autowired
-    private ClientRepository clientRepository;
+    @PostMapping("")
+    public boolean validateCart(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException, Exception {
+        HashMap<Long, Integer> cart = cartDTO.getCart();
+        HashMap<Aliment, Integer> order_cart = new HashMap<Aliment, Integer>();
 
-    @PostMapping("/delete")
-    public boolean removeItem(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException {
-        Aliment aliment = cartDTO.getAliment();
-        int quantity = cartDTO.getQuantity();
+        for (Map.Entry<Long, Integer> entry : cart.entrySet()) {
+            Long k = entry.getKey();
+            Integer v = entry.getValue();
 
-        Aliment existingAliment = alimentRepository.findById(aliment.getId()).orElse(null);
-
-        if (existingAliment == null) {
-            LOG.debug("Aliment nul :" + existingAliment);
-            return false;
+            if (v <= 0) {
+                return false;
+            }
+            Aliment a = alimentRepository.findById(k).orElse(null);
+            if (a == null) {
+                LOG.debug("Aliment id wasn't found " + k);
+                return false;
+            }
+            if (a.getStockQuantity() < v) {
+                return false;
+            }
+            order_cart.put(a, v);
         }
 
-        LOG.debug("DEBUG : " + aliment.toString() + " Supprimé du cart");
-        items.remove(aliment);
-        return true;
-    }
-
-    @PostMapping("/set")
-    public boolean addItem(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException {
-        Aliment aliment = cartDTO.getAliment();
-        int quantity = cartDTO.getQuantity();
-
-        Aliment existingAliment = alimentRepository.findById(aliment.getId()).orElse(null);
-
-        if (existingAliment == null || existingAliment.getStockQuantity() < quantity) {
-            LOG.debug("Quantité insuffisante ou aliment nul " + existingAliment + ", quantité : " + quantity);
-            return false;
-        }
-        LOG.debug("DEBUG : " + aliment.toString() + " Ajouté au cart");
-        items.put(aliment, quantity);
-        return true;
-    }
-
-    @GetMapping("")
-    public Map<Aliment, Integer> getItems() {
-        return items;
-    }
-
-    @GetMapping("/validate")
-    public boolean validateCart() throws Exception {
         Client c = clientService.getCurrentClient();
-
-        if (items.isEmpty()) {
-            System.err.println("Le panier est vide");
-            return false;
-        }
-        orderService.addOrder(items, c);
+        orderService.addOrder(order_cart, c);
         return true;
     }
 }
