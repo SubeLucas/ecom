@@ -3,9 +3,7 @@ package com.je3l.web.rest;
 import static com.je3l.domain.ClientAsserts.*;
 import static com.je3l.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -14,19 +12,14 @@ import com.je3l.IntegrationTest;
 import com.je3l.domain.Client;
 import com.je3l.repository.ClientRepository;
 import com.je3l.repository.UserRepository;
-import com.je3l.repository.search.ClientSearchRepository;
 import jakarta.persistence.EntityManager;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,7 +41,6 @@ class ClientResourceIT {
 
     private static final String ENTITY_API_URL = "/api/clients";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/clients/_search";
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -61,9 +53,6 @@ class ClientResourceIT {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private ClientSearchRepository clientSearchRepository;
 
     @Autowired
     private EntityManager em;
@@ -104,7 +93,6 @@ class ClientResourceIT {
     public void cleanup() {
         if (insertedClient != null) {
             clientRepository.delete(insertedClient);
-            clientSearchRepository.delete(insertedClient);
             insertedClient = null;
         }
     }
@@ -113,7 +101,6 @@ class ClientResourceIT {
     @Transactional
     void createClient() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         // Create the Client
         var returnedClient = om.readValue(
             restClientMockMvc
@@ -129,13 +116,6 @@ class ClientResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertClientUpdatableFieldsEquals(returnedClient, getPersistedClient(returnedClient));
 
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
-            });
-
         insertedClient = returnedClient;
     }
 
@@ -146,7 +126,6 @@ class ClientResourceIT {
         client.setId(1L);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restClientMockMvc
@@ -155,15 +134,12 @@ class ClientResourceIT {
 
         // Validate the Client in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkPreferedDayIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         // set the field null
         client.setPreferedDay(null);
 
@@ -174,16 +150,12 @@ class ClientResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkAddressIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         // set the field null
         client.setAddress(null);
 
@@ -194,9 +166,6 @@ class ClientResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -245,8 +214,6 @@ class ClientResourceIT {
         insertedClient = clientRepository.saveAndFlush(client);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        clientSearchRepository.save(client);
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
 
         // Update the client
         Client updatedClient = clientRepository.findById(client.getId()).orElseThrow();
@@ -265,24 +232,12 @@ class ClientResourceIT {
         // Validate the Client in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertPersistedClientToMatchAllProperties(updatedClient);
-
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-                List<Client> clientSearchList = Streamable.of(clientSearchRepository.findAll()).toList();
-                Client testClientSearch = clientSearchList.get(searchDatabaseSizeAfter - 1);
-
-                assertClientAllPropertiesEquals(testClientSearch, updatedClient);
-            });
     }
 
     @Test
     @Transactional
     void putNonExistingClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         client.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -292,15 +247,12 @@ class ClientResourceIT {
 
         // Validate the Client in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         client.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -314,15 +266,12 @@ class ClientResourceIT {
 
         // Validate the Client in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         client.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -332,8 +281,6 @@ class ClientResourceIT {
 
         // Validate the Client in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -348,7 +295,7 @@ class ClientResourceIT {
         Client partialUpdatedClient = new Client();
         partialUpdatedClient.setId(client.getId());
 
-        partialUpdatedClient.preferedDay(UPDATED_PREFERED_DAY).address(UPDATED_ADDRESS);
+        partialUpdatedClient.preferedDay(UPDATED_PREFERED_DAY);
 
         restClientMockMvc
             .perform(
@@ -396,7 +343,6 @@ class ClientResourceIT {
     @Transactional
     void patchNonExistingClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         client.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -408,15 +354,12 @@ class ClientResourceIT {
 
         // Validate the Client in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         client.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -430,15 +373,12 @@ class ClientResourceIT {
 
         // Validate the Client in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamClient() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
         client.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -448,8 +388,6 @@ class ClientResourceIT {
 
         // Validate the Client in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -457,12 +395,8 @@ class ClientResourceIT {
     void deleteClient() throws Exception {
         // Initialize the database
         insertedClient = clientRepository.saveAndFlush(client);
-        clientRepository.save(client);
-        clientSearchRepository.save(client);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
         // Delete the client
         restClientMockMvc
@@ -471,25 +405,6 @@ class ClientResourceIT {
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
-    }
-
-    @Test
-    @Transactional
-    void searchClient() throws Exception {
-        // Initialize the database
-        insertedClient = clientRepository.saveAndFlush(client);
-        clientSearchRepository.save(client);
-
-        // Search the client
-        restClientMockMvc
-            .perform(get(ENTITY_SEARCH_API_URL + "?query=id:" + client.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(client.getId().intValue())))
-            .andExpect(jsonPath("$.[*].preferedDay").value(hasItem(DEFAULT_PREFERED_DAY)))
-            .andExpect(jsonPath("$.[*].address").value(hasItem(DEFAULT_ADDRESS)));
     }
 
     protected long getRepositoryCount() {

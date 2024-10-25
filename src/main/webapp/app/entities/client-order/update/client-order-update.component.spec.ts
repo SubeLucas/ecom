@@ -49,10 +49,10 @@ describe('ClientOrder Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Client query and add missing value', () => {
       const clientOrder: IClientOrder = { id: 456 };
-      const client: IClient = { id: 2699 };
+      const client: IClient = { id: 21577 };
       clientOrder.client = client;
 
-      const clientCollection: IClient[] = [{ id: 1139 }];
+      const clientCollection: IClient[] = [{ id: 6711 }];
       jest.spyOn(clientService, 'query').mockReturnValue(of(new HttpResponse({ body: clientCollection })));
       const additionalClients = [client];
       const expectedCollection: IClient[] = [...additionalClients, ...clientCollection];
@@ -71,7 +71,7 @@ describe('ClientOrder Management Update Component', () => {
 
     it('Should update editForm', () => {
       const clientOrder: IClientOrder = { id: 456 };
-      const client: IClient = { id: 21985 };
+      const client: IClient = { id: 4178 };
       clientOrder.client = client;
 
       activatedRoute.data = of({ clientOrder });

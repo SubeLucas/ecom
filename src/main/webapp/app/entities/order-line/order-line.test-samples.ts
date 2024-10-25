@@ -1,26 +1,26 @@
 import { IOrderLine, NewOrderLine } from './order-line.model';
 
 export const sampleWithRequiredData: IOrderLine = {
-  id: 29916,
-  quantity: 613,
-  purchasePrice: 3954.32,
+  id: 13771,
+  quantity: 21716,
+  purchasePrice: 21477.28,
 };
 
 export const sampleWithPartialData: IOrderLine = {
-  id: 91,
-  quantity: 1087,
-  purchasePrice: 13204.36,
+  id: 31368,
+  quantity: 15355,
+  purchasePrice: 16895.9,
 };
 
 export const sampleWithFullData: IOrderLine = {
-  id: 7887,
-  quantity: 12293,
-  purchasePrice: 2697.5,
+  id: 4491,
+  quantity: 14032,
+  purchasePrice: 29762.81,
 };
 
 export const sampleWithNewData: NewOrderLine = {
-  quantity: 23391,
-  purchasePrice: 10469.67,
+  quantity: 9583,
+  purchasePrice: 1474.15,
   id: null,
 };
 

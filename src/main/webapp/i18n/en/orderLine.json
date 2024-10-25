@@ -6,7 +6,6 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Order Line",
         "createOrEditLabel": "Create or edit a Order Line",
-        "search": "Search for Order Line",
         "notFound": "No Order Lines found"
       },
       "created": "A new Order Line is created with identifier {{ param }}",

@@ -6,7 +6,6 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Client Order",
         "createOrEditLabel": "Create or edit a Client Order",
-        "search": "Search for Client Order",
         "notFound": "No Client Orders found"
       },
       "created": "A new Client Order is created with identifier {{ param }}",

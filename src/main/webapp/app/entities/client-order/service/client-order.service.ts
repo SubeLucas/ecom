@@ -1,8 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, asapScheduler, map, scheduled } from 'rxjs';
-
-import { catchError } from 'rxjs/operators';
+import { Observable, map } from 'rxjs';
 
 import dayjs from 'dayjs/esm';
 
@@ -10,7 +8,6 @@ import { isPresent } from 'app/core/util/operators';
 import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { Search } from 'app/core/request/request.model';
 import { IClientOrder, NewClientOrder } from '../client-order.model';
 
 export type PartialUpdateClientOrder = Partial<IClientOrder> & Pick<IClientOrder, 'id'>;
@@ -35,7 +32,6 @@ export class ClientOrderService {
   protected applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/client-orders');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/client-orders/_search');
 
   create(clientOrder: NewClientOrder): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(clientOrder);
@@ -73,15 +69,6 @@ export class ClientOrderService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
-  }
-
-  search(req: Search): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http.get<RestClientOrder[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
-      map(res => this.convertResponseArrayFromServer(res)),
-
-      catchError(() => scheduled([new HttpResponse<IClientOrder[]>()], asapScheduler)),
-    );
   }
 
   getClientOrderIdentifier(clientOrder: Pick<IClientOrder, 'id'>): number {

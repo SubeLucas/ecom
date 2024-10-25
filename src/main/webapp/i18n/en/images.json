@@ -6,7 +6,6 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Images",
         "createOrEditLabel": "Create or edit a Images",
-        "search": "Search for Images",
         "notFound": "No Images found"
       },
       "created": "A new Images is created with identifier {{ param }}",

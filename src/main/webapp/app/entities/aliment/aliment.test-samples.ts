@@ -1,46 +1,46 @@
 import { IAliment, NewAliment } from './aliment.model';
 
 export const sampleWithRequiredData: IAliment = {
-  id: 24885,
-  name: 'neatly cross via',
+  id: 30680,
+  name: 'antagonize oh lest',
   origin: 'ITALIE',
-  season: 15658,
-  color: 'PINK',
-  weight: 11493.3,
-  stockQuantity: 16980,
-  price: 32243.53,
+  season: 30928,
+  color: 'BLACK',
+  weight: 6972.92,
+  stockQuantity: 3569,
+  price: 22211.91,
 };
 
 export const sampleWithPartialData: IAliment = {
-  id: 11319,
-  name: 'whether likewise a',
+  id: 18580,
+  name: 'lift requirement bulky',
   origin: 'ESPAGNE',
-  season: 18824,
-  color: 'PURPLE',
-  weight: 11763.89,
-  stockQuantity: 23832,
-  price: 7239.56,
+  season: 30856,
+  color: 'BLACK',
+  weight: 22986.3,
+  stockQuantity: 5554,
+  price: 22284.29,
 };
 
 export const sampleWithFullData: IAliment = {
-  id: 4499,
-  name: 'mount among',
+  id: 8354,
+  name: 'bowler',
   origin: 'FRANCE',
-  season: 26575,
-  color: 'BROWN',
-  weight: 10972.83,
-  stockQuantity: 13280,
-  price: 29150.35,
+  season: 11152,
+  color: 'ORANGE',
+  weight: 2491.16,
+  stockQuantity: 5216,
+  price: 4184.7,
 };
 
 export const sampleWithNewData: NewAliment = {
-  name: 'annual while',
+  name: 'safely',
   origin: 'FRANCE',
-  season: 7411,
-  color: 'RED',
-  weight: 3943.21,
-  stockQuantity: 13591,
-  price: 20433.55,
+  season: 31726,
+  color: 'WHITE',
+  weight: 29903.61,
+  stockQuantity: 20103,
+  price: 9637.68,
   id: null,
 };
 

@@ -15,7 +15,7 @@
         [routerLink]="['/client/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span class="hidden-sm-down" jhiTranslate="ecomApp.client.home.createLabel">Create a new Client</span>
+        <span jhiTranslate="ecomApp.client.home.createLabel">Create a new Client</span>
       </button>
     </div>
   </h2>
@@ -23,32 +23,6 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
-
-  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
-    <div class="col-sm-12">
-      <div class="input-group w-100 mt-3">
-        <label class="visually-hidden" for="currentSearch" jhiTranslate="ecomApp.client.home.search">Search for Client</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="currentSearch"
-          id="currentSearch"
-          name="currentSearch"
-          placeholder="{{ 'ecomApp.client.home.search' | translate }}"
-        />
-
-        <button class="btn btn-info" (click)="search(currentSearch)">
-          <fa-icon icon="search"></fa-icon>
-        </button>
-
-        @if (currentSearch) {
-          <button class="btn btn-danger" (click)="search('')">
-            <fa-icon icon="trash-alt"></fa-icon>
-          </button>
-        }
-      </div>
-    </div>
-  </form>
 
   @if (clients?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -71,17 +45,15 @@
             <th scope="col" jhiSortBy="preferedDay">
               <div class="d-flex">
                 <span jhiTranslate="ecomApp.client.preferedDay">Prefered Day</span>
-                @if (!currentSearch) {
-                  <fa-icon class="p-1" icon="sort"></fa-icon>
-                }
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="address">
               <div class="d-flex">
                 <span jhiTranslate="ecomApp.client.address">Address</span>
-                @if (!currentSearch) {
-                  <fa-icon class="p-1" icon="sort"></fa-icon>
-                }
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="user.id">

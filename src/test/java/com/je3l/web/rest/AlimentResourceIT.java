@@ -4,9 +4,7 @@ import static com.je3l.domain.AlimentAsserts.*;
 import static com.je3l.web.rest.TestUtil.createUpdateProxyForBean;
 import static com.je3l.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -16,20 +14,15 @@ import com.je3l.domain.Aliment;
 import com.je3l.domain.enumeration.EnumColor;
 import com.je3l.domain.enumeration.EnumOrigin;
 import com.je3l.repository.AlimentRepository;
-import com.je3l.repository.search.AlimentSearchRepository;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -66,7 +59,6 @@ class AlimentResourceIT {
 
     private static final String ENTITY_API_URL = "/api/aliments";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/aliments/_search";
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -76,9 +68,6 @@ class AlimentResourceIT {
 
     @Autowired
     private AlimentRepository alimentRepository;
-
-    @Autowired
-    private AlimentSearchRepository alimentSearchRepository;
 
     @Autowired
     private EntityManager em;
@@ -133,7 +122,6 @@ class AlimentResourceIT {
     public void cleanup() {
         if (insertedAliment != null) {
             alimentRepository.delete(insertedAliment);
-            alimentSearchRepository.delete(insertedAliment);
             insertedAliment = null;
         }
     }
@@ -142,7 +130,6 @@ class AlimentResourceIT {
     @Transactional
     void createAliment() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         // Create the Aliment
         var returnedAliment = om.readValue(
             restAlimentMockMvc
@@ -158,13 +145,6 @@ class AlimentResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertAlimentUpdatableFieldsEquals(returnedAliment, getPersistedAliment(returnedAliment));
 
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
-            });
-
         insertedAliment = returnedAliment;
     }
 
@@ -175,7 +155,6 @@ class AlimentResourceIT {
         aliment.setId(1L);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restAlimentMockMvc
@@ -184,15 +163,12 @@ class AlimentResourceIT {
 
         // Validate the Aliment in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkNameIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         // set the field null
         aliment.setName(null);
 
@@ -203,16 +179,12 @@ class AlimentResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkOriginIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         // set the field null
         aliment.setOrigin(null);
 
@@ -223,16 +195,12 @@ class AlimentResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkSeasonIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         // set the field null
         aliment.setSeason(null);
 
@@ -243,16 +211,12 @@ class AlimentResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkColorIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         // set the field null
         aliment.setColor(null);
 
@@ -263,16 +227,12 @@ class AlimentResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkWeightIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         // set the field null
         aliment.setWeight(null);
 
@@ -283,16 +243,12 @@ class AlimentResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkStockQuantityIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         // set the field null
         aliment.setStockQuantity(null);
 
@@ -303,16 +259,12 @@ class AlimentResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkPriceIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         // set the field null
         aliment.setPrice(null);
 
@@ -323,9 +275,6 @@ class AlimentResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -384,8 +333,6 @@ class AlimentResourceIT {
         insertedAliment = alimentRepository.saveAndFlush(aliment);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        alimentSearchRepository.save(aliment);
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
 
         // Update the aliment
         Aliment updatedAliment = alimentRepository.findById(aliment.getId()).orElseThrow();
@@ -411,24 +358,12 @@ class AlimentResourceIT {
         // Validate the Aliment in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertPersistedAlimentToMatchAllProperties(updatedAliment);
-
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-                List<Aliment> alimentSearchList = Streamable.of(alimentSearchRepository.findAll()).toList();
-                Aliment testAlimentSearch = alimentSearchList.get(searchDatabaseSizeAfter - 1);
-
-                assertAlimentAllPropertiesEquals(testAlimentSearch, updatedAliment);
-            });
     }
 
     @Test
     @Transactional
     void putNonExistingAliment() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         aliment.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -438,15 +373,12 @@ class AlimentResourceIT {
 
         // Validate the Aliment in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchAliment() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         aliment.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -460,15 +392,12 @@ class AlimentResourceIT {
 
         // Validate the Aliment in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamAliment() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         aliment.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -478,8 +407,6 @@ class AlimentResourceIT {
 
         // Validate the Aliment in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -494,7 +421,7 @@ class AlimentResourceIT {
         Aliment partialUpdatedAliment = new Aliment();
         partialUpdatedAliment.setId(aliment.getId());
 
-        partialUpdatedAliment.origin(UPDATED_ORIGIN).color(UPDATED_COLOR).weight(UPDATED_WEIGHT).stockQuantity(UPDATED_STOCK_QUANTITY);
+        partialUpdatedAliment.season(UPDATED_SEASON).color(UPDATED_COLOR).price(UPDATED_PRICE);
 
         restAlimentMockMvc
             .perform(
@@ -549,7 +476,6 @@ class AlimentResourceIT {
     @Transactional
     void patchNonExistingAliment() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         aliment.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -561,15 +487,12 @@ class AlimentResourceIT {
 
         // Validate the Aliment in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchAliment() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         aliment.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -583,15 +506,12 @@ class AlimentResourceIT {
 
         // Validate the Aliment in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamAliment() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
         aliment.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -601,8 +521,6 @@ class AlimentResourceIT {
 
         // Validate the Aliment in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -610,12 +528,8 @@ class AlimentResourceIT {
     void deleteAliment() throws Exception {
         // Initialize the database
         insertedAliment = alimentRepository.saveAndFlush(aliment);
-        alimentRepository.save(aliment);
-        alimentSearchRepository.save(aliment);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
         // Delete the aliment
         restAlimentMockMvc
@@ -624,30 +538,6 @@ class AlimentResourceIT {
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(alimentSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
-    }
-
-    @Test
-    @Transactional
-    void searchAliment() throws Exception {
-        // Initialize the database
-        insertedAliment = alimentRepository.saveAndFlush(aliment);
-        alimentSearchRepository.save(aliment);
-
-        // Search the aliment
-        restAlimentMockMvc
-            .perform(get(ENTITY_SEARCH_API_URL + "?query=id:" + aliment.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(aliment.getId().intValue())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
-            .andExpect(jsonPath("$.[*].origin").value(hasItem(DEFAULT_ORIGIN.toString())))
-            .andExpect(jsonPath("$.[*].season").value(hasItem(DEFAULT_SEASON)))
-            .andExpect(jsonPath("$.[*].color").value(hasItem(DEFAULT_COLOR.toString())))
-            .andExpect(jsonPath("$.[*].weight").value(hasItem(sameNumber(DEFAULT_WEIGHT))))
-            .andExpect(jsonPath("$.[*].stockQuantity").value(hasItem(DEFAULT_STOCK_QUANTITY)))
-            .andExpect(jsonPath("$.[*].price").value(hasItem(sameNumber(DEFAULT_PRICE))));
     }
 
     protected long getRepositoryCount() {

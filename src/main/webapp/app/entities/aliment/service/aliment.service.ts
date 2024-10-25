@@ -1,13 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, asapScheduler, scheduled } from 'rxjs';
-
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { Search } from 'app/core/request/request.model';
 import { IAliment, NewAliment } from '../aliment.model';
 
 export type PartialUpdateAliment = Partial<IAliment> & Pick<IAliment, 'id'>;
@@ -21,7 +18,6 @@ export class AlimentService {
   protected applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/aliments');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/aliments/_search');
 
   create(aliment: NewAliment): Observable<EntityResponseType> {
     return this.http.post<IAliment>(this.resourceUrl, aliment, { observe: 'response' });
@@ -46,13 +42,6 @@ export class AlimentService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
-  }
-
-  search(req: Search): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http
-      .get<IAliment[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-      .pipe(catchError(() => scheduled([new HttpResponse<IAliment[]>()], asapScheduler)));
   }
 
   getAlimentIdentifier(aliment: Pick<IAliment, 'id'>): number {

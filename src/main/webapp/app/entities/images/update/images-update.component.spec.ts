@@ -49,10 +49,10 @@ describe('Images Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Aliment query and add missing value', () => {
       const images: IImages = { id: 456 };
-      const aliment: IAliment = { id: 9245 };
+      const aliment: IAliment = { id: 24486 };
       images.aliment = aliment;
 
-      const alimentCollection: IAliment[] = [{ id: 29675 }];
+      const alimentCollection: IAliment[] = [{ id: 7639 }];
       jest.spyOn(alimentService, 'query').mockReturnValue(of(new HttpResponse({ body: alimentCollection })));
       const additionalAliments = [aliment];
       const expectedCollection: IAliment[] = [...additionalAliments, ...alimentCollection];
@@ -71,7 +71,7 @@ describe('Images Management Update Component', () => {
 
     it('Should update editForm', () => {
       const images: IImages = { id: 456 };
-      const aliment: IAliment = { id: 14981 };
+      const aliment: IAliment = { id: 16975 };
       images.aliment = aliment;
 
       activatedRoute.data = of({ images });

@@ -32,5 +32,6 @@
       "relationshipType": "many-to-one",
       "relationshipWithBuiltInEntity": true
     }
-  ]
+  ],
+  "searchEngine": "no"
 }

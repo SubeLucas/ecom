@@ -17,7 +17,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "client")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "client")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Client implements Serializable {
 
@@ -31,17 +30,14 @@ public class Client implements Serializable {
 
     @NotNull
     @Column(name = "prefered_day", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String preferedDay;
 
     @NotNull
     @Column(name = "address", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String address;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "client")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @org.springframework.data.annotation.Transient
     @JsonIgnoreProperties(value = { "orderLines", "client" }, allowSetters = true)
     private Set<ClientOrder> orders = new HashSet<>();
 

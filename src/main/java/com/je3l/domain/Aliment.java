@@ -18,7 +18,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "aliment")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "aliment")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Aliment implements Serializable {
 
@@ -32,24 +31,20 @@ public class Aliment implements Serializable {
 
     @NotNull
     @Column(name = "name", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String name;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "origin", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
     private EnumOrigin origin;
 
     @NotNull
     @Column(name = "season", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer season;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "color", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
     private EnumColor color;
 
     @NotNull
@@ -58,7 +53,6 @@ public class Aliment implements Serializable {
 
     @NotNull
     @Column(name = "stock_quantity", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer stockQuantity;
 
     @NotNull
@@ -67,13 +61,11 @@ public class Aliment implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "aliment")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @org.springframework.data.annotation.Transient
     @JsonIgnoreProperties(value = { "clientOrder", "aliment" }, allowSetters = true)
     private Set<OrderLine> clientOrders = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "aliment")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @org.springframework.data.annotation.Transient
     @JsonIgnoreProperties(value = { "aliment" }, allowSetters = true)
     private Set<Images> images = new HashSet<>();
 

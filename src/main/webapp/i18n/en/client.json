@@ -6,7 +6,6 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Client",
         "createOrEditLabel": "Create or edit a Client",
-        "search": "Search for Client",
         "notFound": "No Clients found"
       },
       "created": "A new Client is created with identifier {{ param }}",

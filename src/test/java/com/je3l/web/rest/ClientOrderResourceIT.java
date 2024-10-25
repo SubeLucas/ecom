@@ -4,9 +4,7 @@ import static com.je3l.domain.ClientOrderAsserts.*;
 import static com.je3l.web.rest.TestUtil.createUpdateProxyForBean;
 import static com.je3l.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -15,22 +13,17 @@ import com.je3l.IntegrationTest;
 import com.je3l.domain.ClientOrder;
 import com.je3l.domain.enumeration.EnumStatus;
 import com.je3l.repository.ClientOrderRepository;
-import com.je3l.repository.search.ClientOrderSearchRepository;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -61,7 +54,6 @@ class ClientOrderResourceIT {
 
     private static final String ENTITY_API_URL = "/api/client-orders";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/client-orders/_search";
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -71,9 +63,6 @@ class ClientOrderResourceIT {
 
     @Autowired
     private ClientOrderRepository clientOrderRepository;
-
-    @Autowired
-    private ClientOrderSearchRepository clientOrderSearchRepository;
 
     @Autowired
     private EntityManager em;
@@ -124,7 +113,6 @@ class ClientOrderResourceIT {
     public void cleanup() {
         if (insertedClientOrder != null) {
             clientOrderRepository.delete(insertedClientOrder);
-            clientOrderSearchRepository.delete(insertedClientOrder);
             insertedClientOrder = null;
         }
     }
@@ -133,7 +121,6 @@ class ClientOrderResourceIT {
     @Transactional
     void createClientOrder() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         // Create the ClientOrder
         var returnedClientOrder = om.readValue(
             restClientOrderMockMvc
@@ -149,13 +136,6 @@ class ClientOrderResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertClientOrderUpdatableFieldsEquals(returnedClientOrder, getPersistedClientOrder(returnedClientOrder));
 
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
-            });
-
         insertedClientOrder = returnedClientOrder;
     }
 
@@ -166,7 +146,6 @@ class ClientOrderResourceIT {
         clientOrder.setId(1L);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restClientOrderMockMvc
@@ -175,15 +154,12 @@ class ClientOrderResourceIT {
 
         // Validate the ClientOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkOrderDateIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         // set the field null
         clientOrder.setOrderDate(null);
 
@@ -194,16 +170,12 @@ class ClientOrderResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkDeliveryDateIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         // set the field null
         clientOrder.setDeliveryDate(null);
 
@@ -214,16 +186,12 @@ class ClientOrderResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkDeliveryAddressIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         // set the field null
         clientOrder.setDeliveryAddress(null);
 
@@ -234,16 +202,12 @@ class ClientOrderResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkStatusIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         // set the field null
         clientOrder.setStatus(null);
 
@@ -254,16 +218,12 @@ class ClientOrderResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkTotalPriceIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         // set the field null
         clientOrder.setTotalPrice(null);
 
@@ -274,9 +234,6 @@ class ClientOrderResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -331,8 +288,6 @@ class ClientOrderResourceIT {
         insertedClientOrder = clientOrderRepository.saveAndFlush(clientOrder);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        clientOrderSearchRepository.save(clientOrder);
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
 
         // Update the clientOrder
         ClientOrder updatedClientOrder = clientOrderRepository.findById(clientOrder.getId()).orElseThrow();
@@ -356,24 +311,12 @@ class ClientOrderResourceIT {
         // Validate the ClientOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertPersistedClientOrderToMatchAllProperties(updatedClientOrder);
-
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-                List<ClientOrder> clientOrderSearchList = Streamable.of(clientOrderSearchRepository.findAll()).toList();
-                ClientOrder testClientOrderSearch = clientOrderSearchList.get(searchDatabaseSizeAfter - 1);
-
-                assertClientOrderAllPropertiesEquals(testClientOrderSearch, updatedClientOrder);
-            });
     }
 
     @Test
     @Transactional
     void putNonExistingClientOrder() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         clientOrder.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -387,15 +330,12 @@ class ClientOrderResourceIT {
 
         // Validate the ClientOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchClientOrder() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         clientOrder.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -409,15 +349,12 @@ class ClientOrderResourceIT {
 
         // Validate the ClientOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamClientOrder() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         clientOrder.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -427,8 +364,6 @@ class ClientOrderResourceIT {
 
         // Validate the ClientOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -443,7 +378,11 @@ class ClientOrderResourceIT {
         ClientOrder partialUpdatedClientOrder = new ClientOrder();
         partialUpdatedClientOrder.setId(clientOrder.getId());
 
-        partialUpdatedClientOrder.orderDate(UPDATED_ORDER_DATE).deliveryDate(UPDATED_DELIVERY_DATE).totalPrice(UPDATED_TOTAL_PRICE);
+        partialUpdatedClientOrder
+            .deliveryDate(UPDATED_DELIVERY_DATE)
+            .deliveryAddress(UPDATED_DELIVERY_ADDRESS)
+            .status(UPDATED_STATUS)
+            .totalPrice(UPDATED_TOTAL_PRICE);
 
         restClientOrderMockMvc
             .perform(
@@ -499,7 +438,6 @@ class ClientOrderResourceIT {
     @Transactional
     void patchNonExistingClientOrder() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         clientOrder.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -513,15 +451,12 @@ class ClientOrderResourceIT {
 
         // Validate the ClientOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchClientOrder() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         clientOrder.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -535,15 +470,12 @@ class ClientOrderResourceIT {
 
         // Validate the ClientOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamClientOrder() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
         clientOrder.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -553,8 +485,6 @@ class ClientOrderResourceIT {
 
         // Validate the ClientOrder in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -562,12 +492,8 @@ class ClientOrderResourceIT {
     void deleteClientOrder() throws Exception {
         // Initialize the database
         insertedClientOrder = clientOrderRepository.saveAndFlush(clientOrder);
-        clientOrderRepository.save(clientOrder);
-        clientOrderSearchRepository.save(clientOrder);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
         // Delete the clientOrder
         restClientOrderMockMvc
@@ -576,28 +502,6 @@ class ClientOrderResourceIT {
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(clientOrderSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
-    }
-
-    @Test
-    @Transactional
-    void searchClientOrder() throws Exception {
-        // Initialize the database
-        insertedClientOrder = clientOrderRepository.saveAndFlush(clientOrder);
-        clientOrderSearchRepository.save(clientOrder);
-
-        // Search the clientOrder
-        restClientOrderMockMvc
-            .perform(get(ENTITY_SEARCH_API_URL + "?query=id:" + clientOrder.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(clientOrder.getId().intValue())))
-            .andExpect(jsonPath("$.[*].orderDate").value(hasItem(DEFAULT_ORDER_DATE.toString())))
-            .andExpect(jsonPath("$.[*].deliveryDate").value(hasItem(DEFAULT_DELIVERY_DATE.toString())))
-            .andExpect(jsonPath("$.[*].deliveryAddress").value(hasItem(DEFAULT_DELIVERY_ADDRESS)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
-            .andExpect(jsonPath("$.[*].totalPrice").value(hasItem(sameNumber(DEFAULT_TOTAL_PRICE))));
     }
 
     protected long getRepositoryCount() {

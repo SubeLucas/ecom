@@ -6,7 +6,6 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Aliment",
         "createOrEditLabel": "Create or edit a Aliment",
-        "search": "Search for Aliment",
         "notFound": "No Aliments found"
       },
       "created": "A new Aliment is created with identifier {{ param }}",

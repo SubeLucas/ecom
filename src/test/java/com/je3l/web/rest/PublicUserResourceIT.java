@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.je3l.IntegrationTest;
 import com.je3l.domain.User;
 import com.je3l.repository.UserRepository;
-import com.je3l.repository.search.UserSearchRepository;
 import com.je3l.security.AuthoritiesConstants;
 import com.je3l.service.UserService;
 import java.util.Objects;
@@ -37,14 +36,6 @@ class PublicUserResourceIT {
 
     @Autowired
     private UserService userService;
-
-    /**
-     * This repository is mocked in the com.je3l.repository.search test package.
-     *
-     * @see com.je3l.repository.search.UserSearchRepositoryMockConfiguration
-     */
-    @Autowired
-    private UserSearchRepository mockUserSearchRepository;
 
     @Autowired
     private CacheManager cacheManager;

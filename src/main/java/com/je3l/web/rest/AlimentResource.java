@@ -2,9 +2,7 @@ package com.je3l.web.rest;
 
 import com.je3l.domain.Aliment;
 import com.je3l.repository.AlimentRepository;
-import com.je3l.repository.search.AlimentSearchRepository;
 import com.je3l.web.rest.errors.BadRequestAlertException;
-import com.je3l.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -12,7 +10,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,11 +36,8 @@ public class AlimentResource {
 
     private final AlimentRepository alimentRepository;
 
-    private final AlimentSearchRepository alimentSearchRepository;
-
-    public AlimentResource(AlimentRepository alimentRepository, AlimentSearchRepository alimentSearchRepository) {
+    public AlimentResource(AlimentRepository alimentRepository) {
         this.alimentRepository = alimentRepository;
-        this.alimentSearchRepository = alimentSearchRepository;
     }
 
     /**
@@ -60,7 +54,6 @@ public class AlimentResource {
             throw new BadRequestAlertException("A new aliment cannot already have an ID", ENTITY_NAME, "idexists");
         }
         aliment = alimentRepository.save(aliment);
-        alimentSearchRepository.index(aliment);
         return ResponseEntity.created(new URI("/api/aliments/" + aliment.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, aliment.getId().toString()))
             .body(aliment);
@@ -94,7 +87,6 @@ public class AlimentResource {
         }
 
         aliment = alimentRepository.save(aliment);
-        alimentSearchRepository.index(aliment);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, aliment.getId().toString()))
             .body(aliment);
@@ -155,11 +147,7 @@ public class AlimentResource {
 
                 return existingAliment;
             })
-            .map(alimentRepository::save)
-            .map(savedAliment -> {
-                alimentSearchRepository.index(savedAliment);
-                return savedAliment;
-            });
+            .map(alimentRepository::save);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -201,26 +189,8 @@ public class AlimentResource {
     public ResponseEntity<Void> deleteAliment(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Aliment : {}", id);
         alimentRepository.deleteById(id);
-        alimentSearchRepository.deleteFromIndexById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
-    }
-
-    /**
-     * {@code SEARCH  /aliments/_search?query=:query} : search for the aliment corresponding
-     * to the query.
-     *
-     * @param query the query of the aliment search.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search")
-    public List<Aliment> searchAliments(@RequestParam("query") String query) {
-        LOG.debug("REST request to search Aliments for query {}", query);
-        try {
-            return StreamSupport.stream(alimentSearchRepository.search(query).spliterator(), false).toList();
-        } catch (RuntimeException e) {
-            throw ElasticsearchExceptionMapper.mapException(e);
-        }
     }
 }
