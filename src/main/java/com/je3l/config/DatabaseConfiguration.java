@@ -18,7 +18,7 @@ import tech.jhipster.config.h2.H2ConfigurationHelper;
 @EnableJpaRepositories({ "com.je3l.repository" })
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 @EnableTransactionManagement
-@EnableElasticsearchRepositories("com.je3l.repository.search")
+//@EnableElasticsearchRepositories("com.je3l.repository.search")
 public class DatabaseConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseConfiguration.class);
