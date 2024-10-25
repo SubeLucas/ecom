@@ -28,14 +28,11 @@ import { ClientOrderDeleteDialogComponent } from '../delete/client-order-delete-
   ],
 })
 export class ClientOrderComponent implements OnInit {
-  private static readonly NOT_SORTABLE_FIELDS_AFTER_SEARCH = ['deliveryAddress', 'status'];
-
   subscription: Subscription | null = null;
   clientOrders?: IClientOrder[];
   isLoading = false;
 
   sortState = sortStateSignal({});
-  currentSearch = '';
 
   public router = inject(Router);
   protected clientOrderService = inject(ClientOrderService);
@@ -50,22 +47,13 @@ export class ClientOrderComponent implements OnInit {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-        tap(() => this.load()),
+        tap(() => {
+          if (!this.clientOrders || this.clientOrders.length === 0) {
+            this.load();
+          }
+        }),
       )
       .subscribe();
-  }
-
-  search(query: string): void {
-    const { predicate } = this.sortState();
-    if (query && predicate && ClientOrderComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
-      this.loadDefaultSortState();
-    }
-    this.currentSearch = query;
-    this.navigateToWithComponentValues(this.sortState());
-  }
-
-  loadDefaultSortState(): void {
-    this.sortState.set(this.sortService.parseSortParam(this.activatedRoute.snapshot.data[DEFAULT_SORT_DATA]));
   }
 
   delete(clientOrder: IClientOrder): void {
@@ -89,18 +77,11 @@ export class ClientOrderComponent implements OnInit {
   }
 
   navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(event, this.currentSearch);
+    this.handleNavigation(event);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
-    if (params.has('search') && params.get('search') !== '') {
-      this.currentSearch = params.get('search') as string;
-      const { predicate } = this.sortState();
-      if (predicate && ClientOrderComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
-        this.sortState.set({});
-      }
-    }
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -118,22 +99,15 @@ export class ClientOrderComponent implements OnInit {
   }
 
   protected queryBackend(): Observable<EntityArrayResponseType> {
-    const { currentSearch } = this;
-
     this.isLoading = true;
     const queryObject: any = {
-      query: currentSearch,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
-    if (this.currentSearch && this.currentSearch !== '') {
-      return this.clientOrderService.search(queryObject).pipe(tap(() => (this.isLoading = false)));
-    }
     return this.clientOrderService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(sortState: SortState, currentSearch?: string): void {
+  protected handleNavigation(sortState: SortState): void {
     const queryParamsObj = {
-      search: currentSearch,
       sort: this.sortService.buildSortParam(sortState),
     };
 

@@ -1,13 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, asapScheduler, scheduled } from 'rxjs';
-
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { Search } from 'app/core/request/request.model';
 import { IImages, NewImages } from '../images.model';
 
 export type PartialUpdateImages = Partial<IImages> & Pick<IImages, 'id'>;
@@ -21,7 +18,6 @@ export class ImagesService {
   protected applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/images');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/images/_search');
 
   create(images: NewImages): Observable<EntityResponseType> {
     return this.http.post<IImages>(this.resourceUrl, images, { observe: 'response' });
@@ -46,13 +42,6 @@ export class ImagesService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
-  }
-
-  search(req: Search): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http
-      .get<IImages[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-      .pipe(catchError(() => scheduled([new HttpResponse<IImages[]>()], asapScheduler)));
   }
 
   getImagesIdentifier(images: Pick<IImages, 'id'>): number {

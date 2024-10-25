@@ -11,5 +11,6 @@
     }
   ],
   "name": "Images",
-  "relationships": []
+  "relationships": [],
+  "searchEngine": "no"
 }

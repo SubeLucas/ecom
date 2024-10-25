@@ -6,7 +6,6 @@
         "refreshListLabel": "Actualiser la liste",
         "createLabel": "Créer un nouveau Images",
         "createOrEditLabel": "Créer ou éditer un Images",
-        "search": "Recherche pour Images",
         "notFound": "Aucun Images trouvé"
       },
       "created": "Un nouveau Images a été créé avec l'identifiant {{ param }}",

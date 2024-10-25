@@ -1,22 +1,22 @@
 import { IImages, NewImages } from './images.model';
 
 export const sampleWithRequiredData: IImages = {
-  id: 25628,
-  url: 'https://bright-corral.info',
+  id: 4006,
+  url: 'https://rare-concentration.org/',
 };
 
 export const sampleWithPartialData: IImages = {
-  id: 29548,
-  url: 'https://french-palate.net',
+  id: 20997,
+  url: 'https://humiliating-lawmaker.com',
 };
 
 export const sampleWithFullData: IImages = {
-  id: 2445,
-  url: 'https://informal-trash.info',
+  id: 7955,
+  url: 'https://cooperative-tarragon.info',
 };
 
 export const sampleWithNewData: NewImages = {
-  url: 'https://hospitable-overload.net/',
+  url: 'https://superb-newsletter.com/',
   id: null,
 };
 

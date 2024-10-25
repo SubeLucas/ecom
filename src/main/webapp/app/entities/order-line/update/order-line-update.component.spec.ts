@@ -53,10 +53,10 @@ describe('OrderLine Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call ClientOrder query and add missing value', () => {
       const orderLine: IOrderLine = { id: 456 };
-      const clientOrder: IClientOrder = { id: 5262 };
+      const clientOrder: IClientOrder = { id: 8306 };
       orderLine.clientOrder = clientOrder;
 
-      const clientOrderCollection: IClientOrder[] = [{ id: 22467 }];
+      const clientOrderCollection: IClientOrder[] = [{ id: 11105 }];
       jest.spyOn(clientOrderService, 'query').mockReturnValue(of(new HttpResponse({ body: clientOrderCollection })));
       const additionalClientOrders = [clientOrder];
       const expectedCollection: IClientOrder[] = [...additionalClientOrders, ...clientOrderCollection];
@@ -75,10 +75,10 @@ describe('OrderLine Management Update Component', () => {
 
     it('Should call Aliment query and add missing value', () => {
       const orderLine: IOrderLine = { id: 456 };
-      const aliment: IAliment = { id: 13848 };
+      const aliment: IAliment = { id: 29474 };
       orderLine.aliment = aliment;
 
-      const alimentCollection: IAliment[] = [{ id: 14305 }];
+      const alimentCollection: IAliment[] = [{ id: 30037 }];
       jest.spyOn(alimentService, 'query').mockReturnValue(of(new HttpResponse({ body: alimentCollection })));
       const additionalAliments = [aliment];
       const expectedCollection: IAliment[] = [...additionalAliments, ...alimentCollection];
@@ -97,9 +97,9 @@ describe('OrderLine Management Update Component', () => {
 
     it('Should update editForm', () => {
       const orderLine: IOrderLine = { id: 456 };
-      const clientOrder: IClientOrder = { id: 13967 };
+      const clientOrder: IClientOrder = { id: 14699 };
       orderLine.clientOrder = clientOrder;
-      const aliment: IAliment = { id: 4710 };
+      const aliment: IAliment = { id: 30735 };
       orderLine.aliment = aliment;
 
       activatedRoute.data = of({ orderLine });

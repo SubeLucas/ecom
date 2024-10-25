@@ -14,7 +14,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "order_line")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "orderline")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class OrderLine implements Serializable {
 
@@ -28,7 +27,6 @@ public class OrderLine implements Serializable {
 
     @NotNull
     @Column(name = "quantity", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Integer)
     private Integer quantity;
 
     @NotNull

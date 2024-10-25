@@ -13,7 +13,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "images")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "images")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Images implements Serializable {
 
@@ -27,7 +26,6 @@ public class Images implements Serializable {
 
     @NotNull
     @Column(name = "url", nullable = false)
-    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)

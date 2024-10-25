@@ -6,7 +6,6 @@
         "refreshListLabel": "Actualiser la liste",
         "createLabel": "Créer un nouveau Aliment",
         "createOrEditLabel": "Créer ou éditer un Aliment",
-        "search": "Recherche pour Aliment",
         "notFound": "Aucun Aliment trouvé"
       },
       "created": "Un nouveau Aliment a été créé avec l'identifiant {{ param }}",

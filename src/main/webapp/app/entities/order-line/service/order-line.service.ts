@@ -1,13 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, asapScheduler, scheduled } from 'rxjs';
-
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
-import { Search } from 'app/core/request/request.model';
 import { IOrderLine, NewOrderLine } from '../order-line.model';
 
 export type PartialUpdateOrderLine = Partial<IOrderLine> & Pick<IOrderLine, 'id'>;
@@ -21,7 +18,6 @@ export class OrderLineService {
   protected applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/order-lines');
-  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/order-lines/_search');
 
   create(orderLine: NewOrderLine): Observable<EntityResponseType> {
     return this.http.post<IOrderLine>(this.resourceUrl, orderLine, { observe: 'response' });
@@ -46,13 +42,6 @@ export class OrderLineService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
-  }
-
-  search(req: Search): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http
-      .get<IOrderLine[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-      .pipe(catchError(() => scheduled([new HttpResponse<IOrderLine[]>()], asapScheduler)));
   }
 
   getOrderLineIdentifier(orderLine: Pick<IOrderLine, 'id'>): number {

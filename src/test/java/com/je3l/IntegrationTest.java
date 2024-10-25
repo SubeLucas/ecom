@@ -1,7 +1,6 @@
 package com.je3l;
 
 import com.je3l.config.AsyncSyncConfiguration;
-import com.je3l.config.EmbeddedElasticsearch;
 import com.je3l.config.EmbeddedSQL;
 import com.je3l.config.JacksonConfiguration;
 import java.lang.annotation.ElementType;
@@ -16,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(classes = { EcomApp.class, JacksonConfiguration.class, AsyncSyncConfiguration.class })
-@EmbeddedElasticsearch
 @EmbeddedSQL
 public @interface IntegrationTest {
 }

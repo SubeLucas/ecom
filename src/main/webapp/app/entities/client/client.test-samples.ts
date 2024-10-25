@@ -1,26 +1,26 @@
 import { IClient, NewClient } from './client.model';
 
 export const sampleWithRequiredData: IClient = {
-  id: 14534,
-  preferedDay: 'consequently embed upright',
-  address: 'vicinity aha happily',
+  id: 1568,
+  preferedDay: 'filthy aged whose',
+  address: 'lined',
 };
 
 export const sampleWithPartialData: IClient = {
-  id: 18386,
-  preferedDay: 'yippee',
-  address: 'ah bank',
+  id: 15964,
+  preferedDay: 'except',
+  address: 'hydrocarbon',
 };
 
 export const sampleWithFullData: IClient = {
-  id: 28690,
-  preferedDay: 'source for happy-go-lucky',
-  address: 'whoever',
+  id: 9891,
+  preferedDay: 'avow ew',
+  address: 'dreamily',
 };
 
 export const sampleWithNewData: NewClient = {
-  preferedDay: 'firsthand meanwhile gee',
-  address: 'tribe pfft yowza',
+  preferedDay: 'thyme fussy',
+  address: 'whistle',
   id: null,
 };
 

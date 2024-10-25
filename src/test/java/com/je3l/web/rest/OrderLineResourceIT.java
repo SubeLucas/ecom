@@ -4,9 +4,7 @@ import static com.je3l.domain.OrderLineAsserts.*;
 import static com.je3l.web.rest.TestUtil.createUpdateProxyForBean;
 import static com.je3l.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -14,20 +12,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.je3l.IntegrationTest;
 import com.je3l.domain.OrderLine;
 import com.je3l.repository.OrderLineRepository;
-import com.je3l.repository.search.OrderLineSearchRepository;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,7 +42,6 @@ class OrderLineResourceIT {
 
     private static final String ENTITY_API_URL = "/api/order-lines";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
-    private static final String ENTITY_SEARCH_API_URL = "/api/order-lines/_search";
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -59,9 +51,6 @@ class OrderLineResourceIT {
 
     @Autowired
     private OrderLineRepository orderLineRepository;
-
-    @Autowired
-    private OrderLineSearchRepository orderLineSearchRepository;
 
     @Autowired
     private EntityManager em;
@@ -102,7 +91,6 @@ class OrderLineResourceIT {
     public void cleanup() {
         if (insertedOrderLine != null) {
             orderLineRepository.delete(insertedOrderLine);
-            orderLineSearchRepository.delete(insertedOrderLine);
             insertedOrderLine = null;
         }
     }
@@ -111,7 +99,6 @@ class OrderLineResourceIT {
     @Transactional
     void createOrderLine() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         // Create the OrderLine
         var returnedOrderLine = om.readValue(
             restOrderLineMockMvc
@@ -127,13 +114,6 @@ class OrderLineResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertOrderLineUpdatableFieldsEquals(returnedOrderLine, getPersistedOrderLine(returnedOrderLine));
 
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
-            });
-
         insertedOrderLine = returnedOrderLine;
     }
 
@@ -144,7 +124,6 @@ class OrderLineResourceIT {
         orderLine.setId(1L);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restOrderLineMockMvc
@@ -153,15 +132,12 @@ class OrderLineResourceIT {
 
         // Validate the OrderLine in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkQuantityIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         // set the field null
         orderLine.setQuantity(null);
 
@@ -172,16 +148,12 @@ class OrderLineResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkPurchasePriceIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         // set the field null
         orderLine.setPurchasePrice(null);
 
@@ -192,9 +164,6 @@ class OrderLineResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
-
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -243,8 +212,6 @@ class OrderLineResourceIT {
         insertedOrderLine = orderLineRepository.saveAndFlush(orderLine);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        orderLineSearchRepository.save(orderLine);
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
 
         // Update the orderLine
         OrderLine updatedOrderLine = orderLineRepository.findById(orderLine.getId()).orElseThrow();
@@ -263,24 +230,12 @@ class OrderLineResourceIT {
         // Validate the OrderLine in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertPersistedOrderLineToMatchAllProperties(updatedOrderLine);
-
-        await()
-            .atMost(5, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
-                List<OrderLine> orderLineSearchList = Streamable.of(orderLineSearchRepository.findAll()).toList();
-                OrderLine testOrderLineSearch = orderLineSearchList.get(searchDatabaseSizeAfter - 1);
-
-                assertOrderLineAllPropertiesEquals(testOrderLineSearch, updatedOrderLine);
-            });
     }
 
     @Test
     @Transactional
     void putNonExistingOrderLine() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         orderLine.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -292,15 +247,12 @@ class OrderLineResourceIT {
 
         // Validate the OrderLine in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchOrderLine() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         orderLine.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -314,15 +266,12 @@ class OrderLineResourceIT {
 
         // Validate the OrderLine in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamOrderLine() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         orderLine.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -332,8 +281,6 @@ class OrderLineResourceIT {
 
         // Validate the OrderLine in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -347,6 +294,8 @@ class OrderLineResourceIT {
         // Update the orderLine using partial update
         OrderLine partialUpdatedOrderLine = new OrderLine();
         partialUpdatedOrderLine.setId(orderLine.getId());
+
+        partialUpdatedOrderLine.quantity(UPDATED_QUANTITY).purchasePrice(UPDATED_PURCHASE_PRICE);
 
         restOrderLineMockMvc
             .perform(
@@ -397,7 +346,6 @@ class OrderLineResourceIT {
     @Transactional
     void patchNonExistingOrderLine() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         orderLine.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -411,15 +359,12 @@ class OrderLineResourceIT {
 
         // Validate the OrderLine in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchOrderLine() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         orderLine.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -433,15 +378,12 @@ class OrderLineResourceIT {
 
         // Validate the OrderLine in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamOrderLine() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
         orderLine.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -451,8 +393,6 @@ class OrderLineResourceIT {
 
         // Validate the OrderLine in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -460,12 +400,8 @@ class OrderLineResourceIT {
     void deleteOrderLine() throws Exception {
         // Initialize the database
         insertedOrderLine = orderLineRepository.saveAndFlush(orderLine);
-        orderLineRepository.save(orderLine);
-        orderLineSearchRepository.save(orderLine);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
-        int searchDatabaseSizeBefore = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
         // Delete the orderLine
         restOrderLineMockMvc
@@ -474,25 +410,6 @@ class OrderLineResourceIT {
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
-        int searchDatabaseSizeAfter = IterableUtil.sizeOf(orderLineSearchRepository.findAll());
-        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
-    }
-
-    @Test
-    @Transactional
-    void searchOrderLine() throws Exception {
-        // Initialize the database
-        insertedOrderLine = orderLineRepository.saveAndFlush(orderLine);
-        orderLineSearchRepository.save(orderLine);
-
-        // Search the orderLine
-        restOrderLineMockMvc
-            .perform(get(ENTITY_SEARCH_API_URL + "?query=id:" + orderLine.getId()))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(orderLine.getId().intValue())))
-            .andExpect(jsonPath("$.[*].quantity").value(hasItem(DEFAULT_QUANTITY)))
-            .andExpect(jsonPath("$.[*].purchasePrice").value(hasItem(sameNumber(DEFAULT_PURCHASE_PRICE))));
     }
 
     protected long getRepositoryCount() {

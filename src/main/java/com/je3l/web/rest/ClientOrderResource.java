@@ -2,9 +2,7 @@ package com.je3l.web.rest;
 
 import com.je3l.domain.ClientOrder;
 import com.je3l.repository.ClientOrderRepository;
-import com.je3l.repository.search.ClientOrderSearchRepository;
 import com.je3l.web.rest.errors.BadRequestAlertException;
-import com.je3l.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -12,7 +10,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,11 +36,8 @@ public class ClientOrderResource {
 
     private final ClientOrderRepository clientOrderRepository;
 
-    private final ClientOrderSearchRepository clientOrderSearchRepository;
-
-    public ClientOrderResource(ClientOrderRepository clientOrderRepository, ClientOrderSearchRepository clientOrderSearchRepository) {
+    public ClientOrderResource(ClientOrderRepository clientOrderRepository) {
         this.clientOrderRepository = clientOrderRepository;
-        this.clientOrderSearchRepository = clientOrderSearchRepository;
     }
 
     /**
@@ -60,7 +54,6 @@ public class ClientOrderResource {
             throw new BadRequestAlertException("A new clientOrder cannot already have an ID", ENTITY_NAME, "idexists");
         }
         clientOrder = clientOrderRepository.save(clientOrder);
-        clientOrderSearchRepository.index(clientOrder);
         return ResponseEntity.created(new URI("/api/client-orders/" + clientOrder.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, clientOrder.getId().toString()))
             .body(clientOrder);
@@ -94,7 +87,6 @@ public class ClientOrderResource {
         }
 
         clientOrder = clientOrderRepository.save(clientOrder);
-        clientOrderSearchRepository.index(clientOrder);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, clientOrder.getId().toString()))
             .body(clientOrder);
@@ -149,11 +141,7 @@ public class ClientOrderResource {
 
                 return existingClientOrder;
             })
-            .map(clientOrderRepository::save)
-            .map(savedClientOrder -> {
-                clientOrderSearchRepository.index(savedClientOrder);
-                return savedClientOrder;
-            });
+            .map(clientOrderRepository::save);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -195,26 +183,8 @@ public class ClientOrderResource {
     public ResponseEntity<Void> deleteClientOrder(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete ClientOrder : {}", id);
         clientOrderRepository.deleteById(id);
-        clientOrderSearchRepository.deleteFromIndexById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
-    }
-
-    /**
-     * {@code SEARCH  /client-orders/_search?query=:query} : search for the clientOrder corresponding
-     * to the query.
-     *
-     * @param query the query of the clientOrder search.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search")
-    public List<ClientOrder> searchClientOrders(@RequestParam("query") String query) {
-        LOG.debug("REST request to search ClientOrders for query {}", query);
-        try {
-            return StreamSupport.stream(clientOrderSearchRepository.search(query).spliterator(), false).toList();
-        } catch (RuntimeException e) {
-            throw ElasticsearchExceptionMapper.mapException(e);
-        }
     }
 }

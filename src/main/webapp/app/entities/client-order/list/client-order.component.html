@@ -15,7 +15,7 @@
         [routerLink]="['/client-order/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span class="hidden-sm-down" jhiTranslate="ecomApp.clientOrder.home.createLabel">Create a new Client Order</span>
+        <span jhiTranslate="ecomApp.clientOrder.home.createLabel">Create a new Client Order</span>
       </button>
     </div>
   </h2>
@@ -23,32 +23,6 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
-
-  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
-    <div class="col-sm-12">
-      <div class="input-group w-100 mt-3">
-        <label class="visually-hidden" for="currentSearch" jhiTranslate="ecomApp.clientOrder.home.search">Search for Client Order</label>
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="currentSearch"
-          id="currentSearch"
-          name="currentSearch"
-          placeholder="{{ 'ecomApp.clientOrder.home.search' | translate }}"
-        />
-
-        <button class="btn btn-info" (click)="search(currentSearch)">
-          <fa-icon icon="search"></fa-icon>
-        </button>
-
-        @if (currentSearch) {
-          <button class="btn btn-danger" (click)="search('')">
-            <fa-icon icon="trash-alt"></fa-icon>
-          </button>
-        }
-      </div>
-    </div>
-  </form>
 
   @if (clientOrders?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -85,17 +59,15 @@
             <th scope="col" jhiSortBy="deliveryAddress">
               <div class="d-flex">
                 <span jhiTranslate="ecomApp.clientOrder.deliveryAddress">Delivery Address</span>
-                @if (!currentSearch) {
-                  <fa-icon class="p-1" icon="sort"></fa-icon>
-                }
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="status">
               <div class="d-flex">
                 <span jhiTranslate="ecomApp.clientOrder.status">Status</span>
-                @if (!currentSearch) {
-                  <fa-icon class="p-1" icon="sort"></fa-icon>
-                }
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
             <th scope="col" jhiSortBy="totalPrice">

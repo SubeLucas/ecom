@@ -2,9 +2,7 @@ package com.je3l.web.rest;
 
 import com.je3l.domain.Images;
 import com.je3l.repository.ImagesRepository;
-import com.je3l.repository.search.ImagesSearchRepository;
 import com.je3l.web.rest.errors.BadRequestAlertException;
-import com.je3l.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -12,7 +10,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,11 +36,8 @@ public class ImagesResource {
 
     private final ImagesRepository imagesRepository;
 
-    private final ImagesSearchRepository imagesSearchRepository;
-
-    public ImagesResource(ImagesRepository imagesRepository, ImagesSearchRepository imagesSearchRepository) {
+    public ImagesResource(ImagesRepository imagesRepository) {
         this.imagesRepository = imagesRepository;
-        this.imagesSearchRepository = imagesSearchRepository;
     }
 
     /**
@@ -60,7 +54,6 @@ public class ImagesResource {
             throw new BadRequestAlertException("A new images cannot already have an ID", ENTITY_NAME, "idexists");
         }
         images = imagesRepository.save(images);
-        imagesSearchRepository.index(images);
         return ResponseEntity.created(new URI("/api/images/" + images.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, images.getId().toString()))
             .body(images);
@@ -94,7 +87,6 @@ public class ImagesResource {
         }
 
         images = imagesRepository.save(images);
-        imagesSearchRepository.index(images);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, images.getId().toString()))
             .body(images);
@@ -137,11 +129,7 @@ public class ImagesResource {
 
                 return existingImages;
             })
-            .map(imagesRepository::save)
-            .map(savedImages -> {
-                imagesSearchRepository.index(savedImages);
-                return savedImages;
-            });
+            .map(imagesRepository::save);
 
         return ResponseUtil.wrapOrNotFound(
             result,
@@ -183,26 +171,8 @@ public class ImagesResource {
     public ResponseEntity<Void> deleteImages(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Images : {}", id);
         imagesRepository.deleteById(id);
-        imagesSearchRepository.deleteFromIndexById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
-    }
-
-    /**
-     * {@code SEARCH  /images/_search?query=:query} : search for the images corresponding
-     * to the query.
-     *
-     * @param query the query of the images search.
-     * @return the result of the search.
-     */
-    @GetMapping("/_search")
-    public List<Images> searchImages(@RequestParam("query") String query) {
-        LOG.debug("REST request to search Images for query {}", query);
-        try {
-            return StreamSupport.stream(imagesSearchRepository.search(query).spliterator(), false).toList();
-        } catch (RuntimeException e) {
-            throw ElasticsearchExceptionMapper.mapException(e);
-        }
     }
 }
