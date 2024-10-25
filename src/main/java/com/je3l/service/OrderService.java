@@ -25,15 +25,17 @@ public class OrderService {
     private static final Logger LOG = LoggerFactory.getLogger(MailService.class);
     private final OrderLineRepository orderLineRepository;
     private final ClientOrderRepository clientOrderRepository;
+    private final AlimentService alimentService;
 
-    public OrderService(OrderLineRepository olr, ClientOrderRepository cor) {
+    public OrderService(OrderLineRepository olr, ClientOrderRepository cor, AlimentService as) {
         this.orderLineRepository = olr;
         this.clientOrderRepository = cor;
+        this.alimentService = as; // A remplacer par un référence au service d'aliment'
     }
 
     @Transactional
     public void addOrder(HashMap<Aliment, Integer> order, Client c) {
-        BigDecimal totalPrice = BigDecimal.valueOf(-1);
+        BigDecimal totalPrice = BigDecimal.valueOf(0);
         ClientOrder co = new ClientOrder()
             .client(c)
             .status(EnumStatus.IN_PROGRESS)
@@ -50,6 +52,9 @@ public class OrderService {
                 .quantity(value)
                 .purchasePrice(key.getPrice().multiply(BigDecimal.valueOf(value)))
                 .clientOrder(co);
+            if (!alimentService.removeFromStock(key, value)) {
+                throw new RuntimeException("Not enough stock for aliment: " + key.getName()); // Vous pouvez mettre un message d'erreur personnalisé ici.'
+            }
             orderLineRepository.save(ol);
             totalPrice = totalPrice.add(key.getPrice().multiply(BigDecimal.valueOf(value)));
         }
