@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 public class CartDTO implements Serializable {
 
     //@NotBlank
-    private Aliment aliment;
-
-    //@Size(min = 1)
-    private Integer quantity;
+    private Map<Integer, Integer> cart;
 
     public CartDTO(Aliment aliment, Integer quantity) {
         this.aliment = aliment;

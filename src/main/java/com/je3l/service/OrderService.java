@@ -39,7 +39,6 @@ public class OrderService {
             .orderDate(LocalDate.now())
             .deliveryDate(LocalDate.now().plusDays(7))
             .deliveryAddress("TEMP ADDRESS") // Faire un getter dans client qui va chercher dans le bon type de client
-            //.deliveryAddress(c.getAddress())
             .totalPrice(BigDecimal.ZERO);
 
         clientOrderRepository.save(co);

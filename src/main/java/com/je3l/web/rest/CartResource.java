@@ -44,21 +44,39 @@ public class CartResource {
     @Autowired
     private ClientRepository clientRepository;
 
-    @PostMapping("")
-    public void addItem(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException {
+    @PostMapping("/delete")
+    public boolean removeItem(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException {
+        Aliment aliment = cartDTO.getAliment();
+        int quantity = cartDTO.getQuantity();
+
+        Aliment existingAliment = alimentRepository.findById(aliment.getId()).orElse(null);
+
+        if (existingAliment == null) {
+            LOG.debug("Aliment nul :" + existingAliment);
+            return false;
+        }
+
+        LOG.debug("DEBUG : " + aliment.toString() + " Supprimé du cart");
+        items.remove(aliment);
+        return true;
+    }
+
+    @PostMapping("/set")
+    public boolean addItem(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException {
         Aliment aliment = cartDTO.getAliment();
         int quantity = cartDTO.getQuantity();
 
         Aliment existingAliment = alimentRepository.findById(aliment.getId()).orElse(null);
 
         if (existingAliment == null || existingAliment.getStockQuantity() < quantity) {
-            System.err.println("Pas assez de stock :" + aliment.toString() + " quantity" + quantity);
-            throw new BadRequestAlertException("Not enough", ENTITY_NAME, "quantity" + quantity + " requested");
+            LOG.debug("Quantité insuffisante ou aliment nul " + existingAliment + ", quantité : " + quantity);
+            return false;
         }
 
-        LOG.debug("DEBUG : " + aliment.toString() + "Ajouté au cart");
+        LOG.debug("DEBUG : " + aliment.toString() + " Ajouté au cart");
 
         items.put(aliment, quantity);
+        return true;
     }
 
     @GetMapping("")
