@@ -34,7 +34,6 @@ public class OrderService {
     @Transactional
     public void addOrder(HashMap<Aliment, Integer> order, Client c) {
         BigDecimal totalPrice = BigDecimal.valueOf(-1);
-
         ClientOrder co = new ClientOrder()
             .client(c)
             .status(EnumStatus.IN_PROGRESS)
