@@ -2,8 +2,10 @@ package com.je3l.service;
 
 import com.je3l.config.Constants;
 import com.je3l.domain.Authority;
+import com.je3l.domain.Client;
 import com.je3l.domain.User;
 import com.je3l.repository.AuthorityRepository;
+import com.je3l.repository.ClientRepository;
 import com.je3l.repository.UserRepository;
 import com.je3l.security.AuthoritiesConstants;
 import com.je3l.security.SecurityUtils;
@@ -41,16 +43,20 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final ClientRepository clientRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         AuthorityRepository authorityRepository,
-        CacheManager cacheManager
+        CacheManager cacheManager,
+        ClientRepository clientRepository
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.clientRepository = clientRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -132,6 +138,14 @@ public class UserService {
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
         LOG.debug("Created Information for User: {}", newUser);
+
+        Client newClient = new Client();
+        newClient.setUser(newUser);
+        newClient.setAddress("Your address here");
+        newClient.setPreferedDay("Your preferred day for delivery here");
+        clientRepository.save(newClient);
+        LOG.debug("Created Information for Client: {}", newClient);
+
         return newUser;
     }
 
