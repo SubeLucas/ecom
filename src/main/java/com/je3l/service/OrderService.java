@@ -33,19 +33,30 @@ public class OrderService {
 
     @Transactional
     public void addOrder(HashMap<Aliment, Integer> order, Client c) {
+        BigDecimal totalPrice = BigDecimal.valueOf(-1);
+
         ClientOrder co = new ClientOrder()
             .client(c)
             .status(EnumStatus.IN_PROGRESS)
             .orderDate(LocalDate.now())
             .deliveryDate(LocalDate.now().plusDays(7))
-            .deliveryAddress("TEMP ADDRESS") // Faire un getter dans client qui va chercher dans le bon type de client
-            //.deliveryAddress(c.getAddress())
-            .totalPrice(BigDecimal.ZERO);
+            .deliveryAddress(c.getAddress()) // Faire un getter dans client qui va chercher dans le bon type de client
+            .totalPrice(totalPrice);
+
+        for (Map.Entry<Aliment, Integer> entry : order.entrySet()) {
+            Aliment key = entry.getKey();
+            Integer value = entry.getValue();
+            OrderLine ol = new OrderLine()
+                .aliment(key)
+                .quantity(value)
+                .purchasePrice(key.getPrice().multiply(BigDecimal.valueOf(value)))
+                .clientOrder(co);
+            orderLineRepository.save(ol);
+            totalPrice = totalPrice.add(key.getPrice().multiply(BigDecimal.valueOf(value)));
+        }
+
+        co.totalPrice(totalPrice);
 
         clientOrderRepository.save(co);
-        order.forEach((key, value) -> {
-            OrderLine ol = new OrderLine().aliment(key).quantity(value).purchasePrice(BigDecimal.ZERO).clientOrder(co);
-            orderLineRepository.save(ol);
-        });
     }
 }
