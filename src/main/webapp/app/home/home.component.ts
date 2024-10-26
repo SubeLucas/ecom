@@ -30,6 +30,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
   // private cartMap = new Map<number, number>();
   private cart = new Cart(new Map<number, number>());
 
+  constructor(private http: CartService) {}
+
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
@@ -37,9 +39,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
       .subscribe(account => this.account.set(account));
 
     // temporary members for cart validation tests
-    this.cart.map.set(1, 8);
-    this.cart.map.set(6, 3);
-    this.cart.map.set(10, 1);
+    this.cart.cart.set(1, 8);
+    this.cart.cart.set(6, 3);
+    this.cart.cart.set(10, 1);
     // this.cart = new Cart(this.cartMap);
   }
 
@@ -55,6 +57,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   // temporary button handler for cart validation tests
   onButtonClick(): void {
     // TODO use CartService
-    console.log(this.cart.map.get(1), this.cart.map.get(6), this.cart.map.get(10));
+    // console.log(this.cart.map.get(1), this.cart.map.get(6), this.cart.map.get(10));
+    this.http.validate(this.cart).subscribe(success => console.log(success));
   }
 }
