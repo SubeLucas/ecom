@@ -7,6 +7,10 @@ import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
+// temporary imports for cart validation tests
+import { CartService } from '../cart/cart.service';
+import { Cart } from '../cart/cart.model';
+
 @Component({
   standalone: true,
   selector: 'jhi-home',
@@ -22,11 +26,21 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private router = inject(Router);
 
+  // temporary members for cart validation tests
+  // private cartMap = new Map<number, number>();
+  private cart = new Cart(new Map<number, number>());
+
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => this.account.set(account));
+
+    // temporary members for cart validation tests
+    this.cart.map.set(1, 8);
+    this.cart.map.set(6, 3);
+    this.cart.map.set(10, 1);
+    // this.cart = new Cart(this.cartMap);
   }
 
   login(): void {
@@ -36,5 +50,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  // temporary button handler for cart validation tests
+  onButtonClick(): void {
+    // TODO use CartService
+    console.log(this.cart.map.get(1), this.cart.map.get(6), this.cart.map.get(10));
   }
 }
