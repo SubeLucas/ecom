@@ -28,7 +28,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   // temporary members for cart validation tests
   // private cartMap = new Map<number, number>();
-  private cart = new Cart(new Map<number, number>());
+  private homeCart = new Cart(new Map<number, number>());
 
   constructor(private http: CartService) {}
 
@@ -39,10 +39,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
       .subscribe(account => this.account.set(account));
 
     // temporary members for cart validation tests
-    this.cart.cart.set(1, 8);
-    this.cart.cart.set(6, 3);
-    this.cart.cart.set(10, 1);
-    // this.cart = new Cart(this.cartMap);
+    this.homeCart.cart.set(1, 8);
+    this.homeCart.cart.set(6, 3);
+    this.homeCart.cart.set(10, 1);
   }
 
   login(): void {
@@ -56,8 +55,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   // temporary button handler for cart validation tests
   onButtonClick(): void {
-    // TODO use CartService
     // console.log(this.cart.map.get(1), this.cart.map.get(6), this.cart.map.get(10));
-    this.http.validate(this.cart).subscribe(success => console.log(success));
+    // FIXME: line above shows the cart is filled properly, but the POST request is empty
+    this.http.validate(this.homeCart).subscribe(success => {
+      console.log(success);
+    });
   }
 }
