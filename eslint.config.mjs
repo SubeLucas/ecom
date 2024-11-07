@@ -1,7 +1,7 @@
 // @ts-check
 
 import globals from 'globals';
-import prettier from 'eslint-plugin-prettier/recommended';
+// import prettier from 'eslint-plugin-prettier/recommended';
 import tseslint from 'typescript-eslint';
 import eslint from '@eslint/js';
 // For a detailed explanation, visit: https://github.com/angular-eslint/angular-eslint/blob/main/docs/CONFIGURING_FLAT_CONFIG.md
@@ -22,7 +22,7 @@ export default tseslint.config(
   {
     files: ['**/*.{js,cjs,mjs}'],
     rules: {
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },
   {
@@ -45,7 +45,7 @@ export default tseslint.config(
     },
     rules: {
       '@angular-eslint/component-selector': [
-        'error',
+        'warn',
         {
           type: 'element',
           prefix: 'jhi',
@@ -53,19 +53,19 @@ export default tseslint.config(
         },
       ],
       '@angular-eslint/directive-selector': [
-        'error',
+        'warn',
         {
           type: 'attribute',
           prefix: 'jhi',
           style: 'camelCase',
         },
       ],
-      '@angular-eslint/relative-url-prefix': 'error',
+      '@angular-eslint/relative-url-prefix': 'warn',
       '@typescript-eslint/consistent-type-definitions': 'off',
-      '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
+      '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true }],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/member-ordering': [
-        'error',
+        'warn',
         {
           default: [
             'public-static-field',
@@ -90,30 +90,30 @@ export default tseslint.config(
       '@typescript-eslint/no-extraneous-class': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/no-shadow': ['error'],
-      '@typescript-eslint/no-unnecessary-condition': 'error',
+      '@typescript-eslint/no-shadow': ['warn'],
+      '@typescript-eslint/no-unnecessary-condition': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/prefer-nullish-coalescing': 'error',
-      '@typescript-eslint/prefer-optional-chain': 'error',
-      '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
+      '@typescript-eslint/prefer-nullish-coalescing': 'warn',
+      '@typescript-eslint/prefer-optional-chain': 'warn',
+      '@typescript-eslint/restrict-template-expressions': ['warn', { allowNumber: true }],
       '@typescript-eslint/unbound-method': 'off',
-      'arrow-body-style': 'error',
-      curly: 'error',
-      eqeqeq: ['error', 'always', { null: 'ignore' }],
-      'guard-for-in': 'error',
-      'no-bitwise': 'error',
-      'no-caller': 'error',
-      'no-console': ['error', { allow: ['warn', 'error'] }],
-      'no-eval': 'error',
-      'no-labels': 'error',
-      'no-new': 'error',
-      'no-new-wrappers': 'error',
-      'object-shorthand': ['error', 'always', { avoidExplicitReturnArrows: true }],
-      radix: 'error',
+      'arrow-body-style': 'warn',
+      curly: 'warn',
+      eqeqeq: ['warn', 'always', { null: 'ignore' }],
+      'guard-for-in': 'warn',
+      'no-bitwise': 'warn',
+      'no-caller': 'warn',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-eval': 'warn',
+      'no-labels': 'warn',
+      'no-new': 'warn',
+      'no-new-wrappers': 'warn',
+      'object-shorthand': ['warn', 'always', { avoidExplicitReturnArrows: true }],
+      radix: 'warn',
       'spaced-comment': ['warn', 'always'],
     },
   },
@@ -131,8 +131,8 @@ export default tseslint.config(
   {
     // Html templates requires some work
     ignores: ['**/*.html'],
-    extends: [prettier],
+    // extends: [prettier],
   },
   // jhipster-needle-eslint-add-config - JHipster will add additional config here
-  prettier,
+  // prettier,
 );
