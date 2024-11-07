@@ -9,7 +9,7 @@ import { Account } from 'app/core/auth/account.model';
 
 // temporary imports for cart validation tests
 import { CartService } from '../cart/cart.service';
-import { Cart } from '../cart/cart.model';
+import { Cart, CartItem } from '../cart/cart.model';
 
 @Component({
   standalone: true,
@@ -28,7 +28,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   // temporary members for cart validation tests
   // private cartMap = new Map<number, number>();
-  private homeCart = new Cart(new Map<number, number>());
+  //private homeCart = new Cart([new CartItem(1,5)]);
 
   constructor(private http: CartService) {}
 
@@ -39,9 +39,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       .subscribe(account => this.account.set(account));
 
     // temporary members for cart validation tests
-    this.homeCart.cart.set(1, 8);
-    this.homeCart.cart.set(6, 3);
-    this.homeCart.cart.set(10, 1);
   }
 
   login(): void {
@@ -57,7 +54,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   onButtonClick(): void {
     // console.log(this.cart.map.get(1), this.cart.map.get(6), this.cart.map.get(10));
     // FIXME: line above shows the cart is filled properly, but the POST request is empty
-    this.http.validate(this.homeCart).subscribe(success => {
+    this.http.validate(new Cart([new CartItem(1, 5)])).subscribe(success => {
       console.log(success);
     });
   }
