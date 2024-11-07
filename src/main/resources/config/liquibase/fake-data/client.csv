@@ -1,11 +1,3 @@
-id;prefered_day;address
-1;Monday;12 Rue des Lilas, 75015 Paris
-2;None;45 Avenue de la République, 69003 Lyon
-3;Wednesday;23 Boulevard des Capucines, 13001 Marseille
-4;Sunday;7 Rue de la Paix, 33000 Bordeaux
-5;Sunday;18 Avenue Jean Jaurès, 59000 Lille
-6;Wednesday;32 Rue de la Liberté, 31000 Toulouse
-7;Saturday;56 Boulevard de la Mer, 06000 Nice
-8;Saturday;14 Rue des Écoles, 67000 Strasbourg
-9;Friday;89 Avenue de la Gare, 44000 Nantes
-10;None;27 Rue du Commerce, 34000 Montpellier
+id;prefered_day;address;user_id
+1;BasicUser;12 Rue des Lilas, 75015 Paris;2
+2;BasicAdmin;27 Rue du Commerce, 34000 Montpellier;1

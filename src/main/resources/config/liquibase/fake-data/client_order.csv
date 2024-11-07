@@ -1,11 +1,2 @@
 id;order_date;delivery_date;delivery_address;status;total_price
-1;2024-10-23;2024-10-23;12 Rue des Lilas, 75015 Paris;CANCELLED;130.12
-2;2024-10-24;2024-10-23;45 Avenue de la République, 69003 Lyon;IN_PROGRESS;194.28
-3;2024-10-24;2024-10-24;23 Boulevard des Capucines, 13001 Marseille;IN_PROGRESS;155.02
-4;2024-10-24;2024-10-23;7 Rue de la Paix, 33000 Bordeaux;CANCELLED;268.76
-5;2024-10-24;2024-10-24;18 Avenue Jean Jaurès, 59000 Lille;CANCELLED;79.81
-6;2024-10-24;2024-10-24;32 Rue de la Liberté, 31000 Toulouse;SHIPPED;283.98
-7;2024-10-23;2024-10-23;56 Boulevard de la Mer, 06000 Nice;CANCELLED;227.25
-8;2024-10-24;2024-10-24;14 Rue des Écoles, 67000 Strasbourg;SHIPPED;100.73
-9;2024-10-24;2024-10-24;89 Avenue de la Gare, 44000 Nantes;SHIPPED;65.05
-10;2024-10-24;2024-10-24;27 Rue du Commerce, 34000 Montpellier;SHIPPED;237.14
+1;2024-10-24;2024-10-24;27 Rue du Commerce, 34000 Montpellier;SHIPPED;237.14
