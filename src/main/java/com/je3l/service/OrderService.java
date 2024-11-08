@@ -4,21 +4,20 @@ import com.je3l.domain.Aliment;
 import com.je3l.domain.Client;
 import com.je3l.domain.ClientOrder;
 import com.je3l.domain.OrderLine;
-import com.je3l.domain.User;
 import com.je3l.domain.enumeration.EnumStatus;
+import com.je3l.repository.AlimentRepository;
 import com.je3l.repository.ClientOrderRepository;
 import com.je3l.repository.OrderLineRepository;
+import com.je3l.service.dto.CartItem;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.context.Context;
-import tech.jhipster.config.JHipsterProperties;
 
 @Service
 public class OrderService {
@@ -27,15 +26,17 @@ public class OrderService {
     private final OrderLineRepository orderLineRepository;
     private final ClientOrderRepository clientOrderRepository;
     private final AlimentService alimentService;
+    private final AlimentRepository alimentRepository;
 
-    public OrderService(OrderLineRepository olr, ClientOrderRepository cor, AlimentService as) {
+    public OrderService(OrderLineRepository olr, ClientOrderRepository cor, AlimentService as, AlimentRepository ar) {
         this.orderLineRepository = olr;
         this.clientOrderRepository = cor;
-        this.alimentService = as; // A remplacer par un référence au service d'aliment'
+        this.alimentService = as;
+        this.alimentRepository = ar;
     }
 
     @Transactional
-    public void addOrder(HashMap<Aliment, Integer> order, Client c) {
+    public void addOrder(CartItem[] order, Client c) {
         BigDecimal totalPrice = BigDecimal.valueOf(0);
         ClientOrder co = new ClientOrder()
             .client(c)
@@ -45,19 +46,21 @@ public class OrderService {
             .deliveryAddress(c.getAddress())
             .totalPrice(totalPrice);
 
-        for (Map.Entry<Aliment, Integer> entry : order.entrySet()) {
-            Aliment key = entry.getKey();
-            Integer value = entry.getValue();
+        for (int i = 0; i < order.length; i++) {
+            Optional<Aliment> al = alimentRepository.findById(order[i].getId());
+            int finalI = i;
+            Aliment aliment = al.orElseThrow(() -> new RuntimeException("Aliment not found: " + order[finalI].getId()));
+            Integer qt = order[i].getQt();
             OrderLine ol = new OrderLine()
-                .aliment(key)
-                .quantity(value)
-                .purchasePrice(key.getPrice().multiply(BigDecimal.valueOf(value)))
+                .aliment(aliment)
+                .quantity(qt)
+                .purchasePrice(aliment.getPrice().multiply(BigDecimal.valueOf(qt)))
                 .clientOrder(co);
-            if (!alimentService.decStock(key.getId(), value)) {
-                throw new RuntimeException("Not enough stock for aliment: " + key.getName());
+            if (!alimentService.decStock(aliment.getId(), qt)) {
+                throw new RuntimeException("Not enough stock for aliment: " + aliment.getName());
             }
             orderLineRepository.save(ol);
-            totalPrice = totalPrice.add(key.getPrice().multiply(BigDecimal.valueOf(value)));
+            totalPrice = totalPrice.add(aliment.getPrice().multiply(BigDecimal.valueOf(qt)));
         }
 
         co.totalPrice(totalPrice);

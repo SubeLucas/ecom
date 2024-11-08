@@ -5,6 +5,11 @@ public class CartItem {
     private Long id;
     private Integer qt;
 
+    public CartItem(Long id, Integer qt) {
+        this.id = id;
+        this.qt = qt;
+    }
+
     public Long getId() {
         return this.id;
     }
