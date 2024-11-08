@@ -1,6 +1,10 @@
 export class Cart {
   constructor(public cartItems: CartItem[]) {}
 
+  static isEmpty(): boolean {
+    return JSON.parse(localStorage.getItem('cart')!).length === 0;
+  }
+
   static addItem(item: CartItem): void {
     let found = false;
 
