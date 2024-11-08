@@ -224,6 +224,12 @@ public class AlimentResource {
         return only_season;
     }
 
+    @GetMapping("/colors/{col}")
+    public List<Aliment> getColors(@PathVariable("color") String color) {
+        LOG.debug("color requested : {}", color);
+        return alimentRepository.findColor(color);
+    }
+
     /**
      * {@code DELETE  /aliments/:id} : delete the "id" aliment.
      *
