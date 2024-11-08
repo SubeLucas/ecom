@@ -76,6 +76,7 @@ public class SecurityConfiguration {
                     .requestMatchers(mvc.pattern("/api/cart/add")).permitAll()
                     .requestMatchers(mvc.pattern("/api/cart/delete")).permitAll()
                     .requestMatchers(mvc.pattern("/api/cart")).permitAll()
+                    .requestMatchers(mvc.pattern("/api/aliments/colors/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/register")).permitAll()
                     .requestMatchers(mvc.pattern("/api/activate")).permitAll()
                     .requestMatchers(mvc.pattern("/api/account/reset-password/init")).permitAll()
