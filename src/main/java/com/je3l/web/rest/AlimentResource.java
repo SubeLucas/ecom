@@ -7,6 +7,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -197,6 +201,27 @@ public class AlimentResource {
     @GetMapping("/vegetable")
     public List<Aliment> getVegetable() {
         return alimentRepository.findVegetable();
+    }
+
+    /**
+     *   {@code GET /aliments/season} : get in season vegetable
+     *   @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of aliments in season
+     */
+    @GetMapping("/season")
+    public List<Aliment> getSeason() {
+        Date date = new Date();
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int month = localDate.getMonthValue();
+        List<Aliment> all = alimentRepository.findAll();
+        List<Aliment> only_season = new ArrayList<Aliment>();
+        LOG.debug("current month is {}", month);
+        for (Aliment a : all) {
+            if ((a.getSeason() & (1 << (month - 1))) > 0) {
+                only_season.add(a);
+            }
+        }
+
+        return only_season;
     }
 
     /**
