@@ -1,0 +1,30 @@
+<p>card-product works!</p>
+
+<div class="card-product">
+  <p class="type-saison" [ngClass]="isSeasonProduct ? 'season' : 'not-season'">
+    {{ isSeasonProduct ? 'De saison' : 'Hors saison' }}
+  </p>
+
+  <div class="centered-infos">
+    <img class="img-product" src="../../content/images/tomate.png" alt="tomate rouge" />
+    <p class="title-product">{{ titleProduct }}</p>
+    <div class="weight-infos">
+      <p>{{ weightProduct }}</p>
+      <p>{{ priceKiloProduct }}</p>
+    </div>
+  </div>
+  <p class="origin-product">{{ originroduct }}</p>
+  <div class="centered-infos div-cart">
+    <p class="price-product">{{ priceProduct }}</p>
+    @if (quantity == 0) {
+      <button class="add-cart-btn" (click)="plusQuantity()">Panier</button>
+    } @else {
+      <div class="change-qt">
+        <button class="minus-btn" (click)="minusQuantity()">-</button>
+        <!--TODO add blocage type nb (mozilla)-->
+        <input type="number" id="qt-input" name="qt" [value]="quantity" required min="0" max="99" minlength="1" maxlength="2" size="2" />
+        <button class="plus-btn" (click)="plusQuantity()">+</button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,5 +1,6 @@
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
+@import '../../../content/scss/colors.scss';
 
 /* ==========================================================================
 Navbar
@@ -17,6 +18,7 @@ Navbar
 
 .navbar {
   padding: 0.2rem 1rem;
+  background-color: $vanilla-green;
 
   a.nav-link {
     font-weight: 400;

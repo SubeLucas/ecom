@@ -1,0 +1,83 @@
+@import '../../content/scss/colors.scss';
+
+.card-product {
+  background-color: greenyellow;
+  padding: 1em 2em;
+  max-width: fit-content;
+  border-radius: 25px;
+  margin-inline: 0.5em;
+}
+
+.type-saison {
+  //inclusions comme ça pour exemple
+  &.season {
+    color: $asparagus;
+  }
+  &.not-season {
+    color: $fire-engine-red;
+  }
+}
+
+.img-product {
+  max-width: 75%;
+  height: auto;
+}
+
+.centered-infos {
+  text-align: center;
+}
+
+.title-product {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.weight-infos {
+  display: flex;
+  justify-content: space-between;
+  color: grey;
+}
+
+.origin-product {
+  font-style: italic;
+}
+
+.div-cart {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.price-product {
+  font-weight: bold;
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.add-cart-btn {
+}
+
+//No arrows
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  appearance: textfield;
+}
+
+.change-qt {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-weight: bold;
+}
+
+input {
+  width: 1.7em;
+}

@@ -10,13 +10,14 @@ import { Account } from 'app/core/auth/account.model';
 // temporary imports for cart validation tests
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
+import { CardProductComponent } from '../card-product/card-product.component';
 
 @Component({
   standalone: true,
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule],
+  imports: [SharedModule, RouterModule, CardProductComponent],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
@@ -27,6 +28,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private router = inject(Router);
 
   private item = new CartItem(0, 0);
+  /*aliments = [{id: 1, name: 'a'},
+  {id: 2, name: 'b'},
+  {id: 3, name: 'c'},
+  {id: 4, name: 'd'}];*/
 
   constructor(private http: CartService) {}
 
