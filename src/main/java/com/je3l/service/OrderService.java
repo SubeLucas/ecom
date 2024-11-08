@@ -11,6 +11,7 @@ import com.je3l.repository.OrderLineRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,5 +62,9 @@ public class OrderService {
 
         co.totalPrice(totalPrice);
         clientOrderRepository.save(co);
+    }
+
+    public List<ClientOrder> getClientHistory() {
+        return clientOrderRepository.findClientHistory();
     }
 }

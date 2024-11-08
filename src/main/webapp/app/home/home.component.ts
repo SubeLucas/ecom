@@ -62,4 +62,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.item = new CartItem(2, 3);
     Cart.addItem(this.item.toString());
   }
+
+  isCartEmpty(): boolean {
+    return localStorage.getItem('cart') === null;
+  }
 }

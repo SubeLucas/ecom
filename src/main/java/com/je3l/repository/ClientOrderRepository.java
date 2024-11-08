@@ -1,6 +1,8 @@
 package com.je3l.repository;
 
+import com.je3l.domain.Aliment;
 import com.je3l.domain.ClientOrder;
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +11,7 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> {}
+public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> {
+    @Query("SELECT co FROM ClientOrder co " + "JOIN co.client c " + "WHERE c.user.login = ?#{authentication.name}")
+    List<ClientOrder> findClientHistory();
+}
