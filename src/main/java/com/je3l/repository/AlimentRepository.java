@@ -19,5 +19,5 @@ public interface AlimentRepository extends JpaRepository<Aliment, Long> {
     List<Aliment> findVegetable();
 
     @Query("select aliment from Aliment aliment where aliment.color = ?1")
-    List<Aliment> findColor(String color);
+    List<Aliment> findColor(EnumColor color);
 }

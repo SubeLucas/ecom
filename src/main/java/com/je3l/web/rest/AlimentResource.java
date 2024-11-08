@@ -1,6 +1,7 @@
 package com.je3l.web.rest;
 
 import com.je3l.domain.Aliment;
+import com.je3l.domain.enumeration.EnumColor;
 import com.je3l.repository.AlimentRepository;
 import com.je3l.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -225,7 +226,7 @@ public class AlimentResource {
     }
 
     @GetMapping("/colors/{col}")
-    public List<Aliment> getColors(@PathVariable("color") String color) {
+    public List<Aliment> getColors(@PathVariable("col") EnumColor color) {
         LOG.debug("color requested : {}", color);
         return alimentRepository.findColor(color);
     }
