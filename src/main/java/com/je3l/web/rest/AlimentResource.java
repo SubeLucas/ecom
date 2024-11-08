@@ -180,6 +180,26 @@ public class AlimentResource {
     }
 
     /**
+     *   {@code GET /aliments/fruits} : get all the fruits
+     *
+     *   @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fruits in body.
+     */
+    @GetMapping("/fruits")
+    public List<Aliment> getFruits() {
+        return alimentRepository.findFruits();
+    }
+
+    /**
+     *   {@code GET /aliments/vegetable} : get all the vegetables
+     *
+     *   @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of vegetables in body.
+     */
+    @GetMapping("/vegetable")
+    public List<Aliment> getVegetable() {
+        return alimentRepository.findVegetable();
+    }
+
+    /**
      * {@code DELETE  /aliments/:id} : delete the "id" aliment.
      *
      * @param id the id of the aliment to delete.
