@@ -35,7 +35,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => this.account.set(account));
-    localStorage.setItem('cart', '[{"id":4, "qt":5},{"id":2, "qt":7}]');
   }
 
   login(): void {
