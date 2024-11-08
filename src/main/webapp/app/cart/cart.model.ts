@@ -9,13 +9,6 @@ export class Cart {
     let found = false;
 
     // recuperer le panier
-    if (!localStorage.getItem('cart')) {
-      // le panier n'existe pas, le creer
-      localStorage.setItem('cart', '[' + JSON.stringify(item) + ']');
-      return;
-    }
-
-    // le panier existe
     const data = JSON.parse(localStorage.getItem('cart')!);
 
     // modifier le panier
