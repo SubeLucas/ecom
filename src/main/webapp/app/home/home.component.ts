@@ -48,7 +48,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   // temporary button handler for cart validation tests
   onButtonClick(): void {
-    this.http.validate(new Cart([new CartItem(1, 5)])).subscribe(success => {
+    this.http.validate(Cart.getCart()).subscribe(success => {
       console.log(success);
     });
   }

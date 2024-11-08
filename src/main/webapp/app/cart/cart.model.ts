@@ -5,6 +5,10 @@ export class Cart {
     return JSON.parse(localStorage.getItem('cart')!).length === 0;
   }
 
+  static getCart(): Cart {
+    return new Cart(JSON.parse(localStorage.getItem('cart')!));
+  }
+
   static addItem(item: CartItem): void {
     let found = false;
 
