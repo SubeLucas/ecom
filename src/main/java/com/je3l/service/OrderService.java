@@ -40,8 +40,8 @@ public class OrderService {
             .client(c)
             .status(EnumStatus.IN_PROGRESS)
             .orderDate(LocalDate.now())
-            .deliveryDate(LocalDate.now().plusDays(7))
-            .deliveryAddress(c.getAddress()) // Faire un getter dans client qui va chercher dans le bon type de client
+            .deliveryDate(LocalDate.now().plusDays(3))
+            .deliveryAddress(c.getAddress())
             .totalPrice(totalPrice);
 
         for (Map.Entry<Aliment, Integer> entry : order.entrySet()) {
@@ -52,8 +52,8 @@ public class OrderService {
                 .quantity(value)
                 .purchasePrice(key.getPrice().multiply(BigDecimal.valueOf(value)))
                 .clientOrder(co);
-            if (!alimentService.removeFromStock(key, value)) {
-                throw new RuntimeException("Not enough stock for aliment: " + key.getName()); // Vous pouvez mettre un message d'erreur personnalisé ici.'
+            if (!alimentService.decStock(key.getId(), value)) {
+                throw new RuntimeException("Not enough stock for aliment: " + key.getName());
             }
             orderLineRepository.save(ol);
             totalPrice = totalPrice.add(key.getPrice().multiply(BigDecimal.valueOf(value)));

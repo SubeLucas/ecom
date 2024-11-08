@@ -29,6 +29,10 @@ public class Aliment implements Serializable {
     @Column(name = "id", unique = true)
     private Long id;
 
+    @Version
+    //@Column(name = "optlock", columnDefinition = "integer DEFAULT 0", nullable = false)
+    private long version = 0L;
+
     @NotNull
     @Column(name = "name", nullable = false)
     private String name;
@@ -269,5 +273,13 @@ public class Aliment implements Serializable {
             ", stockQuantity=" + getStockQuantity() +
             ", price=" + getPrice() +
             "}";
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 }

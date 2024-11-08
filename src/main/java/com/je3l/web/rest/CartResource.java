@@ -8,6 +8,7 @@ import com.je3l.service.OrderService;
 import com.je3l.service.dto.CartDTO;
 import com.je3l.service.dto.CartItem;
 import com.je3l.web.rest.errors.BadRequestAlertException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import org.slf4j.Logger;
@@ -55,7 +56,14 @@ public class CartResource {
         }
 
         Client c = clientService.getCurrentClient();
-        orderService.addOrder(order_cart, c);
+
+        try {
+            orderService.addOrder(order_cart, c);
+        } catch (OptimisticLockException e) {
+            LOG.warn("OptimisticLockException occurred, retrying...", e);
+            return false;
+        }
+
         return true;
     }
 }
