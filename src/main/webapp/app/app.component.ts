@@ -29,6 +29,6 @@ export default class AppComponent {
     registerLocaleData(locale);
     this.iconLibrary.addIcons(...fontAwesomeIcons);
     this.dpConfig.minDate = { year: dayjs().subtract(100, 'year').year(), month: 1, day: 1 };
-    localStorage.setItem('cart', '[]');
+    if (!localStorage.getItem('cart')) localStorage.setItem('cart', '[]');
   }
 }
