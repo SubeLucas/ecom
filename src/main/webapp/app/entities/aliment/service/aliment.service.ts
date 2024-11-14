@@ -19,6 +19,10 @@ export class AlimentService {
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/aliments');
 
+  all(): Observable<EntityArrayResponseType> {
+    return this.http.get<IAliment[]>(this.resourceUrl, { observe: 'response' });
+  }
+
   create(aliment: NewAliment): Observable<EntityResponseType> {
     return this.http.post<IAliment>(this.resourceUrl, aliment, { observe: 'response' });
   }

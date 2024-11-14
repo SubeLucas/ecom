@@ -97,13 +97,10 @@
 
     <button id="goto-cart" class="btn btn-primary" (click)="onCartButtonClick()" [routerLink]="['/cart']">Go to cart</button>
   </div>
+
   <div class="product-list">
-    <!--@for (product of aliments; track product.id){
-      <jhi-card-product></jhi-card-product>
-    }-->
-    <jhi-card-product></jhi-card-product>
-    <jhi-card-product></jhi-card-product>
-    <jhi-card-product></jhi-card-product>
-    <jhi-card-product></jhi-card-product>
+    <div *ngFor="let aliment of aliments">
+      <li>{{ aliment.name }}</li>
+    </div>
   </div>
 </div>

@@ -7,6 +7,9 @@ import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
+import { IAliment } from '../entities/aliment/aliment.model';
+import { AlimentService } from 'app/entities/aliment/service/aliment.service';
+
 // temporary imports for cart validation tests
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
@@ -28,18 +31,22 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private router = inject(Router);
 
   private item = new CartItem(0, 0);
-  /*aliments = [{id: 1, name: 'a'},
-  {id: 2, name: 'b'},
-  {id: 3, name: 'c'},
-  {id: 4, name: 'd'}];*/
+  aliments: IAliment[] = [];
 
-  constructor(private http: CartService) {}
+  constructor(
+    private httpCart: CartService,
+    private httpAliment: AlimentService,
+  ) {}
 
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => this.account.set(account));
+
+    this.httpAliment.all().subscribe(aliments => {
+      this.aliments = aliments.body != null ? aliments.body : [];
+    });
   }
 
   login(): void {
@@ -53,7 +60,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   // temporary button handler for cart validation tests
   onButtonClick(): void {
-    this.http.validate(Cart.getCart()).subscribe(success => {
+    this.httpCart.validate(Cart.getCart()).subscribe(success => {
       console.log(success);
     });
   }
