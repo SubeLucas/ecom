@@ -35,6 +35,10 @@ export class AlimentService {
     return this.http.get<IAliment>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  getStock(id: number): Observable<HttpResponse<number>> {
+    return this.http.get<number>(`${this.resourceUrl}/quantity/${id}`, { observe: 'response' });
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IAliment[]>(this.resourceUrl, { params: options, observe: 'response' });
