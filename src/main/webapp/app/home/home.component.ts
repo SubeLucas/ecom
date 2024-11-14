@@ -11,6 +11,8 @@ import { Account } from 'app/core/auth/account.model';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
 
+import { jsPDF } from 'jspdf';
+
 @Component({
   standalone: true,
   selector: 'jhi-home',
@@ -49,6 +51,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
   // temporary button handler for cart validation tests
   onButtonClick(): void {
     this.http.validate(new Cart([new CartItem(1, 5)])).subscribe(success => {
+      const doc = new jsPDF();
+      doc.text('poney!', 10, 10);
+      doc.save('VALIDATE.pdf'); // will save the file in the current working directory
+
       console.log(success);
     });
   }
