@@ -7,6 +7,7 @@ import { IOrderLine } from '../../entities/order-line/order-line.model';
 import { AlimentService } from '../../entities/aliment/service/aliment.service';
 import { IAliment } from '../../entities/aliment/aliment.model';
 
+import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -17,15 +18,15 @@ export class PDFService {
   private orderLineService = inject(OrderLineService);
   private alimentService = inject(AlimentService);
 
-  //constructor() {}
-
   // id du ClientOrder
   generatePDF(id: number): void {
     const doc = new jsPDF();
     let y = 10;
-    this.clientOrderService.find(id).subscribe(response => {
-      const clientOrder: IClientOrder = response.body!;
 
+    forkJoin({
+      clientOrder: this.clientOrderService.find(id).pipe(map(response => response.body!)),
+      orderLines: this.orderLineService.findByClientOrder(id).pipe(map(response => response.body!)),
+    }).subscribe(({ clientOrder, orderLines }) => {
       // Titre principal
       doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
@@ -98,32 +99,39 @@ export class PDFService {
           y += 10;
         }
       }
-    });
 
-    doc.line(10, y, 200, y);
-    y += 15;
+      // Ligne de séparation
+      doc.line(10, y, 200, y);
+      y += 15;
 
-    this.orderLineService.findByClientOrder(id).subscribe(response => {
-      const OrderLines: IOrderLine[] = response.body!;
+      // Sous-titre pour les détails des lignes de commande
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Order Lines', 10, y);
+      y += 10;
+
       // Détails des lignes de commande
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-      OrderLines.forEach((orderLine: IOrderLine) => {
-        this.alimentService.find(orderLine.aliment!.id).subscribe(rep => {
-          const Aliment: IAliment = rep.body!;
-          doc.text(`Aliment: ${Aliment.name}`, 10, y);
+
+      const alimentObservables = orderLines.map(orderLine =>
+        this.alimentService.find(orderLine.aliment!.id).pipe(map(response => response.body!)),
+      );
+
+      forkJoin(alimentObservables).subscribe(aliments => {
+        orderLines.forEach((orderLine, index) => {
+          const aliment = aliments[index];
+          doc.text(`Aliment: ${aliment.name}`, 10, y);
           y += 10;
+          doc.text(`Quantity: ${orderLine.quantity}`, 10, y);
+          y += 10;
+          doc.text(`Purchase Price: ${orderLine.purchasePrice} €`, 10, y);
+          y += 15; // Ajouter un peu plus d'espace entre les lignes de commande
         });
 
-        doc.text(`Quantity: ${orderLine.quantity}`, 10, y);
-        y += 10;
-        doc.text(`Purchase Price: ${orderLine.purchasePrice} €`, 10, y);
-        y += 15; // Ajouter un peu plus d'espace entre les lignes de commande
-
+        // Sauvegarde du PDF
         doc.save('receipt.pdf');
       });
     });
-
-    // Sauvegarde du PDF
   }
 }

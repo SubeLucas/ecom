@@ -52,11 +52,13 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   // temporary button handler for cart validation tests
   onButtonClick(): void {
-    this.http.validate(new Cart([new CartItem(1, 5)])).subscribe(success => {
-      this.PDFService.generatePDF(success);
+    this.http
+      .validate(new Cart([new CartItem(1, 5), new CartItem(2, 1), new CartItem(2, 1), new CartItem(3, 1), new CartItem(4, 1)]))
+      .subscribe(success => {
+        this.PDFService.generatePDF(success);
 
-      console.log(success);
-    });
+        console.log(success);
+      });
   }
 
   onAddPommeButtonClick(): void {
