@@ -11,8 +11,6 @@ import { Account } from 'app/core/auth/account.model';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
 
-import { jsPDF } from 'jspdf';
-
 @Component({
   standalone: true,
   selector: 'jhi-home',
