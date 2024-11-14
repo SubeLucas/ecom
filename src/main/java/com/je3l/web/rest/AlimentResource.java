@@ -1,18 +1,24 @@
 package com.je3l.web.rest;
 
 import com.je3l.domain.Aliment;
+import com.je3l.domain.enumeration.EnumColor;
 import com.je3l.repository.AlimentRepository;
 import com.je3l.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -177,6 +183,70 @@ public class AlimentResource {
         LOG.debug("REST request to get Aliment : {}", id);
         Optional<Aliment> aliment = alimentRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(aliment);
+    }
+
+    /**
+     *   {@code GET /aliments/quantity/:id } : get the quantity of an aliment
+     *
+     *   @param id the id of the aliment
+     *   @return the {@link ResponseEntity} with status {@code 200 (OK)} with the quantity in the body, as -1 if not found
+     */
+    @GetMapping("/aliments/quantity/{id}")
+    public ResponseEntity<Integer> getQuantity(@PathVariable("id") Long id) {
+        LOG.debug("REST request get aliment quantity : {}", id);
+        Optional<Aliment> opt_alim = alimentRepository.findById(id);
+        Aliment a = opt_alim.orElse(null);
+        if (a != null) {
+            return new ResponseEntity<Integer>(a.getStockQuantity(), HttpStatus.OK);
+        }
+        return new ResponseEntity<Integer>(-1, HttpStatus.OK);
+    }
+
+    /**
+     *   {@code GET /aliments/fruits} : get all the fruits
+     *
+     *   @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of fruits in body.
+     */
+    @GetMapping("/fruits")
+    public List<Aliment> getFruits() {
+        return alimentRepository.findFruits();
+    }
+
+    /**
+     *   {@code GET /aliments/vegetable} : get all the vegetables
+     *
+     *   @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of vegetables in body.
+     */
+    @GetMapping("/vegetable")
+    public List<Aliment> getVegetable() {
+        return alimentRepository.findVegetable();
+    }
+
+    /**
+     *   {@code GET /aliments/season} : get in season vegetable
+     *   @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of aliments in season
+     */
+    @GetMapping("/season")
+    public List<Aliment> getSeason() {
+        Date date = new Date();
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int month = localDate.getMonthValue();
+        List<Aliment> all = alimentRepository.findAll();
+        List<Aliment> only_season = new ArrayList<Aliment>();
+        LOG.debug("current month is {}", month);
+        for (Aliment a : all) {
+            if ((a.getSeason() & (1 << (month - 1))) > 0) {
+                only_season.add(a);
+            }
+        }
+
+        return only_season;
+    }
+
+    @GetMapping("/colors/{col}")
+    public List<Aliment> getColors(@PathVariable("col") EnumColor color) {
+        LOG.debug("color requested : {}", color);
+        return alimentRepository.findColor(color);
     }
 
     /**

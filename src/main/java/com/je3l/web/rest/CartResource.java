@@ -1,5 +1,8 @@
 package com.je3l.web.rest;
 
+import static org.apache.commons.lang3.ArrayUtils.remove;
+import static org.apache.commons.lang3.ArrayUtils.removeElement;
+
 import com.je3l.domain.Aliment;
 import com.je3l.domain.Client;
 import com.je3l.repository.AlimentRepository;
@@ -8,8 +11,11 @@ import com.je3l.service.OrderService;
 import com.je3l.service.dto.CartDTO;
 import com.je3l.service.dto.CartItem;
 import com.je3l.web.rest.errors.BadRequestAlertException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.Valid;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,28 +40,59 @@ public class CartResource {
 
     @PostMapping("")
     public boolean validateCart(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException, Exception {
-        HashMap<Aliment, Integer> order_cart = new HashMap<Aliment, Integer>();
         CartItem[] cartItems = cartDTO.getCartItems();
-        for (int i = 0; i < cartItems.length; i++) {
-            Long id = cartItems[i].getId();
-            Integer qt = cartItems[i].getQt();
-
-            if (qt <= 0) {
-                return false;
-            }
-            Aliment a = alimentRepository.findById(id).orElse(null);
-            if (a == null) {
-                LOG.debug("Aliment id wasn't found " + id);
-                return false;
-            }
-            if (a.getStockQuantity() < qt) {
-                return false;
-            }
-            order_cart.put(a, qt);
+        if (!checkCart(cartItems)) {
+            return false;
         }
+        cartItems = fuseDouble(cartItems);
 
         Client c = clientService.getCurrentClient();
-        orderService.addOrder(order_cart, c);
+
+        try {
+            orderService.addOrder(cartItems, c);
+        } catch (OptimisticLockException e) {
+            LOG.warn("OptimisticLockException occurred", e);
+            return false;
+        }
+
         return true;
+    }
+
+    /*
+    Check if the cart is valid.
+     */
+    private Boolean checkCart(CartItem[] cartItems) {
+        for (CartItem item : cartItems) {
+            if (item.getQt() <= 0) {
+                return false;
+            }
+            Aliment a = alimentRepository.findById(item.getId()).orElse(null);
+            if (a == null) {
+                LOG.debug("Aliment id wasn't found " + item.getId());
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /*
+     * Fuse double items in the cart, so that the quantity is added up.
+     */
+    private CartItem[] fuseDouble(CartItem[] cartItems) {
+        Map<Long, Integer> idToQtMap = new HashMap<>();
+
+        for (CartItem item : cartItems) {
+            Long id = item.getId();
+            int qt = item.getQt();
+            idToQtMap.put(id, idToQtMap.getOrDefault(id, 0) + qt);
+        }
+
+        CartItem[] fusedCartItems = new CartItem[idToQtMap.size()];
+        int index = 0;
+        for (Map.Entry<Long, Integer> entry : idToQtMap.entrySet()) {
+            fusedCartItems[index++] = new CartItem(entry.getKey(), entry.getValue());
+        }
+
+        return fusedCartItems;
     }
 }

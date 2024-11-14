@@ -75,4 +75,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
   onCartButtonClick(): void {
     this.router.navigate(['/cart']);
   }
+
+  isCartEmpty(): boolean {
+    return localStorage.getItem('cart') === null;
+  }
 }
