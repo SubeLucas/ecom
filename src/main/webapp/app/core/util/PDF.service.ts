@@ -10,18 +10,29 @@ import { ClientOrderService } from '../../entities/client-order/service/client-o
 export class PDFService {
   private clientOrderService = inject(ClientOrderService);
 
-  constructor() {}
+  //constructor() {}
 
   generatePDF(id: number): void {
-    this.clientOrderService.find(id).subscribe((clientOrder: IClientOrder) => {
+    this.clientOrderService.find(id).subscribe(response => {
+      const clientOrder: IClientOrder = response.body!;
       const doc = new jsPDF();
-      doc.text(id, 10, 10);
+      let y = 10;
 
-      /*let y = 10;
-
+      // Titre principal
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
       doc.text('Client Order Details', 10, y);
+      y += 15;
+
+      // Sous-titre pour les détails de la commande
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Order Information', 10, y);
       y += 10;
 
+      // Détails de la commande
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
       doc.text(`Order ID: ${clientOrder.id}`, 10, y);
       y += 10;
 
@@ -50,11 +61,37 @@ export class PDFService {
         y += 10;
       }
 
-      if (clientOrder.client) {
-        doc.text(`Client: ${clientOrder.client.name}`, 10, y);
-        y += 10;
-      }*/
+      // Ligne de séparation
+      doc.line(10, y, 200, y);
+      y += 15;
 
+      // Sous-titre pour les détails du client
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Client Information', 10, y);
+      y += 10;
+
+      // Détails du client
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      if (clientOrder.client) {
+        doc.text(`Client ID: ${clientOrder.client.id}`, 10, y);
+        y += 10;
+        if (clientOrder.client.preferedDay) {
+          doc.text(`Preferred Day: ${clientOrder.client.preferedDay}`, 10, y);
+          y += 10;
+        }
+        if (clientOrder.client.address) {
+          doc.text(`Client Address: ${clientOrder.client.address}`, 10, y);
+          y += 10;
+        }
+        if (clientOrder.client.user) {
+          doc.text(`User ID: ${clientOrder.client.user.id}`, 10, y);
+          y += 10;
+        }
+      }
+
+      // Sauvegarde du PDF
       doc.save('receipt.pdf');
     });
   }
