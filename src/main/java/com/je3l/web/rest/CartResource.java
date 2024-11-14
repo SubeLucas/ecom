@@ -40,10 +40,10 @@ public class CartResource {
 
     @PostMapping("")
     public boolean validateCart(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException, Exception {
-        //CartItem[] cartItems = cartDTO.getCartItems();
-        CartItem[] cartItems = new CartItem[2];
-        cartItems[0] = new CartItem(1L, 2);
-        cartItems[1] = new CartItem(1L, 3);
+        CartItem[] cartItems = cartDTO.getCartItems();
+        if (!checkCart(cartItems)) {
+            return false;
+        }
         cartItems = fuseDouble(cartItems);
 
         Client c = clientService.getCurrentClient();
@@ -55,6 +55,23 @@ public class CartResource {
             return false;
         }
 
+        return true;
+    }
+
+    /*
+    Check if the cart is valid.
+     */
+    private Boolean checkCart(CartItem[] cartItems) {
+        for (CartItem item : cartItems) {
+            if (item.getQt() <= 0) {
+                return false;
+            }
+            Aliment a = alimentRepository.findById(item.getId()).orElse(null);
+            if (a == null) {
+                LOG.debug("Aliment id wasn't found " + item.getId());
+                return false;
+            }
+        }
         return true;
     }
 
