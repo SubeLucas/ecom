@@ -17,7 +17,7 @@ export class CardProductComponent {
   isSeasonProduct = false;
   quantity = 2;
   maxQuantity = 99;
-  inCart = false;
+  inCart = true;
 
   totalPriceProduct = this.quantity * this.priceProduct;
 
@@ -37,9 +37,42 @@ export class CardProductComponent {
 
   deleteArticleFromCart(): void {
     this.quantity = 0;
+    this.updateTotalPriceProduct();
   }
 
   updateTotalPriceProduct(): void {
     this.totalPriceProduct = this.quantity * this.priceProduct;
+  }
+
+  onInputChange(event: Event): void {
+    const el = event.target as HTMLInputElement;
+    const inputEvt = event as InputEvent;
+    const inputEvtType = inputEvt.inputType;
+
+    if (
+      el.value &&
+      (inputEvtType === 'insertText' ||
+        inputEvtType === 'deleteContentBackward' ||
+        inputEvtType === 'deleteContentForward' ||
+        inputEvtType === 'historyUndo' ||
+        inputEvtType === 'historyRedo' ||
+        inputEvtType === 'insertFromPaste' ||
+        inputEvtType === 'insertFromDrop')
+    ) {
+      this.quantity = +el.value;
+      this.updateTotalPriceProduct();
+    }
+  }
+
+  onBlur(event: Event): void {
+    //Pour le moment prend le 1er id qt-input qu'il trouve sur toute la page
+    //TODO corriger
+    if (document.getElementById('qt-input')) {
+      const element = document.getElementById('qt-input') as HTMLInputElement;
+      console.warn(element.value);
+      if (element.value == '') {
+        element.value = this.quantity.toString();
+      }
+    }
   }
 }

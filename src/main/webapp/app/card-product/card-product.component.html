@@ -28,7 +28,6 @@
         </div>
       }
     </div>
-
   } @else {
     <div class="main-infos">
       <img class="img-product-cart" src="../../content/images/tomate.png" alt="tomate rouge" />
@@ -47,7 +46,20 @@
       <div class="change-qt">
         <button class="minus-btn" (click)="minusQuantity()">-</button>
         <!--TODO add blocage type nb (mozilla)-->
-        <input type="number" id="qt-input" name="qt" [value]="quantity" required min="0" max="99" minlength="1" maxlength="2" size="2" />
+        <input
+          type="number"
+          id="qt-input"
+          name="qt"
+          [value]="quantity"
+          (input)="onInputChange($event)"
+          (blur)="onBlur($event)"
+          required
+          min="0"
+          max="99"
+          minlength="1"
+          maxlength="2"
+          size="2"
+        />
         <button class="plus-btn" (click)="plusQuantity()">+</button>
       </div>
       <button class="del-btn" (click)="deleteArticleFromCart()">del</button>

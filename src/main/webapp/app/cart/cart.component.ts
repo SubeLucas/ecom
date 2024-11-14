@@ -3,11 +3,12 @@ import { Router, RouterModule } from '@angular/router';
 
 import { Cart } from './cart.model';
 import { AlimentService } from '../entities/aliment/service/aliment.service';
+import { CardProductComponent } from '../card-product/card-product.component';
 
 @Component({
   selector: 'jhi-cart',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, CardProductComponent],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss',
 })
