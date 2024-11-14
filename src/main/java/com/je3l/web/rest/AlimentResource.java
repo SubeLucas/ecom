@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -182,6 +183,23 @@ public class AlimentResource {
         LOG.debug("REST request to get Aliment : {}", id);
         Optional<Aliment> aliment = alimentRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(aliment);
+    }
+
+    /**
+     *   {@code GET /aliments/quantity/:id } : get the quantity of an aliment
+     *
+     *   @param id the id of the aliment
+     *   @return the {@link ResponseEntity} with status {@code 200 (OK)} with the quantity in the body, as -1 if not found
+     */
+    @GetMapping("/aliments/quantity/{id}")
+    public ResponseEntity<Integer> getQuantity(@PathVariable("id") Long id) {
+        LOG.debug("REST request get aliment quantity : {}", id);
+        Optional<Aliment> opt_alim = alimentRepository.findById(id);
+        Aliment a = opt_alim.orElse(null);
+        if (a != null) {
+            return new ResponseEntity<Integer>(a.getStockQuantity(), HttpStatus.OK);
+        }
+        return new ResponseEntity<Integer>(-1, HttpStatus.OK);
     }
 
     /**
