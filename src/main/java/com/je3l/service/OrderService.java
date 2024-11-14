@@ -36,7 +36,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void addOrder(CartItem[] order, Client c) {
+    public ClientOrder addOrder(CartItem[] order, Client c) {
         BigDecimal totalPrice = BigDecimal.valueOf(0);
         ClientOrder co = new ClientOrder()
             .client(c)
@@ -64,7 +64,7 @@ public class OrderService {
         }
 
         co.totalPrice(totalPrice);
-        clientOrderRepository.save(co);
+        return clientOrderRepository.save(co);
     }
 
     public List<ClientOrder> getClientHistory() {

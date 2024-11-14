@@ -191,7 +191,7 @@ public class AlimentResource {
      *   @param id the id of the aliment
      *   @return the {@link ResponseEntity} with status {@code 200 (OK)} with the quantity in the body, as -1 if not found
      */
-    @GetMapping("/aliments/quantity/{id}")
+    @GetMapping("/quantity/{id}")
     public ResponseEntity<Integer> getQuantity(@PathVariable("id") Long id) {
         LOG.debug("REST request get aliment quantity : {}", id);
         Optional<Aliment> opt_alim = alimentRepository.findById(id);
