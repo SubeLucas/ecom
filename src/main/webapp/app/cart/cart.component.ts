@@ -13,28 +13,35 @@ import { AlimentService } from '../entities/aliment/service/aliment.service';
 })
 export class CartComponent implements OnInit {
   private router = inject(Router);
+  private cart = new Cart([]);
+  private stockMap = new Map<number, number>();
 
   constructor(private http: AlimentService) {}
 
   ngOnInit(): void {
-    const cart = Cart.getCart();
-    const stockMap = new Map<number, number>();
+    this.cart = Cart.getCart();
 
-    for (const item of cart.cartItems) {
+    for (const item of this.cart.cartItems) {
       this.http.getStock(item.id).subscribe(quantity => {
-        stockMap.set(item.id, quantity.body != null ? quantity.body : -1);
-        console.log(stockMap);
+        this.stockMap.set(item.id, quantity.body != null ? quantity.body : -1);
       });
     }
 
-    // appel initial à scan()
+    console.log(this.stockMap);
+    this.scan();
   }
 
-  scan(): void {
-    // analyser les quantités dans le panier et dans la Map
-    // si une quantité n'est pas bonne, griser le bouton de validation,
-    // afficher une info pour le user (message dans console pour commencer) et passer au prochain
+  scan(): boolean {
     // attendre le composant IHM pour appeler cette fonction lorsque les boutons +/- sont cliqués
+    let invalid = false;
+    for (const item of this.cart.cartItems) {
+      if (item.qt > this.stockMap.get(item.id)!) {
+        console.log('Item id ' + item.id.toString() + " n'a plus que " + this.stockMap.get(item.id)!.toString() + ' exemplaires en stock');
+        invalid = true;
+      }
+    }
+
+    return invalid;
   }
 
   onButtonClick(): void {

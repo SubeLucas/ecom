@@ -59,7 +59,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   onAddPommeButtonClick(): void {
-    this.item = new CartItem(4, 5);
+    this.item = new CartItem(4, 100);
     Cart.addItem(this.item);
   }
 
