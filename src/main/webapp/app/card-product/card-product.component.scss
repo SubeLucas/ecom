@@ -2,10 +2,24 @@
 
 .card-product {
   background-color: greenyellow;
-  padding: 1em 2em;
-  max-width: fit-content;
   border-radius: 25px;
   margin-inline: 0.5em;
+
+  &.not-in-cart {
+    padding: 1em 2em;
+    max-width: fit-content;
+  }
+
+  &.in-cart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75em 2em;
+  }
+}
+
+.in-cart p {
+  margin: 0;
 }
 
 .type-saison {
@@ -23,6 +37,21 @@
   height: auto;
 }
 
+.img-product-cart {
+  max-width: 30%;
+  height: auto;
+}
+
+.title-origin-infos {
+  margin-right: 3em;
+}
+
+.main-infos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .centered-infos {
   text-align: center;
 }
@@ -36,6 +65,13 @@
   display: flex;
   justify-content: space-between;
   color: grey;
+}
+
+.weight-infos-cart {
+  color: grey;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .origin-product {
@@ -55,7 +91,8 @@
   margin: 0;
 }
 
-.add-cart-btn {
+.qtt-infos .change-qt {
+  margin-inline: 1em;
 }
 
 //No arrows
