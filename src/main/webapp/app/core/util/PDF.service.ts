@@ -2,21 +2,29 @@ import { Injectable, inject } from '@angular/core';
 import { jsPDF } from 'jspdf';
 import { IClientOrder } from '../../entities/client-order/client-order.model';
 import { ClientOrderService } from '../../entities/client-order/service/client-order.service';
-//import { IOrderLineService } from '../entities/order-line/service/order-line.service';
+import { OrderLineService } from '../../entities/order-line/service/order-line.service';
+import { IOrderLine } from '../../entities/order-line/order-line.model';
+import { AlimentService } from '../../entities/aliment/service/aliment.service';
+import { IAliment } from '../../entities/aliment/aliment.model';
+
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PDFService {
   private clientOrderService = inject(ClientOrderService);
+  private orderLineService = inject(OrderLineService);
+  private alimentService = inject(AlimentService);
 
   //constructor() {}
 
+  // id du ClientOrder
   generatePDF(id: number): void {
+    const doc = new jsPDF();
+    let y = 10;
     this.clientOrderService.find(id).subscribe(response => {
       const clientOrder: IClientOrder = response.body!;
-      const doc = new jsPDF();
-      let y = 10;
 
       // Titre principal
       doc.setFontSize(18);
@@ -57,7 +65,7 @@ export class PDFService {
       }
 
       if (clientOrder.totalPrice !== null) {
-        doc.text(`Total Price: ${clientOrder.totalPrice}`, 10, y);
+        doc.text(`Total Price: ${clientOrder.totalPrice} €`, 10, y);
         y += 10;
       }
 
@@ -90,9 +98,32 @@ export class PDFService {
           y += 10;
         }
       }
-
-      // Sauvegarde du PDF
-      doc.save('receipt.pdf');
     });
+
+    doc.line(10, y, 200, y);
+    y += 15;
+
+    this.orderLineService.findByClientOrder(id).subscribe(response => {
+      const OrderLines: IOrderLine[] = response.body!;
+      // Détails des lignes de commande
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      OrderLines.forEach((orderLine: IOrderLine) => {
+        this.alimentService.find(orderLine.aliment!.id).subscribe(rep => {
+          const Aliment: IAliment = rep.body!;
+          doc.text(`Aliment: ${Aliment.name}`, 10, y);
+          y += 10;
+        });
+
+        doc.text(`Quantity: ${orderLine.quantity}`, 10, y);
+        y += 10;
+        doc.text(`Purchase Price: ${orderLine.purchasePrice} €`, 10, y);
+        y += 15; // Ajouter un peu plus d'espace entre les lignes de commande
+
+        doc.save('receipt.pdf');
+      });
+    });
+
+    // Sauvegarde du PDF
   }
 }

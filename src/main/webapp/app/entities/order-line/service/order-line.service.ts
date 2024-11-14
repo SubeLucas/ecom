@@ -52,6 +52,10 @@ export class OrderLineService {
     return o1 && o2 ? this.getOrderLineIdentifier(o1) === this.getOrderLineIdentifier(o2) : o1 === o2;
   }
 
+  findByClientOrder(id: number): Observable<EntityArrayResponseType> {
+    return this.http.get<IOrderLine[]>(`${this.resourceUrl}/clientOrder/${id}`, { observe: 'response' });
+  }
+
   addOrderLineToCollectionIfMissing<Type extends Pick<IOrderLine, 'id'>>(
     orderLineCollection: Type[],
     ...orderLinesToCheck: (Type | null | undefined)[]

@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -177,5 +178,11 @@ public class OrderLineResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/clientOrder/{clientOrderId}")
+    public List<OrderLine> findByClientOrderId(@PathVariable("clientOrderId") Long clientOrderId) {
+        LOG.debug("REST Request findByClientOrderId : {}", clientOrderId);
+        return orderLineRepository.findByClientOrderId(clientOrderId);
     }
 }

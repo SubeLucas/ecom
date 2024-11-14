@@ -12,7 +12,7 @@ export class CartService {
 
   constructor(private http: HttpClient) {}
 
-  validate(cart: Cart): Observable<boolean> {
-    return this.http.post<boolean>(this.resourceUrl, cart);
+  validate(cart: Cart): Observable<number> {
+    return this.http.post<number>(this.resourceUrl, cart);
   }
 }

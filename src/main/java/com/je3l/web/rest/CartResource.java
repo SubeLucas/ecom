@@ -39,23 +39,21 @@ public class CartResource {
     private ClientService clientService;
 
     @PostMapping("")
-    public boolean validateCart(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException, Exception {
+    public Long validateCart(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException, Exception {
         CartItem[] cartItems = cartDTO.getCartItems();
         if (!checkCart(cartItems)) {
-            return false;
+            return -1L;
         }
         cartItems = fuseDouble(cartItems);
 
         Client c = clientService.getCurrentClient();
 
         try {
-            orderService.addOrder(cartItems, c);
+            return orderService.addOrder(cartItems, c).getId();
         } catch (OptimisticLockException e) {
             LOG.warn("OptimisticLockException occurred", e);
-            return false;
+            return -2L;
         }
-
-        return true;
     }
 
     /*
