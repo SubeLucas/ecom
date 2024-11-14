@@ -10,6 +10,7 @@ import { Account } from 'app/core/auth/account.model';
 // temporary imports for cart validation tests
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
+import { PDFService } from '../core/util/PDF.service';
 
 @Component({
   standalone: true,
@@ -28,8 +29,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   private item = new CartItem(0, 0);
 
-  constructor(private http: CartService) {}
-
+  //constructor(private http: CartService) {}
+  constructor(
+    private http: CartService,
+    private PDFService: PDFService,
+  ) {}
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
@@ -49,9 +53,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   // temporary button handler for cart validation tests
   onButtonClick(): void {
     this.http.validate(new Cart([new CartItem(1, 5)])).subscribe(success => {
-      const doc = new jsPDF();
-      doc.text('poney!', 10, 10);
-      doc.save('VALIDATE.pdf'); // will save the file in the current working directory
+      this.PDFService.generatePDF(success);
 
       console.log(success);
     });
