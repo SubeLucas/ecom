@@ -55,7 +55,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.http
       .validate(new Cart([new CartItem(1, 5), new CartItem(2, 1), new CartItem(2, 1), new CartItem(3, 1), new CartItem(4, 1)]))
       .subscribe(success => {
-        this.PDFService.generatePDF(success);
+        if (success > 0) {
+          this.PDFService.generatePDF(success);
+        }
+        // else page d'erreur
 
         console.log(success);
       });
