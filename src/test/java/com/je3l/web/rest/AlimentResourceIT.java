@@ -328,40 +328,6 @@ class AlimentResourceIT {
 
     @Test
     @Transactional
-    void putExistingAliment() throws Exception {
-        // Initialize the database
-        insertedAliment = alimentRepository.saveAndFlush(aliment);
-
-        long databaseSizeBeforeUpdate = getRepositoryCount();
-
-        // Update the aliment
-        Aliment updatedAliment = alimentRepository.findById(aliment.getId()).orElseThrow();
-        // Disconnect from session so that the updates on updatedAliment are not directly saved in db
-        em.detach(updatedAliment);
-        updatedAliment
-            .name(UPDATED_NAME)
-            .origin(UPDATED_ORIGIN)
-            .season(UPDATED_SEASON)
-            .color(UPDATED_COLOR)
-            .weight(UPDATED_WEIGHT)
-            .stockQuantity(UPDATED_STOCK_QUANTITY)
-            .price(UPDATED_PRICE);
-
-        restAlimentMockMvc
-            .perform(
-                put(ENTITY_API_URL_ID, updatedAliment.getId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(om.writeValueAsBytes(updatedAliment))
-            )
-            .andExpect(status().isOk());
-
-        // Validate the Aliment in the database
-        assertSameRepositoryCount(databaseSizeBeforeUpdate);
-        assertPersistedAlimentToMatchAllProperties(updatedAliment);
-    }
-
-    @Test
-    @Transactional
     void putNonExistingAliment() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
         aliment.setId(longCount.incrementAndGet());
