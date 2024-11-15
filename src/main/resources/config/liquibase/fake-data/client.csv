@@ -1,3 +1,3 @@
 id;prefered_day;address;user_id
-1;BasicUser;12 Rue des Lilas, 75015 Paris;2
-2;BasicAdmin;27 Rue du Commerce, 34000 Montpellier;1
+1;Lundi;12 Rue des Lilas, 75015 Paris;2
+2;Week-end;27 Rue du Commerce, 34000 Montpellier;1
