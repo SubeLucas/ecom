@@ -61,7 +61,7 @@ public class AccountResource {
             throw new InvalidPasswordException();
         }
         User user = userService.registerUser(managedUserVM, managedUserVM.getPassword());
-        mailService.sendActivationEmail(user);
+        userService.activateRegistrationWithouMail(user.getLogin());
     }
 
     /**
@@ -143,7 +143,7 @@ public class AccountResource {
     public void requestPasswordReset(@RequestBody String mail) {
         Optional<User> user = userService.requestPasswordReset(mail);
         if (user.isPresent()) {
-            mailService.sendPasswordResetMail(user.orElseThrow());
+            //mailService.sendPasswordResetMail(user.orElseThrow());
         } else {
             // Pretend the request has been successful to prevent checking which emails really exist
             // but log that an invalid attempt has been made

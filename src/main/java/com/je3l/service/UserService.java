@@ -73,6 +73,19 @@ public class UserService {
             });
     }
 
+    public Optional<User> activateRegistrationWithouMail(String login) {
+        LOG.debug("Activating user for login {}", login);
+        return userRepository
+            .findOneByLogin(login)
+            .map(user -> {
+                user.setActivated(true);
+                user.setActivationKey(null);
+                this.clearUserCaches(user);
+                LOG.debug("Activated user (without mail): {}", user);
+                return user;
+            });
+    }
+
     public Optional<User> completePasswordReset(String newPassword, String key) {
         LOG.debug("Reset user password for reset key {}", key);
         return userRepository
