@@ -1,11 +1,35 @@
 <div class="row">
-  <p>fil d'ariane</p>
-  <div class="col-md-3">
-    <p>FILTRES ICI</p>
-    <span class="hipster img-fluid rounded"></span>
-  </div>
+  <nav>fil d'ariane</nav>
+
+  <!--col-md-3 met au bon endroit par rapport au contente de la page-->
+  <aside class="col-md-3 filters">
+    <div class="filter-top">
+      <p>Filtres</p>
+      <button id="apply-filters">Appliquer</button>
+    </div>
+
+    <hr />
+    <div class="filter-cat">
+      <button class="collapsible" (click)="toggleNavbar()">Catégories</button>
+      <div [ngbCollapse]="isCatCollapsed()">
+        <div>
+          <input type="checkbox" name="cb-fruit" id="cb-fruit" />
+          <label for="cb-fruit">Fruits</label>
+        </div>
+        <div>
+          <input type="checkbox" name="cb-vegetable" id="cb-vegetable" />
+          <label for="cb-vegetable">Légumes</label>
+        </div>
+      </div>
+    </div>
+    <button id="remove-filters">Retirer les filtres</button>
+  </aside>
 
   <div class="col-md-9">
+    <div class="sort">
+      <p>Trier par :</p>
+      <p>Ici toggle tri</p>
+    </div>
     <div>
       @if (account() !== null) {
         <div class="alert alert-success">
@@ -49,12 +73,11 @@
     <button id="add-banane" class="btn btn-primary" (click)="onAddBananeButtonClick()">+Banane</button>
 
     <button id="goto-cart" class="btn btn-primary" (click)="onCartButtonClick()" [routerLink]="['/cart']">Go to cart</button>
-  </div>
-
-  <div class="product-list">
-    <div *ngFor="let aliment of aliments">
-      <li>{{ aliment.name }}</li>
-      <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
+    <div class="product-list">
+      <div *ngFor="let aliment of aliments">
+        <li>{{ aliment.name }}</li>
+        <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
+      </div>
     </div>
   </div>
 </div>

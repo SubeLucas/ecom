@@ -31,3 +31,21 @@ Main page styles
 .row {
   background-color: $baby-powder;
 }
+
+.filters {
+  background-color: $parchment;
+  border-radius: 25px;
+  padding: 1em;
+}
+
+.filter-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.filters p {
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin: 0;
+}
