@@ -12,7 +12,10 @@ import { IAliment } from 'app/entities/aliment/aliment.model';
 export class CardProductComponent {
   @Input() priceProduct!: number | null | undefined;
   @Input() product: IAliment | undefined;
+<<<<<<< HEAD
   @Input() inCart: boolean | undefined;
+=======
+>>>>>>> 86cf773 (petite modification)
 
   quantity = 2;
   maxQuantity = 99;
