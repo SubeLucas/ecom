@@ -10,6 +10,7 @@ import { Account } from 'app/core/auth/account.model';
 // temporary imports for cart validation tests
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
+import { PDFService } from '../core/util/PDF.service';
 
 @Component({
   standalone: true,
@@ -28,8 +29,11 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   private item = new CartItem(0, 0);
 
-  constructor(private http: CartService) {}
-
+  //constructor(private http: CartService) {}
+  constructor(
+    private http: CartService,
+    private PDFService: PDFService,
+  ) {}
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
@@ -48,9 +52,16 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   // temporary button handler for cart validation tests
   onButtonClick(): void {
-    this.http.validate(new Cart([new CartItem(1, 5)])).subscribe(success => {
-      console.log(success);
-    });
+    this.http
+      .validate(new Cart([new CartItem(1, 5), new CartItem(2, 1), new CartItem(2, 1), new CartItem(3, 1), new CartItem(4, 1)]))
+      .subscribe(success => {
+        if (success > 0) {
+          this.PDFService.generatePDF(success);
+        }
+        // else page d'erreur
+
+        console.log(success);
+      });
   }
 
   onAddPommeButtonClick(): void {
