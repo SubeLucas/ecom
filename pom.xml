@@ -78,6 +78,8 @@
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <spring-cloud-dependencies.version>2023.0.3</spring-cloud-dependencies.version>
         <springdoc-openapi-starter-webmvc-api.version>2.6.0</springdoc-openapi-starter-webmvc-api.version>
+        <gatling-maven-plugin.version>4.10.2</gatling-maven-plugin.version>
+        <gatling.version>3.13.1</gatling.version>
     </properties>
 
     <dependencyManagement>
@@ -298,6 +300,12 @@
             <artifactId>testcontainers</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+          <groupId>io.gatling.highcharts</groupId>
+          <artifactId>gatling-charts-highcharts</artifactId>
+          <version>${gatling.version}</version>
+          <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -373,6 +381,11 @@
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+              <groupId>io.gatling</groupId>
+              <artifactId>gatling-maven-plugin</artifactId>
+              <version>${gatling-maven-plugin.version}</version>
             </plugin>
         </plugins>
         <pluginManagement>
