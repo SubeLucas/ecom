@@ -14,6 +14,7 @@ import { AlimentService } from 'app/entities/aliment/service/aliment.service';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
 import { CardProductComponent } from '../card-product/card-product.component';
+import { PDFService } from '../core/util/PDF.service';
 
 @Component({
   standalone: true,
@@ -36,6 +37,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private httpCart: CartService,
     private httpAliment: AlimentService,
+    private pdfService: PDFService,
   ) {}
 
   ngOnInit(): void {
@@ -60,17 +62,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   // temporary button handler for cart validation tests
   onButtonClick(): void {
-    this.http
-      .validate(new Cart([new CartItem(1, 5), new CartItem(2, 1), new CartItem(2, 1), new CartItem(3, 1), new CartItem(4, 1)]))
-      .subscribe(success => {
-        if (success > 0) {
-          console.log(success);
-          this.PDFService.generatePDF(success);
-        }
-        // else page d'erreur
-
-        console.log(success);
-      });
+    this.httpCart.validate(Cart.getCart()).subscribe(success => {
+      console.log(success);
+    });
   }
 
   onAddPommeButtonClick(): void {
