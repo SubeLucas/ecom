@@ -58,7 +58,7 @@ export class CartComponent implements OnInit {
   onValidateButtonClick(): void {
     // placeholder, envoyer le panier au backend dès maintenant
     // plus tard, naviguer vers la page suivante
-    this.httpCart.validate(this.cart).subscribe(success => {
+    this.httpCart.validate(Cart.getCart()).subscribe(success => {
       //console.log('Validate cart : ' + JSON.stringify(Cart));
       if (success > 0) {
         console.log(success);
