@@ -1,0 +1,68 @@
+<p>card-product works!</p>
+
+<div class="card-product" [ngClass]="inCart ? 'in-cart' : 'not-in-cart'">
+  @if (!inCart) {
+    <p class="type-saison" [ngClass]="isSeasonProduct ? 'season' : 'not-season'">
+      {{ isSeasonProduct ? 'De saison' : 'Hors saison' }}
+    </p>
+
+    <div class="centered-infos">
+      <img class="img-product" src="../../content/images/tomate.png" alt="tomate rouge" />
+      <p class="title-product">{{ titleProduct }}</p>
+      <div class="weight-infos">
+        <p>{{ weightProduct }}</p>
+        <p>{{ priceKiloProduct }}</p>
+      </div>
+    </div>
+    <p class="origin-product">{{ originProduct }}</p>
+    <div class="centered-infos div-cart">
+      <p class="price-product">{{ priceProduct.toFixed(2).replace('.', ',') }}€</p>
+      @if (quantity == 0) {
+        <button class="add-cart-btn" (click)="plusQuantity()">Panier</button>
+      } @else {
+        <div class="change-qt">
+          <button class="minus-btn" (click)="minusQuantity()">-</button>
+          <!--TODO add blocage type nb (mozilla)-->
+          <input type="number" id="qt-input" name="qt" [value]="quantity" required min="0" max="99" minlength="1" maxlength="2" size="2" />
+          <button class="plus-btn" (click)="plusQuantity()">+</button>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="main-infos">
+      <img class="img-product-cart" src="../../content/images/tomate.png" alt="tomate rouge" />
+      <div class="title-origin-infos">
+        <p class="title-product">{{ titleProduct }}</p>
+        <p class="origin-product">{{ originProduct }}</p>
+      </div>
+      <div class="weight-infos-cart">
+        <p>{{ weightProduct }}</p>
+        <p>{{ priceKiloProduct }}</p>
+      </div>
+    </div>
+
+    <div class="qtt-infos div-cart">
+      <p class="price-product">{{ totalPriceProduct.toFixed(2).replace('.', ',') }}€</p>
+      <div class="change-qt">
+        <button class="minus-btn" (click)="minusQuantity()">-</button>
+        <!--TODO add blocage type nb (mozilla)-->
+        <input
+          type="number"
+          id="qt-input"
+          name="qt"
+          [value]="quantity"
+          (input)="onInputChange($event)"
+          (blur)="onBlur($event)"
+          required
+          min="0"
+          max="99"
+          minlength="1"
+          maxlength="2"
+          size="2"
+        />
+        <button class="plus-btn" (click)="plusQuantity()">+</button>
+      </div>
+      <button class="del-btn" (click)="deleteArticleFromCart()">del</button>
+    </div>
+  }
+</div>

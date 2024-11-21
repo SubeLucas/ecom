@@ -12,6 +12,7 @@ import PageRibbonComponent from '../profiles/page-ribbon.component';
   standalone: true,
   selector: 'jhi-main',
   templateUrl: './main.component.html',
+  styleUrl: './main.component.scss',
   providers: [AppPageTitleStrategy],
   imports: [RouterOutlet, FooterComponent, PageRibbonComponent],
 })

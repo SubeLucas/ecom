@@ -7,17 +7,20 @@ import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 
+import { IAliment } from '../entities/aliment/aliment.model';
+import { AlimentService } from 'app/entities/aliment/service/aliment.service';
+
 // temporary imports for cart validation tests
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
-import { PDFService } from '../core/util/PDF.service';
+import { CardProductComponent } from '../card-product/card-product.component';
 
 @Component({
   standalone: true,
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule],
+  imports: [SharedModule, RouterModule, CardProductComponent],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
@@ -28,17 +31,22 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private router = inject(Router);
 
   private item = new CartItem(0, 0);
+  aliments: IAliment[] = [];
 
-  //constructor(private http: CartService) {}
   constructor(
-    private http: CartService,
-    private PDFService: PDFService,
+    private httpCart: CartService,
+    private httpAliment: AlimentService,
   ) {}
+
   ngOnInit(): void {
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => this.account.set(account));
+
+    this.httpAliment.all().subscribe(aliments => {
+      this.aliments = aliments.body != null ? aliments.body : [];
+    });
   }
 
   login(): void {
@@ -56,6 +64,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       .validate(new Cart([new CartItem(1, 5), new CartItem(2, 1), new CartItem(2, 1), new CartItem(3, 1), new CartItem(4, 1)]))
       .subscribe(success => {
         if (success > 0) {
+          console.log(success);
           this.PDFService.generatePDF(success);
         }
         // else page d'erreur
@@ -65,16 +74,20 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   onAddPommeButtonClick(): void {
-    this.item = new CartItem(1, 5);
-    Cart.addItem(this.item.toString());
+    this.item = new CartItem(4, 100);
+    Cart.addItem(this.item);
   }
 
   onAddBananeButtonClick(): void {
-    this.item = new CartItem(2, 3);
-    Cart.addItem(this.item.toString());
+    this.item = new CartItem(9, 3);
+    Cart.addItem(this.item);
   }
 
   isCartEmpty(): boolean {
-    return localStorage.getItem('cart') === null;
+    return Cart.isEmpty();
+  }
+
+  onCartButtonClick(): void {
+    this.router.navigate(['/cart']);
   }
 }

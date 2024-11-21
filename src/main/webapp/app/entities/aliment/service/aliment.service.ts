@@ -19,6 +19,10 @@ export class AlimentService {
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/aliments');
 
+  all(): Observable<EntityArrayResponseType> {
+    return this.http.get<IAliment[]>(this.resourceUrl, { observe: 'response' });
+  }
+
   create(aliment: NewAliment): Observable<EntityResponseType> {
     return this.http.post<IAliment>(this.resourceUrl, aliment, { observe: 'response' });
   }
@@ -33,6 +37,10 @@ export class AlimentService {
 
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<IAliment>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  getStock(id: number): Observable<HttpResponse<number>> {
+    return this.http.get<number>(`${this.resourceUrl}/quantity/${id}`, { observe: 'response' });
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {
