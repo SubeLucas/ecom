@@ -5,6 +5,7 @@ import com.je3l.domain.User;
 import com.je3l.repository.ClientRepository;
 import com.je3l.security.SecurityUtils;
 import com.je3l.service.UserService;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,11 @@ public class ClientService {
 
     public Client getCurrentClient() throws Exception {
         LOG.debug("getCurrentClient !");
-        Client c = clientRepository.findByUserIsCurrentUser().iterator().next();
+        List<Client> lc = clientRepository.findByUserIsCurrentUser();
+        if (lc.isEmpty()) {
+            throw new Exception("No client found for current user");
+        }
+        Client c = lc.iterator().next();
         return c;
     }
 }
