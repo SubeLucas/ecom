@@ -68,6 +68,7 @@ export class CartComponent implements OnInit, OnDestroy {
       return true;
     }
     // attendre le composant IHM pour appeler cette fonction lorsque les boutons +/- sont cliqués
+    let invalid = false;
     for (const aliment of this.aliments) {
       const quantity = this.stockMap.get(aliment.id)!;
       if (aliment.stockQuantity! < quantity) {
@@ -84,17 +85,6 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   onValidateButtonClick(): void {
-    // placeholder, envoyer le panier au backend dès maintenant
-    // plus tard, naviguer vers la page suivante
-    // placeholder, envoyer le panier au backend dès maintenant
-    // plus tard, naviguer vers la page suivante
-    this.httpCart.validate(Cart.getCart()).subscribe(success => {
-      //console.log('Validate cart : ' + JSON.stringify(Cart));
-      if (success > 0) {
-        console.log(success);
-        this.pdfService.generatePDF(success);
-      }
-      // else page d'erreur
-    });
+    this.router.navigate(['payment']);
   }
 }
