@@ -85,6 +85,11 @@ export class CardProductComponent {
         inputEvtType === 'insertFromPaste' ||
         inputEvtType === 'insertFromDrop')
     ) {
+      if (+el.value < 0) {
+        el.value = '1';
+      } else if (+el.value > this.maxQuantity) {
+        el.value = this.maxQuantity.toString();
+      }
       this.quantity = +el.value;
       if (this.product) {
         Cart.setItemQuantity(this.product.id, this.quantity);
