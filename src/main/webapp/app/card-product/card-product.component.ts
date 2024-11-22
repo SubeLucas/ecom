@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { IAliment } from 'app/entities/aliment/aliment.model';
 import { Cart } from '../cart/cart.model';
 
@@ -8,17 +8,19 @@ import { Cart } from '../cart/cart.model';
   standalone: true,
   imports: [NgClass],
   templateUrl: './card-product.component.html',
-  styleUrl: './card-product.component.scss',
+  styleUrls: ['./card-product.component.scss'],
 })
 export class CardProductComponent {
   @Input() priceProduct!: number | null | undefined;
   @Input() product: IAliment | undefined;
   @Input() inCart: boolean | undefined;
+  @Output() quantityChanged = new EventEmitter<void>();
 
   quantity = -1;
   maxQuantity = 99;
 
   totalPriceProduct = this.quantity * this.priceProduct!;
+
   ngOnInit(): void {
     const cart = Cart.getCart();
     if (this.product) {
@@ -40,6 +42,7 @@ export class CardProductComponent {
           Cart.removeItem(this.product.id);
         }
       }
+      this.quantityChanged.emit();
     }
   }
 
@@ -59,10 +62,12 @@ export class CardProductComponent {
     if (this.product) {
       Cart.removeItem(this.product.id);
     }
+    this.quantityChanged.emit();
   }
 
   updateTotalPriceProduct(): void {
     this.totalPriceProduct = this.quantity * this.priceProduct!;
+    this.quantityChanged.emit();
   }
 
   onInputChange(event: Event): void {
@@ -82,19 +87,17 @@ export class CardProductComponent {
     ) {
       this.quantity = +el.value;
       this.updateTotalPriceProduct();
+      this.quantityChanged.emit();
     }
   }
 
   onBlur(event: Event): void {
-    //Pour le moment prend le 1er id qt-input qu'il trouve sur toute la page
-    //TODO corriger
-    if (document.getElementById('qt-input')) {
-      const element = document.getElementById('qt-input') as HTMLInputElement;
-      console.warn(element.value);
-      if (element.value == '') {
-        element.value = this.quantity.toString();
-      }
+    const element = event.target as HTMLInputElement;
+    console.warn(element.value);
+    if (element.value == '') {
+      element.value = this.quantity.toString();
     }
+    this.quantityChanged.emit();
   }
 
   isSeasonProduct(season: number): boolean {

@@ -1,6 +1,11 @@
 <div class="product-list">
   <div *ngFor="let aliment of aliments">
-    <jhi-card-product [product]="aliment" [priceProduct]="aliment.price" [inCart]="true"></jhi-card-product>
+    <jhi-card-product
+      [product]="aliment"
+      [priceProduct]="aliment.price"
+      [inCart]="true"
+      (quantityChanged)="onQuantityChanged()"
+    ></jhi-card-product>
   </div>
 </div>
 <div class="total-price">

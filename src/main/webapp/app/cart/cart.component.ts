@@ -57,6 +57,18 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
 
+  updateTotalPrice(): void {
+    this.totalPrice = 0;
+    const cart = Cart.getCart();
+    for (const item of cart.cartItems) {
+      const aliment = this.aliments.find(a => a.id === item.id);
+      if (aliment && aliment.price) {
+        this.totalPrice += aliment.price * item.qt;
+      }
+    }
+    console.log(`New totalPrice: ${this.totalPrice}`);
+  }
+
   scan(): boolean {
     const cart = Cart.getCart();
     let invalid = false;
@@ -80,5 +92,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onValidateButtonClick(): void {
     this.router.navigate(['payment']);
+  }
+
+  onQuantityChanged(): void {
+    this.updateTotalPrice();
   }
 }

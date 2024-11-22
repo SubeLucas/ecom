@@ -98,8 +98,6 @@ export class Cart {
         localStorage.setItem('cart', JSON.stringify(parsedCart));
       } else {
         const newItem = new CartItem(itemId, newQt);
-        //newItem.id = itemId;
-        //newItem.qt = newQt;
         this.addItem(newItem);
       }
     } catch (e) {
