@@ -1,3 +1,26 @@
 <p>payment works!</p>
 <button id="goto-cart" class="btn btn-primary" (click)="onButtonClick()" [routerLink]="['']">Back to cart</button>
-<button id="pay" class="btn btn-primary" (click)="onPayButtonClick()" [routerLink]="['']">Payer</button>
+<form (ngSubmit)="onPayButtonClick()">
+  <div class="form-group">
+    <label for="numCard">Numéro de carte</label>
+    <input
+      type="text"
+      required
+      minlength="16"
+      required
+      maxlength="16"
+      class="form-control"
+      id="numCard"
+      name="numCard"
+      [(ngModel)]="numCard"
+      #lambda="ngModel"
+    />
+    <div *ngIf="lambda.invalid && (lambda.dirty || lambda.touched)" class="alert alert-danger">
+      <div *ngIf="lambda.errors && lambda.errors.required">Ce champ est obligatoire.</div>
+      <div *ngIf="lambda.errors && lambda.errors.minlength">Le numéro doit être composé de 16 chiffres</div>
+    </div>
+  </div>
+  <div *ngIf="lambda.valid">
+    <button type="submit">Payer</button>
+  </div>
+</form>
