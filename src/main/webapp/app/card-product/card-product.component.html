@@ -2,15 +2,15 @@
 
 <div class="card-product" [ngClass]="inCart ? 'in-cart' : 'not-in-cart'">
   @if (!inCart) {
-    <!--<p class="type-saison" [ngClass]="product?.season != null ? isSeasonProduct(product.season) ? 'season' : 'not-season'">
-    {{ product?.season != null ? isSeasonProduct(product.season) ? 'De saison' : 'Hors saison' }}
-  </p>-->
+    <p class="type-saison" [ngClass]="product?.season != null && isSeasonProduct(product!.season) ? 'season' : 'not-season'">
+      {{ product?.season != null && isSeasonProduct(product!.season) ? 'De saison' : 'Hors saison' }}
+    </p>
 
     <div class="centered-infos">
       <img class="img-product" src="../../content/images/tomate.png" alt="tomate rouge" />
       <p class="title-product">{{ product?.name }}</p>
       <div class="weight-infos">
-        <p>{{ product?.weight }}</p>
+        <p>{{ 'poids:' + product?.weight + 'g' }}</p>
         <!--<p>{{ product?.price != null && product?.weight != null ? (product.price / product.weight) }}</p>-->
       </div>
     </div>
@@ -36,7 +36,7 @@
         <p class="origin-product">{{ product?.origin }}</p>
       </div>
       <div class="weight-infos-cart">
-        <p>{{ product?.weight }}</p>
+        <p>{{ 'poids:' + product?.weight + 'g' }}</p>
         <!--<p>{{ product?.price != null && product?.weight != null ? (product.price / product.weight) }}</p>-->
       </div>
     </div>

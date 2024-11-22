@@ -74,7 +74,8 @@ export class CardProductComponent {
     }
   }
 
-  isSeasonProduct(season: number): boolean {
-    return season === 32435;
+  isSeasonProduct(season: number | null | undefined): boolean {
+    if (season === null || undefined) return false;
+    return season === 16795;
   }
 }
