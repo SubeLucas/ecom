@@ -56,6 +56,9 @@ export class CardProductComponent {
   deleteArticleFromCart(): void {
     this.quantity = 0;
     this.updateTotalPriceProduct();
+    if (this.product) {
+      Cart.removeItem(this.product.id);
+    }
   }
 
   updateTotalPriceProduct(): void {

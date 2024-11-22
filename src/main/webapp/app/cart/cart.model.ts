@@ -96,6 +96,11 @@ export class Cart {
       }
       if (found) {
         localStorage.setItem('cart', JSON.stringify(parsedCart));
+      } else {
+        const newItem = new CartItem(itemId, newQt);
+        //newItem.id = itemId;
+        //newItem.qt = newQt;
+        this.addItem(newItem);
       }
     } catch (e) {
       console.error('Invalid JSON in localStorage:', e);
