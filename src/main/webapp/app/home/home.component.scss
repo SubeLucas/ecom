@@ -26,6 +26,7 @@ Main page styles
 .product-list {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .row {
@@ -33,19 +34,106 @@ Main page styles
 }
 
 .filters {
+  text-align: center;
   background-color: $parchment;
   border-radius: 25px;
-  padding: 1em;
+  padding: 0.8em 1em;
+  height: fit-content;
+  max-width: 300px;
 }
 
 .filter-top {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
+  margin-bottom: 0.8em;
+
+  & > button {
+    font-size: 0.9rem;
+  }
 }
 
 .filters p {
   font-weight: bold;
   font-size: 1.25rem;
   margin: 0;
+}
+
+.sort {
+  display: flex;
+  align-items: baseline;
+
+  #sort-select {
+    margin-inline: 0.5em;
+  }
+}
+
+button {
+  //font-size: 19px;
+
+  border-radius: 10px;
+  padding: 0.5em;
+  transition: 0.2s;
+}
+
+button:active {
+  position: relative;
+  top: 1px;
+}
+
+#apply-filters {
+  background-color: $yellow-green;
+  border: 1px solid $yellow-green;
+
+  &:hover {
+    background-color: $vanilla-green;
+  }
+
+  &:active {
+    background-color: $asparagus;
+  }
+}
+
+#remove-filters {
+  margin-top: 1em;
+  background-color: $rosy-brown;
+  border: 1px solid $rosy-brown;
+
+  &:hover {
+    background-color: $rosy-brown-hover;
+  }
+
+  &:active {
+    background-color: $bittersweet-shimmer;
+  }
+}
+
+.collapsible {
+  background-color: transparent;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  padding: 0;
+}
+
+.collapsible:after {
+  content: '▾';
+  float: right;
+  margin-left: 5px;
+}
+
+.filter-cat:has(> .show) {
+  .collapsible:after {
+    content: '▴';
+  }
+}
+
+.list-cb {
+  text-align: left;
+  margin: 0.4em 1em 0em;
+}
+
+hr {
+  margin-block: 0.8em;
 }

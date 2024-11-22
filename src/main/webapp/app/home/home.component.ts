@@ -10,6 +10,8 @@ import { Account } from 'app/core/auth/account.model';
 import { IAliment } from '../entities/aliment/aliment.model';
 import { AlimentService } from 'app/entities/aliment/service/aliment.service';
 
+//import { BreadcrumbModule } from 'primeng/breadcrumb';
+
 // temporary imports for cart validation tests
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
@@ -34,7 +36,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private item = new CartItem(0, 0);
   aliments: IAliment[] = [];
 
-  isCatCollapsed = signal(true);
+  isCatCollapsed = signal(false);
+  isSelected = false;
 
   constructor(
     private httpCart: CartService,
@@ -87,11 +90,31 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/cart']);
   }
 
-  isCollapse(): void {
-    this.router.navigate(['/cart']);
-  }
-
   toggleNavbar(): void {
     this.isCatCollapsed.update(isCatCollapsed => !isCatCollapsed);
+  }
+
+  onApplyFilters(): void {
+    //Récup ce qui est coché niveau catégories
+    const test = [];
+    const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
+    for (let i = 0; i < cbListElements.length; i++) {
+      if (cbListElements[i].checked) {
+        test.push(cbListElements[i].name);
+      }
+    }
+    //Récup ce qui est indiqué nv prix
+
+    //Appel apply
+    console.warn(test);
+  }
+
+  onRemoveFilters(): void {
+    //Supprimer coche catégories
+    const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
+    for (let i = 0; i < cbListElements.length; i++) {
+      cbListElements[i].checked = false;
+    }
+    //Réinit prix
   }
 }
