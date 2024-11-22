@@ -34,6 +34,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private item = new CartItem(0, 0);
   aliments: IAliment[] = [];
 
+  isCatCollapsed = signal(true);
+
   constructor(
     private httpCart: CartService,
     private httpAliment: AlimentService,
@@ -68,7 +70,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   onAddPommeButtonClick(): void {
-    this.item = new CartItem(4, 100);
+    this.item = new CartItem(4, 1);
     Cart.addItem(this.item);
   }
 
@@ -83,5 +85,13 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   onCartButtonClick(): void {
     this.router.navigate(['/cart']);
+  }
+
+  isCollapse(): void {
+    this.router.navigate(['/cart']);
+  }
+
+  toggleNavbar(): void {
+    this.isCatCollapsed.update(isCatCollapsed => !isCatCollapsed);
   }
 }
