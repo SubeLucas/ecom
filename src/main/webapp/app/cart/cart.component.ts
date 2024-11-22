@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 import { Cart } from './cart.model';
@@ -8,6 +8,7 @@ import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor } from '@angular/common';
 import { PDFService } from '../core/util/PDF.service';
 import { CartService } from '../cart/cart.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'jhi-cart',
@@ -16,21 +17,26 @@ import { CartService } from '../cart/cart.service';
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss',
 })
-export class CartComponent implements OnInit {
+export class CartComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   aliments: IAliment[] = [];
   stockMap = new Map<number, number>();
-
+  private cartSubscription: Subscription;
+  private cart: Cart;
   constructor(
     private http: AlimentService,
     private pdfService: PDFService,
     private httpCart: CartService,
-  ) {}
+  ) {
+    this.cartSubscription = Cart.getCartChangedObservable().subscribe(() => {
+      this.loadCartItems();
+    });
+    //this.cart = Cart.getCart();
+  }
 
   ngOnInit(): void {
-    const cart = Cart.getCart();
-
-    for (const item of cart.cartItems) {
+    this.cart = Cart.getCart();
+    for (const item of this.cart.cartItems) {
       this.http.find(item.id).subscribe(aliment => {
         if (aliment.body) {
           this.aliments.push(aliment.body);
@@ -45,10 +51,23 @@ export class CartComponent implements OnInit {
     this.scan();
   }
 
+  ngOnDestroy(): void {
+    this.cartSubscription.unsubscribe();
+  }
+
+  private loadCartItems(): void {
+    this.cart = Cart.getCart();
+  }
+
   scan(): boolean {
     const cart = Cart.getCart();
-    // attendre le composant IHM pour appeler cette fonction lorsque les boutons +/- sont cliqués
     let invalid = false;
+    // todo : pas sur de la condition du if là
+    if (!cart) {
+      console.log('Cart vide');
+      return true;
+    }
+    // attendre le composant IHM pour appeler cette fonction lorsque les boutons +/- sont cliqués
     for (const aliment of this.aliments) {
       const quantity = this.stockMap.get(aliment.id)!;
       if (aliment.stockQuantity! < quantity) {

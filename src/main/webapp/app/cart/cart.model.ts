@@ -1,4 +1,8 @@
+import { Subject } from 'rxjs';
+
 export class Cart {
+  private static cartChanged: Subject<void> = new Subject();
+
   constructor(public cartItems: CartItem[]) {}
 
   static isEmpty(): boolean {
@@ -109,6 +113,11 @@ export class Cart {
     } catch (e) {
       console.error('Invalid JSON in localStorage:', e);
     }
+    this.cartChanged.next();
+  }
+
+  static getCartChangedObservable(): Subject<void> {
+    return this.cartChanged;
   }
 }
 

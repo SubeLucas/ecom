@@ -1,6 +1,6 @@
 <div class="product-list">
-  <div *ngFor="let aliment of aliments">
-    <jhi-card-product [product]="aliment" [priceProduct]="aliment.price" [inCart]="true"></jhi-card-product>
+  <div *ngFor="let aliments of aliments">
+    <jhi-card-product [product]="aliments" [priceProduct]="aliments.price" [inCart]="true"></jhi-card-product>
   </div>
 </div>
 <button id="goto-home" class="btn btn-primary" (click)="onButtonClick()" [routerLink]="['']">Back to homepage</button>
