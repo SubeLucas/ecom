@@ -1,5 +1,5 @@
 id;name;origin;season;color;weight;stock_quantity;price
-1;Pomme;FRANCE;31325;RED;200;150;0.80
+1;Pomme;FRANCE;31325;RED;200;10;0.80
 3;Banane;ESPAGNE;32435;YELLOW;170;224;0.40
 2;Carotte;ITALIE;13593;ORANGE;125;82;0.16
 5;Fraise;ESPAGNE;4967;RED;15;314;0.28
