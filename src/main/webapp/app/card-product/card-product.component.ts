@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { IAliment } from 'app/entities/aliment/aliment.model';
 
 @Component({
   selector: 'jhi-card-product',
@@ -9,17 +10,14 @@ import { Component } from '@angular/core';
   styleUrl: './card-product.component.scss',
 })
 export class CardProductComponent {
-  titleProduct = 'Tomate';
-  weightProduct = '0,99g';
-  priceKiloProduct = '6,78€/kg';
-  originProduct = 'France';
-  priceProduct = 1.8;
-  isSeasonProduct = false;
+  @Input() priceProduct!: number | null | undefined;
+  @Input() product: IAliment | undefined;
+  @Input() inCart: boolean | undefined;
+
   quantity = 2;
   maxQuantity = 99;
-  inCart = true;
 
-  totalPriceProduct = this.quantity * this.priceProduct;
+  totalPriceProduct = this.quantity * this.priceProduct!;
 
   minusQuantity(): void {
     if (this.quantity !== 0) {
@@ -41,7 +39,7 @@ export class CardProductComponent {
   }
 
   updateTotalPriceProduct(): void {
-    this.totalPriceProduct = this.quantity * this.priceProduct;
+    this.totalPriceProduct = this.quantity * this.priceProduct!;
   }
 
   onInputChange(event: Event): void {
@@ -74,5 +72,9 @@ export class CardProductComponent {
         element.value = this.quantity.toString();
       }
     }
+  }
+
+  isSeasonProduct(season: number): boolean {
+    return season === 32435;
   }
 }

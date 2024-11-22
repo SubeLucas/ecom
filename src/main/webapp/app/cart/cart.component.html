@@ -1,8 +1,8 @@
-<p>cart works!</p>
-<jhi-card-product></jhi-card-product>
-<jhi-card-product></jhi-card-product>
-<jhi-card-product></jhi-card-product>
-<jhi-card-product></jhi-card-product>
+<div class="product-list">
+  <div *ngFor="let aliment of aliments">
+    <jhi-card-product [product]="aliment" [priceProduct]="aliment.price" [inCart]="true"></jhi-card-product>
+  </div>
+</div>
 <button id="goto-home" class="btn btn-primary" (click)="onButtonClick()" [routerLink]="['']">Back to homepage</button>
 <button id="validate-cart" class="btn btn-primary" [class.btn-secondary]="scan()" [disabled]="scan()" (click)="onValidateButtonClick()">
   Validate Cart

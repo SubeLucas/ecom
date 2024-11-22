@@ -4,20 +4,21 @@ import { Router, RouterModule } from '@angular/router';
 import { Cart } from './cart.model';
 import { AlimentService } from '../entities/aliment/service/aliment.service';
 import { CardProductComponent } from '../card-product/card-product.component';
+import { IAliment } from 'app/entities/aliment/aliment.model';
+import { NgFor } from '@angular/common';
 import { PDFService } from '../core/util/PDF.service';
 import { CartService } from '../cart/cart.service';
-
 @Component({
   selector: 'jhi-cart',
   standalone: true,
-  imports: [RouterModule, CardProductComponent],
+  imports: [RouterModule, CardProductComponent, NgFor],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss',
 })
 export class CartComponent implements OnInit {
   private router = inject(Router);
-  private cart = new Cart([]);
-  private stockMap = new Map<number, number>();
+  aliments: IAliment[] = [];
+  stockMap = new Map<number, number>();
 
   constructor(
     private http: AlimentService,
@@ -26,24 +27,29 @@ export class CartComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cart = Cart.getCart();
+    const cart = Cart.getCart();
 
-    for (const item of this.cart.cartItems) {
-      this.http.getStock(item.id).subscribe(quantity => {
-        this.stockMap.set(item.id, quantity.body != null ? quantity.body : -1);
+    for (const item of cart.cartItems) {
+      this.http.find(item.id).subscribe(aliment => {
+        if (aliment.body) {
+          this.aliments.push(aliment.body);
+          this.stockMap.set(item.id, item.qt);
+        } else console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
       });
     }
 
-    console.log(this.stockMap);
+    console.log(this.aliments);
     this.scan();
   }
 
   scan(): boolean {
+    const cart = Cart.getCart();
     // attendre le composant IHM pour appeler cette fonction lorsque les boutons +/- sont cliqués
     let invalid = false;
-    for (const item of this.cart.cartItems) {
-      if (item.qt > this.stockMap.get(item.id)!) {
-        console.log('Item id ' + item.id.toString() + " n'a plus que " + this.stockMap.get(item.id)!.toString() + ' exemplaires en stock');
+    for (const aliment of this.aliments) {
+      const quantity = this.stockMap.get(aliment.id)!;
+      if (aliment.stockQuantity! < quantity) {
+        console.log(`Aliment d'id ${aliment.id} n'a plus que ${aliment.stockQuantity} exemplaires en stock`);
         invalid = true;
       }
     }
@@ -56,6 +62,8 @@ export class CartComponent implements OnInit {
   }
 
   onValidateButtonClick(): void {
+    // placeholder, envoyer le panier au backend dès maintenant
+    // plus tard, naviguer vers la page suivante
     // placeholder, envoyer le panier au backend dès maintenant
     // plus tard, naviguer vers la page suivante
     this.httpCart.validate(Cart.getCart()).subscribe(success => {

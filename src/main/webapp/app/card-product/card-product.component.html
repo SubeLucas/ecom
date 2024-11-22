@@ -2,21 +2,21 @@
 
 <div class="card-product" [ngClass]="inCart ? 'in-cart' : 'not-in-cart'">
   @if (!inCart) {
-    <p class="type-saison" [ngClass]="isSeasonProduct ? 'season' : 'not-season'">
-      {{ isSeasonProduct ? 'De saison' : 'Hors saison' }}
-    </p>
+    <!--<p class="type-saison" [ngClass]="product?.season != null ? isSeasonProduct(product.season) ? 'season' : 'not-season'">
+    {{ product?.season != null ? isSeasonProduct(product.season) ? 'De saison' : 'Hors saison' }}
+  </p>-->
 
     <div class="centered-infos">
       <img class="img-product" src="../../content/images/tomate.png" alt="tomate rouge" />
-      <p class="title-product">{{ titleProduct }}</p>
+      <p class="title-product">{{ product?.name }}</p>
       <div class="weight-infos">
-        <p>{{ weightProduct }}</p>
-        <p>{{ priceKiloProduct }}</p>
+        <p>{{ product?.weight }}</p>
+        <!--<p>{{ product?.price != null && product?.weight != null ? (product.price / product.weight) }}</p>-->
       </div>
     </div>
-    <p class="origin-product">{{ originProduct }}</p>
+    <p class="origin-product">{{ product?.origin }}</p>
     <div class="centered-infos div-cart">
-      <p class="price-product">{{ priceProduct.toFixed(2).replace('.', ',') }}€</p>
+      <p class="price-product">{{ priceProduct!.toFixed(2).replace('.', ',') }}€</p>
       @if (quantity == 0) {
         <button class="add-cart-btn" (click)="plusQuantity()">Panier</button>
       } @else {
@@ -32,12 +32,12 @@
     <div class="main-infos">
       <img class="img-product-cart" src="../../content/images/tomate.png" alt="tomate rouge" />
       <div class="title-origin-infos">
-        <p class="title-product">{{ titleProduct }}</p>
-        <p class="origin-product">{{ originProduct }}</p>
+        <p class="title-product">{{ product?.name }}</p>
+        <p class="origin-product">{{ product?.origin }}</p>
       </div>
       <div class="weight-infos-cart">
-        <p>{{ weightProduct }}</p>
-        <p>{{ priceKiloProduct }}</p>
+        <p>{{ product?.weight }}</p>
+        <!--<p>{{ product?.price != null && product?.weight != null ? (product.price / product.weight) }}</p>-->
       </div>
     </div>
 
