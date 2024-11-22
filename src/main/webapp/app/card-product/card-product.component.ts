@@ -86,6 +86,9 @@ export class CardProductComponent {
         inputEvtType === 'insertFromDrop')
     ) {
       this.quantity = +el.value;
+      if (this.product) {
+        Cart.setItemQuantity(this.product.id, this.quantity);
+      }
       this.updateTotalPriceProduct();
       this.quantityChanged.emit();
     }
