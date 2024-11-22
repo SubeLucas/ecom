@@ -6,12 +6,9 @@ import { AlimentService } from '../entities/aliment/service/aliment.service';
 import { CardProductComponent } from '../card-product/card-product.component';
 import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor } from '@angular/common';
-<<<<<<< HEAD
 import { PDFService } from '../core/util/PDF.service';
 import { CartService } from '../cart/cart.service';
-=======
 
->>>>>>> 435a756 (Affichage des produits présents dans le panier)
 @Component({
   selector: 'jhi-cart',
   standalone: true,

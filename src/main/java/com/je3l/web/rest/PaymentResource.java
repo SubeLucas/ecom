@@ -20,12 +20,12 @@ public class PaymentResource {
     public boolean getAllPublicUsers(@Valid @RequestBody String cardNumber) throws URISyntaxException {
         int sum = 0;
         int parity = cardNumber.length() % 2;
-        int last_digit = cardNumber[cardNumber.length() - 1] - '0';
+        int last_digit = cardNumber.charAt(cardNumber.length() - 1) - '0';
         if (last_digit > 9 || last_digit < 0) {
             return false;
         }
         for (int i = 0; i < cardNumber.length() - 1; i++) {
-            int digit = cardNumber[i] - '0';
+            int digit = cardNumber.charAt(i) - '0';
             if (digit > 9 || digit < 0) {
                 return false;
             }
