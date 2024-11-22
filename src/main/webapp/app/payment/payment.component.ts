@@ -32,7 +32,7 @@ export class PaymentComponent {
       if (order > 0) {
         console.log('Panier accepté, order n°', order);
         // TODO envoyer le numéro de carte du formulaire
-        this.httpPayment.pay('515512345678910').subscribe(success => {
+        this.httpPayment.pay('5155123456789108').subscribe(success => {
           if (success) {
             console.log('Numéro de carte accepté');
             this.pdfService.generatePDF(order);
