@@ -6,8 +6,6 @@ import { AlimentService } from '../entities/aliment/service/aliment.service';
 import { CardProductComponent } from '../card-product/card-product.component';
 import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor } from '@angular/common';
-import { PDFService } from '../core/util/PDF.service';
-import { CartService } from '../cart/cart.service';
 
 @Component({
   selector: 'jhi-cart',
@@ -21,11 +19,7 @@ export class CartComponent implements OnInit {
   aliments: IAliment[] = [];
   stockMap = new Map<number, number>();
 
-  constructor(
-    private http: AlimentService,
-    private pdfService: PDFService,
-    private httpCart: CartService,
-  ) {}
+  constructor(private http: AlimentService) {}
 
   ngOnInit(): void {
     const cart = Cart.getCart();
@@ -65,17 +59,6 @@ export class CartComponent implements OnInit {
   }
 
   onValidateButtonClick(): void {
-    // placeholder, envoyer le panier au backend dès maintenant
-    // plus tard, naviguer vers la page suivante
-    // placeholder, envoyer le panier au backend dès maintenant
-    // plus tard, naviguer vers la page suivante
-    this.httpCart.validate(Cart.getCart()).subscribe(success => {
-      //console.log('Validate cart : ' + JSON.stringify(Cart));
-      if (success > 0) {
-        console.log(success);
-        this.pdfService.generatePDF(success);
-      }
-      // else page d'erreur
-    });
+    this.router.navigate(['payment']);
   }
 }
