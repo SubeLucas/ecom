@@ -34,7 +34,9 @@ export class CartComponent implements OnInit {
         if (aliment.body) {
           this.aliments.push(aliment.body);
           this.stockMap.set(item.id, item.qt);
-        } else console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
+        } else {
+          console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
+        }
       });
     }
 

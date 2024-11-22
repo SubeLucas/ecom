@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { IAliment } from 'app/entities/aliment/aliment.model';
+import { Cart } from '../cart/cart.model';
 
 @Component({
   selector: 'jhi-card-product',
@@ -14,15 +15,31 @@ export class CardProductComponent {
   @Input() product: IAliment | undefined;
   @Input() inCart: boolean | undefined;
 
-  quantity = 2;
+  quantity = -1;
   maxQuantity = 99;
 
   totalPriceProduct = this.quantity * this.priceProduct!;
+  ngOnInit(): void {
+    const cart = Cart.getCart();
+    if (this.product) {
+      this.quantity = Cart.getItemQuantity(this.product.id);
+    }
+    if (this.quantity > this.maxQuantity) {
+      this.quantity = this.maxQuantity;
+    }
+    this.updateTotalPriceProduct();
+  }
 
   minusQuantity(): void {
     if (this.quantity !== 0) {
       this.quantity--;
       this.updateTotalPriceProduct();
+      if (this.product) {
+        Cart.setItemQuantity(this.product.id, this.quantity);
+        if (this.quantity === 0) {
+          Cart.removeItem(this.product.id);
+        }
+      }
     }
   }
 
@@ -30,6 +47,9 @@ export class CardProductComponent {
     if (this.quantity !== this.maxQuantity) {
       this.quantity++;
       this.updateTotalPriceProduct();
+      if (this.product) {
+        Cart.setItemQuantity(this.product.id, this.quantity);
+      }
     }
   }
 

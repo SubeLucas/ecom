@@ -54,6 +54,62 @@ export class Cart {
     // sauvegarder le panier modifié
     localStorage.setItem('cart', JSON.stringify(data));
   }
+
+  static getItemQuantity(itemId: number): number {
+    const cart = localStorage.getItem('cart');
+    if (!cart) {
+      return 0;
+    }
+    try {
+      const parsedCart = JSON.parse(cart) as CartItem[];
+      for (const cartItem of parsedCart) {
+        if (cartItem.id === itemId) {
+          return cartItem.qt;
+        }
+      }
+      return 0; // Si l'élément n'est pas trouvé
+    } catch (e) {
+      console.error('Invalid JSON in localStorage:', e);
+      return 0;
+    }
+  }
+
+  static setItemQuantity(itemId: number, newQt: number): void {
+    const cart = localStorage.getItem('cart');
+    if (!cart) {
+      return;
+    }
+    try {
+      const parsedCart = JSON.parse(cart) as CartItem[];
+      let found = false;
+      for (const cartItem of parsedCart) {
+        if (cartItem.id === itemId) {
+          cartItem.qt = newQt;
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        localStorage.setItem('cart', JSON.stringify(parsedCart));
+      }
+    } catch (e) {
+      console.error('Invalid JSON in localStorage:', e);
+    }
+  }
+
+  static removeItem(itemId: number): void {
+    const cart = localStorage.getItem('cart');
+    if (!cart) {
+      return;
+    }
+    try {
+      const parsedCart = JSON.parse(cart) as CartItem[];
+      const updatedCart = parsedCart.filter(cartItem => cartItem.id !== itemId);
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+    } catch (e) {
+      console.error('Invalid JSON in localStorage:', e);
+    }
+  }
 }
 
 export class CartItem {
