@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 
 export class Cart {
-  private static cartChanged: Subject<void> = new Subject();
+  private static cartChanged: Subject<void> = new Subject<void>();
 
   constructor(public cartItems: CartItem[]) {}
 
@@ -57,6 +57,7 @@ export class Cart {
 
     // sauvegarder le panier modifié
     localStorage.setItem('cart', JSON.stringify(data));
+    //this.cartChanged.next();
   }
 
   static getItemQuantity(itemId: number): number {
@@ -98,6 +99,9 @@ export class Cart {
       }
     } catch (e) {
       console.error('Invalid JSON in localStorage:', e);
+    }
+    if (newQt === 0) {
+      this.cartChanged.next();
     }
   }
 

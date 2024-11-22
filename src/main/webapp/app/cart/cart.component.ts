@@ -6,8 +6,6 @@ import { AlimentService } from '../entities/aliment/service/aliment.service';
 import { CardProductComponent } from '../card-product/card-product.component';
 import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor } from '@angular/common';
-import { PDFService } from '../core/util/PDF.service';
-import { CartService } from '../cart/cart.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -23,15 +21,11 @@ export class CartComponent implements OnInit, OnDestroy {
   stockMap = new Map<number, number>();
   private cartSubscription: Subscription;
   private cart: Cart;
-  constructor(
-    private http: AlimentService,
-    private pdfService: PDFService,
-    private httpCart: CartService,
-  ) {
+  constructor(private http: AlimentService) {
     this.cartSubscription = Cart.getCartChangedObservable().subscribe(() => {
       this.loadCartItems();
     });
-    //this.cart = Cart.getCart();
+    this.cart = Cart.getCart();
   }
 
   ngOnInit(): void {
@@ -56,7 +50,19 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   private loadCartItems(): void {
+    this.aliments = [];
+    this.stockMap.clear();
     this.cart = Cart.getCart();
+    for (const item of this.cart.cartItems) {
+      this.http.find(item.id).subscribe(aliment => {
+        if (aliment.body) {
+          this.aliments.push(aliment.body);
+          this.stockMap.set(item.id, item.qt);
+        } else {
+          console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
+        }
+      });
+    }
   }
 
   scan(): boolean {
@@ -68,7 +74,6 @@ export class CartComponent implements OnInit, OnDestroy {
       return true;
     }
     // attendre le composant IHM pour appeler cette fonction lorsque les boutons +/- sont cliqués
-    let invalid = false;
     for (const aliment of this.aliments) {
       const quantity = this.stockMap.get(aliment.id)!;
       if (aliment.stockQuantity! < quantity) {
