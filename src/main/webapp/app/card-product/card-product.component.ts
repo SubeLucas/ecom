@@ -12,7 +12,14 @@ import { IAliment } from 'app/entities/aliment/aliment.model';
 export class CardProductComponent {
   @Input() priceProduct!: number | null | undefined;
   @Input() product: IAliment | undefined;
+<<<<<<< HEAD
+<<<<<<< HEAD
   @Input() inCart: boolean | undefined;
+=======
+>>>>>>> 86cf773 (petite modification)
+=======
+  @Input() inCart: boolean | undefined;
+>>>>>>> 4d50a73 (Affichage produits panier en mode cart)
 
   quantity = 2;
   maxQuantity = 99;
