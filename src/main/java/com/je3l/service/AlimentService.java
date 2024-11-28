@@ -52,11 +52,38 @@ public class AlimentService {
                 return removeFromStock(alimentId, nbProduct);
             } catch (OptimisticLockException e) {
                 // On recommence la transaction
-                LOG.warn("OptimisticLockException occurred, retrying...", e);
+                LOG.warn("decStock : OptimisticLockException occurred, retrying...", e);
                 attempt++;
             }
         }
         // Trop d’essais, on abandonne
         return false;
+    }
+
+    @Transactional
+    public boolean incStock(Long alimentId, int nbProduct) {
+        int attempt = 0;
+        while (attempt < 3) {
+            try {
+                return addToStock(alimentId, nbProduct);
+            } catch (OptimisticLockException e) {
+                // On recommence la transaction
+                LOG.warn("incStock : OptimisticLockException occurred, retrying...", e);
+                attempt++;
+            }
+        }
+        // Trop d’essais, on abandonne
+        return false;
+    }
+
+    @Transactional
+    public boolean addToStock(Long id, int n) {
+        Aliment a = entityManager.find(Aliment.class, id, LockModeType.WRITE);
+        if (a == null) {
+            return false;
+        }
+        a.setStockQuantity(a.getStockQuantity() + n);
+        alimentRepository.save(a);
+        return true;
     }
 }

@@ -79,6 +79,10 @@ export class ClientOrderService {
     return o1 && o2 ? this.getClientOrderIdentifier(o1) === this.getClientOrderIdentifier(o2) : o1 === o2;
   }
 
+  cancel(id: number): Observable<HttpResponse<{}>> {
+    return this.http.post<{}>(`${this.resourceUrl}/${id}/delete`, {}, { observe: 'response' });
+  }
+
   addClientOrderToCollectionIfMissing<Type extends Pick<IClientOrder, 'id'>>(
     clientOrderCollection: Type[],
     ...clientOrdersToCheck: (Type | null | undefined)[]
