@@ -91,7 +91,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   onValidateButtonClick(): void {
-    this.router.navigate(['payment']);
+    this.router.navigate(['delivery']);
   }
 
   onQuantityChanged(): void {

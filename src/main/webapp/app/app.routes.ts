@@ -38,6 +38,10 @@ const routes: Routes = [
     loadComponent: () => import('./cart/cart.component').then(({ CartComponent }) => CartComponent),
   },
   {
+    path: 'delivery',
+    loadComponent: () => import('./delivery/delivery.component').then(({ DeliveryComponent }) => DeliveryComponent),
+  },
+  {
     path: 'payment',
     loadComponent: () => import('./payment/payment.component').then(({ PaymentComponent }) => PaymentComponent),
   },
