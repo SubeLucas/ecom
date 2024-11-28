@@ -1,5 +1,3 @@
-<p>card-product works!</p>
-
 <div class="card-product" [ngClass]="inCart ? 'in-cart' : 'not-in-cart'">
   @if (!inCart) {
     <p class="type-saison" [ngClass]="product?.season != null && isSeasonProduct(product!.season) ? 'season' : 'not-season'">
