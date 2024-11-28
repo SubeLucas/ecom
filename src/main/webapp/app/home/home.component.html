@@ -33,8 +33,8 @@
   <div class="col-md-9">
     <div class="sort">
       <p>Trier par :</p>
-      <select id="sort-select">
-        <option value="default">Défaut</option>
+      <select id="sort-select" (change)="onSortChange($event)">
+        <option value="default"></option>
         <option value="ordered_price">Prix croissant</option>
         <option value="unordered_price">Prix décroissant</option>
         <option value="alpha">Ordre alphabétique</option>

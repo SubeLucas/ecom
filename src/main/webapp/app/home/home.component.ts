@@ -151,12 +151,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
     }
     //Appel apply
-    for (const aliment of this.aliments) {
-      console.log(aliment.name);
-    }
-    for (const aliment of this.kindFilteredAliments) {
-      console.log(aliment.name);
-    }
     console.warn(kindChosen);
   }
 
@@ -168,5 +162,46 @@ export default class HomeComponent implements OnInit, OnDestroy {
     }
     //Réinit prix
     this.kindFilteredAliments = [];
+  }
+
+  onSortChange(event: Event): void {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+
+    switch (selectedValue) {
+      case 'ordered_price':
+        if (this.kindFilteredAliments.length > 0) {
+          this.kindFilteredAliments = this.kindFilteredAliments
+            .filter(aliment => aliment.price != null)
+            .sort((a, b) => a.price! - b.price!);
+        } else if (this.filteredAliments.length > 0) {
+          this.filteredAliments = this.filteredAliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
+        } else {
+          this.aliments = this.aliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
+        }
+        break;
+      case 'unordered_price':
+        if (this.kindFilteredAliments.length > 0) {
+          this.kindFilteredAliments = this.kindFilteredAliments
+            .filter(aliment => aliment.price != null)
+            .sort((a, b) => b.price! - a.price!);
+        } else if (this.filteredAliments.length > 0) {
+          this.filteredAliments = this.filteredAliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
+        } else {
+          this.aliments = this.aliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
+        }
+        break;
+      case 'alpha':
+        if (this.kindFilteredAliments.length > 0) {
+          this.kindFilteredAliments = this.kindFilteredAliments
+            .filter(aliment => aliment.name != null)
+            .sort((a, b) => a.name!.localeCompare(b.name!));
+        } else if (this.filteredAliments.length > 0) {
+          this.filteredAliments = this.filteredAliments
+            .filter(aliment => aliment.name != null)
+            .sort((a, b) => a.name!.localeCompare(b.name!));
+        } else {
+          this.aliments = this.aliments.filter(aliment => aliment.name != null).sort((a, b) => a.name!.localeCompare(b.name!));
+        }
+    }
   }
 }
