@@ -5,7 +5,7 @@
     </p>
 
     <div class="centered-infos">
-      <img class="img-product" src="../../content/images/tomate.png" alt="tomate rouge" />
+      <img [src]="getImageUrl()" alt="{{ product?.name }}" class="img-product" />
       <p class="title-product">{{ product?.name }}</p>
       <div class="weight-infos">
         <p>{{ 'poids:' + product?.weight + 'g' }}</p>
