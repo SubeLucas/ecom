@@ -17,7 +17,10 @@ public class PaymentResource {
     // 5155 1234 5678 9108 mastercard valid
     // 5155 1233 5678 9108 mastercard invalid
     @PostMapping("")
-    public boolean getAllPublicUsers(@Valid @RequestBody String cardNumber) throws URISyntaxException {
+    public boolean verifyCreditCard(@Valid @RequestBody String cardNumber) throws URISyntaxException {
+        if (cardNumber.length() != 16) {
+            return false;
+        }
         int sum = 0;
         int parity = cardNumber.length() % 2;
         int last_digit = cardNumber.charAt(cardNumber.length() - 1) - '0';
