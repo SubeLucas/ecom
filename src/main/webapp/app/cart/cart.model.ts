@@ -126,6 +126,11 @@ export class Cart {
   static getCartChangedObservable(): Subject<void> {
     return this.cartChanged;
   }
+
+  static clearCart(): void {
+    localStorage.setItem('cart', JSON.stringify([]));
+    this.cartChanged.next();
+  }
 }
 
 export class CartItem {

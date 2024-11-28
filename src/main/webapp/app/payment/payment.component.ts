@@ -40,6 +40,7 @@ export class PaymentComponent {
           if (success) {
             console.log('Numéro de carte accepté');
             this.pdfService.generatePDF(order);
+            Cart.clearCart();
           } else {
             console.log('Numéro de carte refusé');
             // TODO notifier au backend que la commande doit etre CANCELLED
