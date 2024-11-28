@@ -66,6 +66,7 @@ public class SecurityConfiguration {
                 authz
                     .requestMatchers(mvc.pattern("/index.html"), mvc.pattern("/*.js"), mvc.pattern("/*.txt"), mvc.pattern("/*.json"), mvc.pattern("/*.map"), mvc.pattern("/*.css")).permitAll()
                     .requestMatchers(mvc.pattern("/*.ico"), mvc.pattern("/*.png"), mvc.pattern("/*.svg"), mvc.pattern("/*.webapp")).permitAll()
+                    .requestMatchers(mvc.pattern("/delivery")).authenticated()
                     .requestMatchers(mvc.pattern("/app/**")).permitAll()
                     .requestMatchers(mvc.pattern("/i18n/**")).permitAll()
                     .requestMatchers(mvc.pattern("/content/**")).permitAll()
@@ -76,6 +77,9 @@ public class SecurityConfiguration {
                     .requestMatchers(mvc.pattern("/api/cart/add")).permitAll()
                     .requestMatchers(mvc.pattern("/api/cart/delete")).permitAll()
                     .requestMatchers(mvc.pattern("/api/cart")).permitAll()
+                    .requestMatchers(mvc.pattern("/api/account")).permitAll()
+                    .requestMatchers(mvc.pattern("/api/aliments")).permitAll()
+                    .requestMatchers(mvc.pattern("/api/aliments/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/aliments/colors/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/register")).permitAll()
                     .requestMatchers(mvc.pattern("/api/activate")).permitAll()

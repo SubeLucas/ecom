@@ -13,7 +13,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    loadComponent: () => import('./layouts/navbar/navbar.component'),
+    loadComponent: () => import('./layouts/my-navbar/my-navbar.component'),
     outlet: 'navbar',
   },
   {
@@ -36,6 +36,10 @@ const routes: Routes = [
   {
     path: 'cart',
     loadComponent: () => import('./cart/cart.component').then(({ CartComponent }) => CartComponent),
+  },
+  {
+    path: 'delivery',
+    loadComponent: () => import('./delivery/delivery.component').then(({ DeliveryComponent }) => DeliveryComponent),
   },
   {
     path: 'payment',
