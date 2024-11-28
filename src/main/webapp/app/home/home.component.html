@@ -1,5 +1,7 @@
 <div class="row">
-  <nav>ariane</nav>
+  <nav>
+    <p-breadcrumb [model]="breadcrumbItems"></p-breadcrumb>
+  </nav>
 
   <!--col-md-3 met au bon endroit par rapport au contente de la page-->
   <aside class="col-md-3 filters">
@@ -12,13 +14,15 @@
     <div class="filter-cat">
       <button class="collapsible" (click)="toggleNavbar()">Catégories</button>
       <div class="list-cb" [ngbCollapse]="isCatCollapsed()">
-        <div>
-          <input class="cb-cat" type="checkbox" name="cb-fruit" id="cb-fruit" />
-          <label for="cb-fruit">Fruits</label>
-        </div>
-        <div>
-          <input class="cb-cat" type="checkbox" name="cb-vegetable" id="cb-vegetable" [checked]="isSelected" />
-          <label for="cb-vegetable">Légumes</label>
+        <div *ngFor="let category of categories">
+          <input
+            class="cb-cat"
+            type="checkbox"
+            [id]="category.concat('-cb')"
+            [name]="category"
+            [checked]="selectedCategories.includes(category)"
+          />
+          <label [for]="category.concat('-cb')">{{ category }}</label>
         </div>
       </div>
     </div>
