@@ -1,5 +1,5 @@
 <div class="row">
-  <nav>fil d'ariane</nav>
+  <nav>ariane</nav>
 
   <!--col-md-3 met au bon endroit par rapport au contente de la page-->
   <div class="search-bar">
@@ -10,31 +10,37 @@
   <aside class="col-md-3 filters">
     <div class="filter-top">
       <p>Filtres</p>
-      <button id="apply-filters">Appliquer</button>
+      <button id="apply-filters" (click)="onApplyFilters()">Appliquer</button>
     </div>
 
     <hr />
     <div class="filter-cat">
       <button class="collapsible" (click)="toggleNavbar()">Catégories</button>
-      <div [ngbCollapse]="isCatCollapsed()">
+      <div class="list-cb" [ngbCollapse]="isCatCollapsed()">
         <div>
-          <input type="checkbox" name="cb-fruit" id="cb-fruit" />
+          <input class="cb-cat" type="checkbox" name="cb-fruit" id="cb-fruit" />
           <label for="cb-fruit">Fruits</label>
         </div>
         <div>
-          <input type="checkbox" name="cb-vegetable" id="cb-vegetable" />
+          <input class="cb-cat" type="checkbox" name="cb-vegetable" id="cb-vegetable" [checked]="isSelected" />
           <label for="cb-vegetable">Légumes</label>
         </div>
       </div>
     </div>
-    <button id="remove-filters">Retirer les filtres</button>
+    <button id="remove-filters" (click)="onRemoveFilters()">Retirer les filtres</button>
   </aside>
 
   <div class="col-md-9">
     <div class="sort">
       <p>Trier par :</p>
-      <p>Ici toggle tri</p>
+      <select id="sort-select">
+        <option value="default">Défaut</option>
+        <option value="ordered_price">Prix croissant</option>
+        <option value="unordered_price">Prix décroissant</option>
+        <option value="alpha">Ordre alphabétique</option>
+      </select>
     </div>
+    <!--
     <div>
       @if (account() !== null) {
         <div class="alert alert-success">
@@ -60,7 +66,7 @@
         </div>
       }
     </div>
-
+  -->
     <!-- temporary button for cart validation tests -->
     <button
       id="validate-cart"

@@ -38,6 +38,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   searchKeyword = '';
 
   isCatCollapsed = signal(true);
+  isSelected = false;
 
   constructor(
     private httpCart: CartService,
