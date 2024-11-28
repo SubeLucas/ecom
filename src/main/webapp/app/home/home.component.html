@@ -85,7 +85,11 @@
 
     <button id="goto-cart" class="btn btn-primary" (click)="onCartButtonClick()" [routerLink]="['/cart']">Go to cart</button>
     <div class="product-list">
-      <div *ngFor="let aliment of filteredAliments.length > 0 ? filteredAliments : aliments">
+      <div
+        *ngFor="
+          let aliment of kindFilteredAliments.length > 0 ? kindFilteredAliments : filteredAliments.length > 0 ? filteredAliments : aliments
+        "
+      >
         <li>{{ aliment.name }}</li>
         <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
       </div>

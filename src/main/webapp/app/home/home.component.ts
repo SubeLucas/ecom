@@ -35,6 +35,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private item = new CartItem(0, 0);
   aliments: IAliment[] = [];
   filteredAliments: IAliment[] = [];
+  kindFilteredAliments: IAliment[] = [];
   searchKeyword = '';
 
   isCatCollapsed = signal(true);
@@ -102,7 +103,13 @@ export default class HomeComponent implements OnInit, OnDestroy {
   onSearch(): void {
     const keyword = this.searchKeyword.trim().toLowerCase();
     if (keyword) {
-      this.filteredAliments = this.aliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
+      if (this.kindFilteredAliments.length > 0) {
+        this.kindFilteredAliments = this.kindFilteredAliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
+        if (this.kindFilteredAliments.length == 0) alert('Aucune produit trouvé !');
+      } else {
+        this.filteredAliments = this.aliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
+        if (this.filteredAliments.length == 0) alert('Aucune produit trouvé !');
+      }
     } else {
       this.filteredAliments = this.aliments;
     }
@@ -110,17 +117,47 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   onApplyFilters(): void {
     //Récup ce qui est coché niveau catégories
-    const test = [];
+    this.kindFilteredAliments = [];
+    const kindChosen = [];
     const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
     for (let i = 0; i < cbListElements.length; i++) {
       if (cbListElements[i].checked) {
-        test.push(cbListElements[i].name);
+        kindChosen.push(cbListElements[i].name);
       }
     }
     //Récup ce qui est indiqué nv prix
-
+    for (const kind of kindChosen) {
+      if (kind === 'cb-fruit') {
+        if (this.filteredAliments.length > 0) {
+          for (const aliment of this.filteredAliments) {
+            if (aliment.id % 2 == 1) this.kindFilteredAliments.push(aliment);
+          }
+        } else {
+          for (const aliment of this.aliments) {
+            if (aliment.id % 2 == 1) this.kindFilteredAliments.push(aliment);
+          }
+        }
+      }
+      if (kind === 'cb-vegetable') {
+        if (this.filteredAliments.length > 0) {
+          for (const aliment of this.filteredAliments) {
+            if (aliment.id % 2 == 0) this.kindFilteredAliments.push(aliment);
+          }
+        } else {
+          for (const aliment of this.aliments) {
+            if (aliment.id % 2 == 0) this.kindFilteredAliments.push(aliment);
+          }
+        }
+      }
+    }
     //Appel apply
-    console.warn(test);
+    for (const aliment of this.aliments) {
+      console.log(aliment.name);
+    }
+    for (const aliment of this.kindFilteredAliments) {
+      console.log(aliment.name);
+    }
+    console.warn(kindChosen);
   }
 
   onRemoveFilters(): void {
@@ -130,5 +167,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       cbListElements[i].checked = false;
     }
     //Réinit prix
+    this.kindFilteredAliments = [];
   }
 }
