@@ -67,6 +67,17 @@ public class OrderService {
         return clientOrderRepository.save(co);
     }
 
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        Optional<ClientOrder> co = clientOrderRepository.findById(orderId);
+        ClientOrder order = co.orElseThrow(() -> new RuntimeException("cancelOrder : Order not found: " + orderId));
+        order.setStatus(EnumStatus.CANCELLED);
+        for (OrderLine ol : order.getOrderLines()) {
+            alimentService.incStock(ol.getAliment().getId(), ol.getQuantity());
+        }
+        clientOrderRepository.save(order);
+    }
+
     public List<ClientOrder> getClientHistory() {
         return clientOrderRepository.findClientHistory();
     }

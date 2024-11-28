@@ -11,7 +11,7 @@
 <div class="total-price">
   <p>Total Price: {{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
 </div>
-<button id="goto-home" class="btn btn-primary" (click)="onButtonClick()" [routerLink]="['']">Back to homepage</button>
+<button id="goto-home" class="btn btn-primary" (click)="onButtonClick()" [routerLink]="['']">Catalogue</button>
 <button id="validate-cart" class="btn btn-primary" [class.btn-secondary]="scan()" [disabled]="scan()" (click)="onValidateButtonClick()">
-  Validate Cart
+  Valider mon panier
 </button>

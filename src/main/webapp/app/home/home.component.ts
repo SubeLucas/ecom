@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -24,7 +25,7 @@ import { PDFService } from '../core/util/PDF.service';
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule, CardProductComponent, BreadcrumbModule],
+  imports: [SharedModule, RouterModule, CardProductComponent, FormsModule, BreadcrumbModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   breadcrumbItems: MenuItem[] = []; // Les éléments du fil d'Ariane
@@ -40,6 +41,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   private item = new CartItem(0, 0);
   aliments: IAliment[] = [];
+  filteredAliments: IAliment[] = [];
+  kindFilteredAliments: IAliment[] = [];
+  searchKeyword = '';
 
   isCatCollapsed = signal(false);
   isSelected = false;
@@ -121,8 +125,27 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/cart']);
   }
 
+  isCollapse(): void {
+    this.router.navigate(['/cart']);
+  }
+
   toggleNavbar(): void {
     this.isCatCollapsed.update(isCatCollapsed => !isCatCollapsed);
+  }
+
+  onSearch(): void {
+    const keyword = this.searchKeyword.trim().toLowerCase();
+    if (keyword) {
+      if (this.kindFilteredAliments.length > 0) {
+        this.kindFilteredAliments = this.kindFilteredAliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
+        if (this.kindFilteredAliments.length == 0) alert('Aucune produit trouvé !');
+      } else {
+        this.filteredAliments = this.aliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
+        if (this.filteredAliments.length == 0) alert('Aucune produit trouvé !');
+      }
+    } else {
+      this.filteredAliments = this.aliments;
+    }
   }
 
   onApplyFilters(): void {
@@ -135,7 +158,30 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
     }
     //Récup ce qui est indiqué nv prix
-
+    for (const kind of this.selectedCategories) {
+      if (kind === 'Fruits-cb') {
+        if (this.filteredAliments.length > 0) {
+          for (const aliment of this.filteredAliments) {
+            if (aliment.id % 2 == 1) this.kindFilteredAliments.push(aliment);
+          }
+        } else {
+          for (const aliment of this.aliments) {
+            if (aliment.id % 2 == 1) this.kindFilteredAliments.push(aliment);
+          }
+        }
+      }
+      if (kind === 'Légumes-cb') {
+        if (this.filteredAliments.length > 0) {
+          for (const aliment of this.filteredAliments) {
+            if (aliment.id % 2 == 0) this.kindFilteredAliments.push(aliment);
+          }
+        } else {
+          for (const aliment of this.aliments) {
+            if (aliment.id % 2 == 0) this.kindFilteredAliments.push(aliment);
+          }
+        }
+      }
+    }
     //Appel apply
     console.warn(this.selectedCategories);
 
@@ -194,5 +240,46 @@ export default class HomeComponent implements OnInit, OnDestroy {
   updateCrumbsSearch(query: string): void {
     // Met à jour le fil d'Ariane quand une recherche est effectuée
     this.breadcrumbItems = [{ label: 'Catalogue' }, { label: `Recherche : ${query}` }];
+  }
+
+  onSortChange(event: Event): void {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+
+    switch (selectedValue) {
+      case 'ordered_price':
+        if (this.kindFilteredAliments.length > 0) {
+          this.kindFilteredAliments = this.kindFilteredAliments
+            .filter(aliment => aliment.price != null)
+            .sort((a, b) => a.price! - b.price!);
+        } else if (this.filteredAliments.length > 0) {
+          this.filteredAliments = this.filteredAliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
+        } else {
+          this.aliments = this.aliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
+        }
+        break;
+      case 'unordered_price':
+        if (this.kindFilteredAliments.length > 0) {
+          this.kindFilteredAliments = this.kindFilteredAliments
+            .filter(aliment => aliment.price != null)
+            .sort((a, b) => b.price! - a.price!);
+        } else if (this.filteredAliments.length > 0) {
+          this.filteredAliments = this.filteredAliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
+        } else {
+          this.aliments = this.aliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
+        }
+        break;
+      case 'alpha':
+        if (this.kindFilteredAliments.length > 0) {
+          this.kindFilteredAliments = this.kindFilteredAliments
+            .filter(aliment => aliment.name != null)
+            .sort((a, b) => a.name!.localeCompare(b.name!));
+        } else if (this.filteredAliments.length > 0) {
+          this.filteredAliments = this.filteredAliments
+            .filter(aliment => aliment.name != null)
+            .sort((a, b) => a.name!.localeCompare(b.name!));
+        } else {
+          this.aliments = this.aliments.filter(aliment => aliment.name != null).sort((a, b) => a.name!.localeCompare(b.name!));
+        }
+    }
   }
 }

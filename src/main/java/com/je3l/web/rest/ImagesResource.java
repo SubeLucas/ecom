@@ -175,4 +175,11 @@ public class ImagesResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("/aliment/{id}")
+    public ResponseEntity<Images> getImagesByAlimentId(@PathVariable("id") Long id) {
+        LOG.debug("REST request to get Images : {}", id);
+        Optional<Images> images = imagesRepository.findByAlimentId(id);
+        return ResponseUtil.wrapOrNotFound(images);
+    }
 }

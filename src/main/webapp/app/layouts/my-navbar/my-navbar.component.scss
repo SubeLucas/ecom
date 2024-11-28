@@ -1,3 +1,15 @@
-navbar {
-    background-color: $vanilla-green;
+@import '../../../content/scss/colors.scss';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+
+.navbar-title {
+  font-family: 'Brush Script MT', cursive;
+  font-size: 28px;
+}
+
+.navbar {
+  background-color: $vanilla-green;
+  a {
+    color: $hunter-green;
+  }
 }

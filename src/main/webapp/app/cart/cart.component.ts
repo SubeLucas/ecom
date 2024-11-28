@@ -6,7 +6,7 @@ import { CardProductComponent } from '../card-product/card-product.component';
 import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor } from '@angular/common';
 import { Subscription } from 'rxjs';
-
+import { AccountService } from '../core/auth/account.service';
 @Component({
   selector: 'jhi-cart',
   standalone: true,
@@ -21,6 +21,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private cartSubscription: Subscription;
   private cart: Cart;
   totalPrice = 0;
+  private accountService = inject(AccountService);
 
   constructor(private http: AlimentService) {
     this.cartSubscription = Cart.getCartChangedObservable().subscribe(() => {
@@ -91,7 +92,11 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   onValidateButtonClick(): void {
-    this.router.navigate(['payment']);
+    if (this.accountService.isAuthenticated()) {
+      this.router.navigate(['delivery']);
+    } else {
+      this.router.navigate(['login']);
+    }
   }
 
   onQuantityChanged(): void {

@@ -4,6 +4,11 @@
   </nav>
 
   <!--col-md-3 met au bon endroit par rapport au contente de la page-->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchKeyword" placeholder="Search for products..." class="form-control" />
+    <button (click)="onSearch()" class="btn btn-primary">Search</button>
+  </div>
+
   <aside class="col-md-3 filters">
     <div class="filter-top">
       <p>Filtres</p>
@@ -32,8 +37,8 @@
   <div class="col-md-9">
     <div class="sort">
       <p>Trier par :</p>
-      <select id="sort-select">
-        <option value="default">Défaut</option>
+      <select id="sort-select" (change)="onSortChange($event)">
+        <option value="default"></option>
         <option value="ordered_price">Prix croissant</option>
         <option value="unordered_price">Prix décroissant</option>
         <option value="alpha">Ordre alphabétique</option>
@@ -77,14 +82,13 @@
       Validate Cart
     </button>
 
-    <!-- temporary buttons for cart frontend manipulation tests -->
-    <button id="add-pomme" class="btn btn-primary" (click)="onAddPommeButtonClick()">+Pomme</button>
-
-    <button id="add-banane" class="btn btn-primary" (click)="onAddBananeButtonClick()">+Banane</button>
-
-    <button id="goto-cart" class="btn btn-primary" (click)="onCartButtonClick()" [routerLink]="['/cart']">Go to cart</button>
     <div class="product-list">
-      <div *ngFor="let aliment of aliments">
+      <div
+        *ngFor="
+          let aliment of kindFilteredAliments.length > 0 ? kindFilteredAliments : filteredAliments.length > 0 ? filteredAliments : aliments
+        "
+      >
+        <li>{{ aliment.name }}</li>
         <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
       </div>
     </div>

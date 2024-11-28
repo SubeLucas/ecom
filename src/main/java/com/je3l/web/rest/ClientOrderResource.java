@@ -2,6 +2,7 @@ package com.je3l.web.rest;
 
 import com.je3l.domain.ClientOrder;
 import com.je3l.repository.ClientOrderRepository;
+import com.je3l.service.OrderService;
 import com.je3l.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -36,8 +37,11 @@ public class ClientOrderResource {
 
     private final ClientOrderRepository clientOrderRepository;
 
-    public ClientOrderResource(ClientOrderRepository clientOrderRepository) {
+    private final OrderService orderService;
+
+    public ClientOrderResource(ClientOrderRepository clientOrderRepository, OrderService orderService) {
         this.clientOrderRepository = clientOrderRepository;
+        this.orderService = orderService;
     }
 
     /**
@@ -186,5 +190,11 @@ public class ClientOrderResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @PostMapping("/{id}/delete")
+    public void cancelClientOrder(@PathVariable("id") Long id) {
+        LOG.debug("REST request to cancel ClientOrder : {}", id);
+        orderService.cancelOrder(id);
     }
 }

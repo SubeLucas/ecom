@@ -1,7 +1,9 @@
 import { NgClass } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { IAliment } from 'app/entities/aliment/aliment.model';
 import { Cart } from '../cart/cart.model';
+import { IImages } from 'app/entities/images/images.model';
+import { ImagesService } from 'app/entities/images/service/images.service';
 
 @Component({
   selector: 'jhi-card-product',
@@ -20,16 +22,25 @@ export class CardProductComponent {
   maxQuantity = 99;
 
   totalPriceProduct = this.quantity * this.priceProduct!;
+  imagesService = inject(ImagesService);
+  public image: IImages | null = null;
 
   ngOnInit(): void {
     const cart = Cart.getCart();
     if (this.product) {
       this.quantity = Cart.getItemQuantity(this.product.id);
+      this.imagesService.findByAlimentId(this.product.id).subscribe(response => {
+        this.image = response.body;
+      });
     }
     if (this.quantity > this.maxQuantity) {
       this.quantity = this.maxQuantity;
     }
     this.updateTotalPriceProduct();
+  }
+
+  getImageUrl(): string {
+    return this.image && this.image.url ? this.image.url : '../../content/images/tomate.png';
   }
 
   minusQuantity(): void {
@@ -108,7 +119,8 @@ export class CardProductComponent {
     this.quantityChanged.emit();
   }
 
-  isSeasonProduct(season: number): boolean {
-    return season === 32435;
+  isSeasonProduct(season: number | null | undefined): boolean {
+    if (season === null || undefined) return false;
+    return season === 16795;
   }
 }
