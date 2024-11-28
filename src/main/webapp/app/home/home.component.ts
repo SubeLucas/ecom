@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -21,7 +22,7 @@ import { PDFService } from '../core/util/PDF.service';
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule, CardProductComponent],
+  imports: [SharedModule, RouterModule, CardProductComponent, FormsModule],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
   account = signal<Account | null>(null);
@@ -100,9 +101,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   onSearch(): void {
     const keyword = this.searchKeyword.trim().toLowerCase();
     if (keyword) {
-      this.filteredAliments = this.aliments.filter(
-        aliment => aliment.name?.toLowerCase().includes(keyword) || aliment.origin?.toLowerCase().includes(keyword),
-      );
+      this.filteredAliments = this.aliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
     } else {
       this.filteredAliments = this.aliments;
     }
