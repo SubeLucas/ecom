@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { NgIf } from '@angular/common';
 
 import { PaymentService } from '../payment/payment.service';
 import { Cart } from '../cart/cart.model';
@@ -9,12 +11,13 @@ import { PDFService } from 'app/core/util/PDF.service';
 @Component({
   selector: 'jhi-payment',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, FormsModule, NgIf],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss',
 })
 export class PaymentComponent {
   private router = inject(Router);
+  numCard = '';
 
   constructor(
     private httpPayment: PaymentService,
@@ -27,15 +30,17 @@ export class PaymentComponent {
   }
 
   onPayButtonClick(): void {
+    console.log('Check formulaire :', this.numCard);
     // envoyer le panier au backend
     this.httpCart.validate(Cart.getCart()).subscribe(order => {
       if (order > 0) {
         console.log('Panier accepté, order n°', order);
         // TODO envoyer le numéro de carte du formulaire
-        this.httpPayment.pay('5155123456789108').subscribe(success => {
+        this.httpPayment.pay(this.numCard).subscribe(success => {
           if (success) {
             console.log('Numéro de carte accepté');
             this.pdfService.generatePDF(order);
+            Cart.clearCart();
           } else {
             console.log('Numéro de carte refusé');
             // TODO notifier au backend que la commande doit etre CANCELLED

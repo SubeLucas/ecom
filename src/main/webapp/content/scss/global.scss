@@ -68,7 +68,7 @@ Generic styles
 /* other generic styles */
 
 .jh-card {
-  padding: 1.5%;
+  padding: 1em;
   margin-top: 20px;
   border: none;
 }
@@ -105,7 +105,13 @@ Generic styles
 }
 
 .footer {
-  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  //border-top: 1px solid rgba(0, 0, 0, 0.125);
+  background-color: $parchment;
+  padding: 1em;
+  p {
+    text-align: center;
+    margin: 0;
+  }
 }
 
 .hand,

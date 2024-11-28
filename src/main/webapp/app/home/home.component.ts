@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FormsModule } from '@angular/forms';
 
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
@@ -22,10 +21,9 @@ import { PDFService } from '../core/util/PDF.service';
   selector: 'jhi-home',
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
-  imports: [SharedModule, RouterModule, CardProductComponent, FormsModule],
+  imports: [SharedModule, RouterModule, CardProductComponent],
 })
 export default class HomeComponent implements OnInit, OnDestroy {
-  inputValue = '';
   account = signal<Account | null>(null);
 
   private readonly destroy$ = new Subject<void>();
@@ -99,16 +97,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.isCatCollapsed.update(isCatCollapsed => !isCatCollapsed);
   }
 
-  onWheel(event: WheelEvent): void {
-    const container = event.currentTarget as HTMLElement;
-
-    if (event.deltaY !== 0) {
-      event.preventDefault();
-
-      container.scrollLeft += event.deltaY;
-    }
-  }
-
   onSearch(): void {
     const keyword = this.searchKeyword.trim().toLowerCase();
     if (keyword) {
@@ -118,5 +106,29 @@ export default class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.filteredAliments = this.aliments;
     }
+  }
+
+  onApplyFilters(): void {
+    //Récup ce qui est coché niveau catégories
+    const test = [];
+    const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
+    for (let i = 0; i < cbListElements.length; i++) {
+      if (cbListElements[i].checked) {
+        test.push(cbListElements[i].name);
+      }
+    }
+    //Récup ce qui est indiqué nv prix
+
+    //Appel apply
+    console.warn(test);
+  }
+
+  onRemoveFilters(): void {
+    //Supprimer coche catégories
+    const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
+    for (let i = 0; i < cbListElements.length; i++) {
+      cbListElements[i].checked = false;
+    }
+    //Réinit prix
   }
 }

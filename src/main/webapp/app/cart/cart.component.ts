@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-
 import { Cart } from './cart.model';
 import { AlimentService } from '../entities/aliment/service/aliment.service';
 import { CardProductComponent } from '../card-product/card-product.component';
@@ -13,7 +12,7 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [RouterModule, CardProductComponent, NgFor],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.scss',
+  styleUrls: ['./cart.component.scss'],
 })
 export class CartComponent implements OnInit, OnDestroy {
   private router = inject(Router);
@@ -21,6 +20,8 @@ export class CartComponent implements OnInit, OnDestroy {
   stockMap = new Map<number, number>();
   private cartSubscription: Subscription;
   private cart: Cart;
+  totalPrice = 0;
+
   constructor(private http: AlimentService) {
     this.cartSubscription = Cart.getCartChangedObservable().subscribe(() => {
       this.loadCartItems();
@@ -29,20 +30,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.cart = Cart.getCart();
-    for (const item of this.cart.cartItems) {
-      this.http.find(item.id).subscribe(aliment => {
-        if (aliment.body) {
-          this.aliments.push(aliment.body);
-          this.stockMap.set(item.id, item.qt);
-        } else {
-          console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
-        }
-      });
-    }
-
-    console.log(this.aliments);
-    this.scan();
+    this.loadCartItems();
   }
 
   ngOnDestroy(): void {
@@ -52,12 +40,16 @@ export class CartComponent implements OnInit, OnDestroy {
   private loadCartItems(): void {
     this.aliments = [];
     this.stockMap.clear();
+    this.totalPrice = 0;
     this.cart = Cart.getCart();
     for (const item of this.cart.cartItems) {
       this.http.find(item.id).subscribe(aliment => {
         if (aliment.body) {
           this.aliments.push(aliment.body);
           this.stockMap.set(item.id, item.qt);
+          if (aliment.body.price) {
+            this.totalPrice += aliment.body.price * item.qt;
+          }
         } else {
           console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
         }
@@ -65,15 +57,25 @@ export class CartComponent implements OnInit, OnDestroy {
     }
   }
 
+  updateTotalPrice(): void {
+    this.totalPrice = 0;
+    const cart = Cart.getCart();
+    for (const item of cart.cartItems) {
+      const aliment = this.aliments.find(a => a.id === item.id);
+      if (aliment && aliment.price) {
+        this.totalPrice += aliment.price * item.qt;
+      }
+    }
+    console.log(`New totalPrice: ${this.totalPrice}`);
+  }
+
   scan(): boolean {
     const cart = Cart.getCart();
     let invalid = false;
-    // todo : pas sur de la condition du if là
     if (!cart) {
       console.log('Cart vide');
       return true;
     }
-    // attendre le composant IHM pour appeler cette fonction lorsque les boutons +/- sont cliqués
     for (const aliment of this.aliments) {
       const quantity = this.stockMap.get(aliment.id)!;
       if (aliment.stockQuantity! < quantity) {
@@ -81,7 +83,6 @@ export class CartComponent implements OnInit, OnDestroy {
         invalid = true;
       }
     }
-
     return invalid;
   }
 
@@ -91,5 +92,9 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onValidateButtonClick(): void {
     this.router.navigate(['payment']);
+  }
+
+  onQuantityChanged(): void {
+    this.updateTotalPrice();
   }
 }

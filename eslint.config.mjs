@@ -27,6 +27,7 @@ export default tseslint.config(
   },
   {
     files: ['src/main/webapp/**/*.ts'],
+    // @ts-ignore
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylistic, ...angular.configs.tsRecommended],
     languageOptions: {
       globals: {
@@ -98,6 +99,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/prefer-nullish-coalescing': 'warn',
+      '@typescript-eslint/prefer-for-of': 'warn',
       '@typescript-eslint/prefer-optional-chain': 'warn',
       '@typescript-eslint/restrict-template-expressions': ['warn', { allowNumber: true }],
       '@typescript-eslint/unbound-method': 'off',

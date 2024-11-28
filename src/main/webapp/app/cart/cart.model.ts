@@ -98,8 +98,6 @@ export class Cart {
         localStorage.setItem('cart', JSON.stringify(parsedCart));
       } else {
         const newItem = new CartItem(itemId, newQt);
-        //newItem.id = itemId;
-        //newItem.qt = newQt;
         this.addItem(newItem);
       }
     } catch (e) {
@@ -127,6 +125,11 @@ export class Cart {
 
   static getCartChangedObservable(): Subject<void> {
     return this.cartChanged;
+  }
+
+  static clearCart(): void {
+    localStorage.setItem('cart', JSON.stringify([]));
+    this.cartChanged.next();
   }
 }
 
