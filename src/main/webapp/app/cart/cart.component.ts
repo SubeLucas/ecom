@@ -4,13 +4,13 @@ import { Cart } from './cart.model';
 import { AlimentService } from '../entities/aliment/service/aliment.service';
 import { CardProductComponent } from '../card-product/card-product.component';
 import { IAliment } from 'app/entities/aliment/aliment.model';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../core/auth/account.service';
 @Component({
   selector: 'jhi-cart',
   standalone: true,
-  imports: [RouterModule, CardProductComponent, NgFor],
+  imports: [RouterModule, CardProductComponent, NgFor, NgIf],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
@@ -32,6 +32,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadCartItems();
+    this.scan();
   }
 
   ngOnDestroy(): void {
@@ -71,16 +72,15 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   scan(): boolean {
-    const cart = Cart.getCart();
     let invalid = false;
+    const cart = Cart.getCart();
     if (!cart) {
       console.log('Cart vide');
-      return true;
+      invalid = true;
     }
     for (const aliment of this.aliments) {
       const quantity = this.stockMap.get(aliment.id)!;
-      if (aliment.stockQuantity! < quantity) {
-        console.log(`Aliment d'id ${aliment.id} n'a plus que ${aliment.stockQuantity} exemplaires en stock`);
+      if (quantity > aliment.stockQuantity!) {
         invalid = true;
       }
     }
@@ -101,5 +101,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onQuantityChanged(): void {
     this.updateTotalPrice();
+    this.scan();
   }
 }

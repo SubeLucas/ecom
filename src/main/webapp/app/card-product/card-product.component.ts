@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { IAliment } from 'app/entities/aliment/aliment.model';
 import { AlimentService } from 'app/entities/aliment/service/aliment.service';
@@ -9,7 +9,7 @@ import { ImagesService } from 'app/entities/images/service/images.service';
 @Component({
   selector: 'jhi-card-product',
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, NgIf],
   templateUrl: './card-product.component.html',
   styleUrls: ['./card-product.component.scss'],
 })
@@ -27,14 +27,29 @@ export class CardProductComponent {
   imagesService = inject(ImagesService);
   alimentsService = inject(AlimentService);
   public image: IImages | null = null;
+  valid = true;
 
   ngOnInit(): void {
     const cart = Cart.getCart();
     if (this.product) {
+      // récupérer la quantite dans le panier, ne jamais permettre plus de maxQuantity
       this.quantity = Cart.getItemQuantity(this.product.id);
+      if (this.quantity > this.maxQuantity) {
+        this.quantity = this.maxQuantity;
+        Cart.setItemQuantity(this.product.id, this.maxQuantity);
+      }
+      // récupérer le stock pour detecter une trop grosse quantite
       this.alimentsService.getStock(this.product.id).subscribe(response => {
-        if (response.body) this.maxQuantity = response.body;
+        if (response.body) {
+          this.product!.stockQuantity = response.body;
+          if (this.quantity > this.product!.stockQuantity) {
+            // TODO afficher un message dans la page panier
+            console.log(`Aliment d'id ${this.product!.id} n'a plus que ${this.product!.stockQuantity} exemplaires en stock`);
+            this.valid = false;
+          }
+        }
       });
+
       this.imagesService.findByAlimentId(this.product.id).subscribe(response => {
         this.image = response.body;
       });
@@ -43,10 +58,6 @@ export class CardProductComponent {
         this.priceByKg = (this.product.price / this.product.weight).toFixed(2);
       }
     }
-    if (this.quantity > this.maxQuantity) {
-      this.quantity = this.maxQuantity;
-    }
-
     this.updateTotalPriceProduct();
   }
 
@@ -63,17 +74,23 @@ export class CardProductComponent {
         if (this.quantity === 0) {
           Cart.removeItem(this.product.id);
         }
+        if (!this.valid && this.quantity <= this.product.stockQuantity!) {
+          this.valid = true;
+        }
       }
       this.quantityChanged.emit();
     }
   }
 
   plusQuantity(): void {
-    if (this.quantity !== this.maxQuantity) {
+    if (this.quantity < this.maxQuantity) {
       this.quantity++;
       this.updateTotalPriceProduct();
       if (this.product) {
         Cart.setItemQuantity(this.product.id, this.quantity);
+        if (this.valid && this.quantity > this.product.stockQuantity!) {
+          this.valid = false;
+        }
       }
     }
   }

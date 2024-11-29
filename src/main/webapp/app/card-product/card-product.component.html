@@ -30,7 +30,7 @@
             (blur)="onBlur($event)"
             required
             min="0"
-            max="99"
+            max="maxQuantity"
             minlength="1"
             maxlength="2"
             size="2"
@@ -40,6 +40,7 @@
       }
     </div>
   } @else {
+    <label *ngIf="!valid" style="color: red">Plus que {{ this.product!.stockQuantity }} en stock</label>
     <div class="main-infos">
       <img class="img-product-cart" src="../../content/images/tomate.png" alt="tomate rouge" />
       <div class="title-origin-infos">
@@ -66,7 +67,7 @@
           (blur)="onBlur($event)"
           required
           min="0"
-          max="99"
+          max="maxQuantity"
           minlength="1"
           maxlength="2"
           size="2"
