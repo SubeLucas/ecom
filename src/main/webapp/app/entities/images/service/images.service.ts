@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { isPresent } from 'app/core/util/operators';
@@ -25,6 +25,13 @@ export class ImagesService {
 
   update(images: IImages): Observable<EntityResponseType> {
     return this.http.put<IImages>(`${this.resourceUrl}/${this.getImagesIdentifier(images)}`, images, { observe: 'response' });
+  }
+
+  upload(img_data: FormData): Observable<HttpResponse<string>> {
+    const httpHeaders = new HttpHeaders({
+      'Content- Type': 'multipart/form-data',
+    });
+    return this.http.post<string>(`${this.resourceUrl}/upload`, img_data, { headers: httpHeaders, observe: 'response' });
   }
 
   partialUpdate(images: PartialUpdateImages): Observable<EntityResponseType> {

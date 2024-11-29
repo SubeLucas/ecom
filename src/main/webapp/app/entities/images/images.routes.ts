@@ -22,6 +22,14 @@ const imagesRoute: Routes = [
     canActivate: [UserRouteAccessService],
   },
   {
+    path: 'new-upload',
+    loadComponent: () => import('./update/images-update-upload.component').then(m => m.ImagesUpdateComponent),
+    resolve: {
+      images: ImagesResolve,
+    },
+    canActivate: [UserRouteAccessService],
+  },
+  {
     path: 'new',
     loadComponent: () => import('./update/images-update.component').then(m => m.ImagesUpdateComponent),
     resolve: {

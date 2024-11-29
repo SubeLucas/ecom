@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
@@ -57,6 +58,17 @@ public class ImagesResource {
         return ResponseEntity.created(new URI("/api/images/" + images.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, images.getId().toString()))
             .body(images);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadImages(@RequestParam(value = "file") MultipartFile image) {
+        try {
+            System.out.println("got the image :ok:");
+            System.out.println(image.getBytes());
+            return ResponseEntity.ok().body(image.getOriginalFilename());
+        } catch (Exception e) {
+            return ResponseEntity.ok().body("image upload error ");
+        }
     }
 
     /**
