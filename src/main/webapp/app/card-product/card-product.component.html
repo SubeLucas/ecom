@@ -21,7 +21,20 @@
         <div class="change-qt">
           <button class="minus-btn" (click)="minusQuantity()">-</button>
           <!--TODO add blocage type nb (mozilla)-->
-          <input type="number" id="qt-input" name="qt" [value]="quantity" required min="0" max="99" minlength="1" maxlength="2" size="2" />
+          <input
+            type="number"
+            id="qt-input"
+            name="qt"
+            [value]="quantity"
+            (input)="onInputChange($event)"
+            (blur)="onBlur($event)"
+            required
+            min="0"
+            max="99"
+            minlength="1"
+            maxlength="2"
+            size="2"
+          />
           <button class="plus-btn" (click)="plusQuantity()">+</button>
         </div>
       }
