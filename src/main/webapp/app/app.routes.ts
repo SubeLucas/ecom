@@ -46,6 +46,11 @@ const routes: Routes = [
     loadComponent: () => import('./payment/payment.component').then(({ PaymentComponent }) => PaymentComponent),
   },
   {
+    path: 'payment-success',
+    loadComponent: () =>
+      import('./payment-success/payment-success.component').then(({ PaymentSuccessComponent }) => PaymentSuccessComponent),
+  },
+  {
     path: '',
     loadChildren: () => import(`./entities/entity.routes`),
   },

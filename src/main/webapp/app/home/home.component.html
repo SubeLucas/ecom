@@ -1,14 +1,14 @@
 <div class="row">
-  <!--<div class="search-bar">
-    <input type="text" [(ngModel)]="searchKeyword" placeholder="Search for products..." class="form-control" />
-    <button (click)="onSearch()" class="btn btn-primary">Search</button>
-  </div>-->
-
   <nav>
     <p-breadcrumb [model]="breadcrumbItems"></p-breadcrumb>
   </nav>
 
   <!--col-md-3 met au bon endroit par rapport au contente de la page-->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchKeyword" placeholder="Search for products..." class="form-control" />
+    <button (click)="onSearch()" class="btn btn-primary">Search</button>
+  </div>
+
   <aside class="col-md-3 filters">
     <div class="filter-top">
       <p>Filtres</p>
@@ -44,33 +44,6 @@
         <option value="alpha">Ordre alphabétique</option>
       </select>
     </div>
-    <!--
-    <div>
-      @if (account() !== null) {
-        <div class="alert alert-success">
-          @if (account(); as accountRef) {
-            <span id="home-logged-message" jhiTranslate="home.logged.message" [translateValues]="{ username: accountRef.login }"
-              >You are logged in as user &quot;{{ accountRef.login }}&quot;.</span
-            >
-          }
-        </div>
-      } @else {
-        <div class="alert alert-warning">
-          <span jhiTranslate="global.messages.info.authenticated.prefix">If you want to </span>
-          <a class="alert-link" (click)="login()" jhiTranslate="global.messages.info.authenticated.link">sign in</a
-          ><span jhiTranslate="global.messages.info.authenticated.suffix"
-            >, you can try the default accounts:<br />- Administrator (login=&quot;admin&quot; and password=&quot;admin&quot;) <br />- User
-            (login=&quot;user&quot; and password=&quot;user&quot;).</span
-          >
-        </div>
-
-        <div class="alert alert-warning">
-          <span jhiTranslate="global.messages.info.register.noaccount">You don&apos;t have an account yet?</span>&nbsp;
-          <a class="alert-link" routerLink="/account/register" jhiTranslate="global.messages.info.register.link">Register a new account</a>
-        </div>
-      }
-    </div>
-  -->
     <div class="product-list">
       <div
         *ngFor="

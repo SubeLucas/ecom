@@ -99,23 +99,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // temporary button handler for cart validation tests
-  onButtonClick(): void {
-    this.httpCart.validate(Cart.getCart()).subscribe(success => {
-      console.log(success);
-    });
-  }
-
-  onAddPommeButtonClick(): void {
-    this.item = new CartItem(4, 1);
-    Cart.addItem(this.item);
-  }
-
-  onAddBananeButtonClick(): void {
-    this.item = new CartItem(9, 3);
-    Cart.addItem(this.item);
-  }
-
   isCartEmpty(): boolean {
     return Cart.isEmpty();
   }

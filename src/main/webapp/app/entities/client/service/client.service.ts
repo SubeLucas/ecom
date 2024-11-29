@@ -35,6 +35,10 @@ export class ClientService {
     return this.http.get<IClient>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  findCurrent(): Observable<EntityResponseType> {
+    return this.http.get<IClient>(`${this.resourceUrl}/current`, { observe: 'response' });
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<IClient[]>(this.resourceUrl, { params: options, observe: 'response' });
