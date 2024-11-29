@@ -130,4 +130,10 @@ export class ClientOrderService {
       body: res.body ? res.body.map(item => this.convertDateFromServer(item)) : null,
     });
   }
+
+  getClientOrdersByCurrentClient(): Observable<EntityArrayResponseType> {
+    return this.http
+      .get<RestClientOrder[]>(`${this.resourceUrl}/currentClient/`, { observe: 'response' })
+      .pipe(map(res => this.convertResponseArrayFromServer(res)));
+  }
 }

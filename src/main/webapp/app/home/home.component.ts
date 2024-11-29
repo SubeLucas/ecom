@@ -165,7 +165,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
     }
     //Appel apply
-    console.warn(this.selectedCategories);
 
     this.updateCrumbsCat(); // Met à jour le fil d'Ariane
   }
