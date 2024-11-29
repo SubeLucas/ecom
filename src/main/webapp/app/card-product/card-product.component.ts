@@ -1,6 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { IAliment } from 'app/entities/aliment/aliment.model';
+import { AlimentService } from 'app/entities/aliment/service/aliment.service';
 import { Cart } from '../cart/cart.model';
 import { IImages } from 'app/entities/images/images.model';
 import { ImagesService } from 'app/entities/images/service/images.service';
@@ -24,12 +25,16 @@ export class CardProductComponent {
 
   totalPriceProduct = this.quantity * this.priceProduct!;
   imagesService = inject(ImagesService);
+  alimentsService = inject(AlimentService);
   public image: IImages | null = null;
 
   ngOnInit(): void {
     const cart = Cart.getCart();
     if (this.product) {
       this.quantity = Cart.getItemQuantity(this.product.id);
+      this.alimentsService.getStock(this.product.id).subscribe(response => {
+        if (response.body) this.maxQuantity = response.body;
+      });
       this.imagesService.findByAlimentId(this.product.id).subscribe(response => {
         this.image = response.body;
       });
