@@ -20,6 +20,7 @@ export class CardProductComponent {
 
   quantity = -1;
   maxQuantity = 99;
+  priceByKg: string | undefined;
 
   totalPriceProduct = this.quantity * this.priceProduct!;
   imagesService = inject(ImagesService);
@@ -32,10 +33,15 @@ export class CardProductComponent {
       this.imagesService.findByAlimentId(this.product.id).subscribe(response => {
         this.image = response.body;
       });
+
+      if (this.product.price && this.product.weight) {
+        this.priceByKg = (this.product.price / this.product.weight).toFixed(2);
+      }
     }
     if (this.quantity > this.maxQuantity) {
       this.quantity = this.maxQuantity;
     }
+
     this.updateTotalPriceProduct();
   }
 

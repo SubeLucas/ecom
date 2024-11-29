@@ -1,6 +1,6 @@
 <nav data-cy="my-navbar" class="navbar navbar-dark navbar-expand-md">
   <div class="container-fluid">
-    <a class="navbar-brand logo" href="/" (click)="collapseNavbar()">
+    <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
       <span class="logo-img"></span>
       <span class="navbar-title">Cueillette</span>
     </a>
@@ -252,7 +252,7 @@
         <li class="nav-item" display="dynamic" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <a class="nav-link" (click)="cart()">
             <span>
-              <fa-icon icon="cart-shopping"></fa-icon>
+              <fa-icon icon="basket-shopping"></fa-icon>
               Panier
             </span>
           </a>
