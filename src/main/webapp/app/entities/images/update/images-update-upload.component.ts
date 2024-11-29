@@ -2,7 +2,7 @@ import { Component, HostListener, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize, map, tap } from 'rxjs/operators';
+import { finalize, map, switchMap, tap } from 'rxjs/operators';
 
 import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -39,7 +39,6 @@ export class ImagesUpdateComponent implements OnInit {
     console.log('file uploaded');
   }
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: ImagesFormGroup = this.imagesFormService.createImagesFormGroup();
 
   compareAliment = (o1: IAliment | null, o2: IAliment | null): boolean => this.alimentService.compareAliment(o1, o2);
@@ -67,17 +66,30 @@ export class ImagesUpdateComponent implements OnInit {
       formData.append('file', this.img_data);
       this.imagesService
         .upload(formData)
-        .pipe(finalize(() => console.log('upload finished')))
+        .pipe(
+          tap((response: HttpResponse<any>) => {
+            // Assuming the response contains the URL of the uploaded image
+            images.url = response.body?.url;
+          }),
+          switchMap(() => {
+            if (images.id !== null) {
+              return this.imagesService.update(images);
+            } else {
+              return this.imagesService.create(images);
+            }
+          }),
+          finalize(() => this.onSaveFinalize()),
+        )
         .subscribe({
-          next: () => console.log('success'),
-          error: () => console.log('error ouin'),
+          next: () => this.onSaveSuccess(),
+          error: () => this.onSaveError(),
         });
-      images.url = 'g envoyé 1 truk';
-    }
-    if (images.id !== null) {
-      this.subscribeToSaveResponse(this.imagesService.update(images));
     } else {
-      this.subscribeToSaveResponse(this.imagesService.create(images));
+      if (images.id !== null) {
+        this.subscribeToSaveResponse(this.imagesService.update(images));
+      } else {
+        this.subscribeToSaveResponse(this.imagesService.create(images));
+      }
     }
   }
 

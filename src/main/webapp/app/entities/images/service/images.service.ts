@@ -28,10 +28,7 @@ export class ImagesService {
   }
 
   upload(img_data: FormData): Observable<HttpResponse<string>> {
-    const httpHeaders = new HttpHeaders({
-      'Content- Type': 'multipart/form-data',
-    });
-    return this.http.post<string>(`${this.resourceUrl}/upload`, img_data, { headers: httpHeaders, observe: 'response' });
+    return this.http.post<string>(`${this.resourceUrl}/upload`, img_data, { observe: 'response' });
   }
 
   partialUpdate(images: PartialUpdateImages): Observable<EntityResponseType> {
