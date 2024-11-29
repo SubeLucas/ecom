@@ -23,7 +23,7 @@ export class PaymentComponent {
   constructor(
     private httpPayment: PaymentService,
     private httpCart: CartService,
-    private pdfService: PDFService,
+    //private pdfService: PDFService,
     private clientOrderService: ClientOrderService,
   ) {}
 
@@ -41,7 +41,8 @@ export class PaymentComponent {
             next: success => {
               if (success) {
                 console.log('Numéro de carte accepté');
-                this.pdfService.generatePDF(order);
+                this.router.navigate(['/payment-success'], { queryParams: { order: order } });
+                //this.pdfService.generatePDF(order);
                 Cart.clearCart();
               } else {
                 console.log('Numéro de carte refusé');
