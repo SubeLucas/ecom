@@ -33,6 +33,20 @@ Main page styles
   background-color: $baby-powder;
 }
 
+::ng-deep p-breadcrumb {
+  li {
+    height: 1em;
+  }
+  a {
+    color: $hunter-green;
+    font-weight: bold;
+  }
+}
+
+nav {
+  margin-bottom: 1em;
+}
+
 .filters {
   text-align: center;
   background-color: $parchment;

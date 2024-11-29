@@ -86,6 +86,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
       // Si la navigation est vers la page d'accueil ou le catalogue sans filtres
       if (event.url === '/') {
         this.onRemoveFilters(); // Réinitialiser les filtres et le fil d'Ariane
+      } else {
+        this.updateCrumbsCat();
       }
     });
   }
@@ -141,7 +143,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
     }
     //Récup ce qui est indiqué nv prix
     for (const kind of this.selectedCategories) {
-      if (kind === 'Fruits-cb') {
+      if (kind === 'Fruits') {
         if (this.filteredAliments.length > 0) {
           for (const aliment of this.filteredAliments) {
             if (aliment.id % 2 == 1) this.kindFilteredAliments.push(aliment);
@@ -152,7 +154,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
           }
         }
       }
-      if (kind === 'Légumes-cb') {
+      if (kind === 'Légumes') {
         if (this.filteredAliments.length > 0) {
           for (const aliment of this.filteredAliments) {
             if (aliment.id % 2 == 0) this.kindFilteredAliments.push(aliment);
@@ -198,7 +200,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {}, // Aucun paramètre
-        queryParamsHandling: 'merge', // Supprime uniquement les paramètres spécifiés
+        // Supprime uniquement les paramètres spécifiés
       });
       this.breadcrumbItems = [{ label: 'Catalogue', routerLink: './', queryParamsHandling: 'merge' }];
     } else {
