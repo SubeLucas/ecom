@@ -178,4 +178,11 @@ public class ClientResource {
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
     }
+
+    @GetMapping("/current")
+    public ResponseEntity<Client> getCurrentClient() throws Exception {
+        LOG.debug("getCurrentClient !");
+        Optional<Client> client = clientRepository.findByUserIsCurrentUserOpt();
+        return ResponseUtil.wrapOrNotFound(client);
+    }
 }
