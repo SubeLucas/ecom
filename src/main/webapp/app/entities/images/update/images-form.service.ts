@@ -19,6 +19,7 @@ type ImagesFormDefaults = Pick<NewImages, 'id'>;
 type ImagesFormGroupContent = {
   id: FormControl<IImages['id'] | NewImages['id']>;
   url: FormControl<IImages['url']>;
+  img: FormControl<IImages['img']>;
   aliment: FormControl<IImages['aliment']>;
 };
 
@@ -31,6 +32,7 @@ export class ImagesFormService {
       ...this.getFormDefaults(),
       ...images,
     };
+    console.log(imagesRawValue);
     return new FormGroup<ImagesFormGroupContent>({
       id: new FormControl(
         { value: imagesRawValue.id, disabled: true },
@@ -40,7 +42,10 @@ export class ImagesFormService {
         },
       ),
       url: new FormControl(imagesRawValue.url, {
-        validators: [Validators.required],
+        validators: [],
+      }),
+      img: new FormControl(imagesRawValue.img, {
+        validators: [],
       }),
       aliment: new FormControl(imagesRawValue.aliment),
     });

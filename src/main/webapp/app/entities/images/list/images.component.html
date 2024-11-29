@@ -15,7 +15,12 @@
         [routerLink]="['/images/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="ecomApp.images.home.createLabel">Create a new Images</span>
+        <span jhiTranslate="ecomApp.images.home.createLabel">New image from link</span>
+      </button>
+
+      <button class="btn btn-primary" [routerLink]="['/images/new-upload']">
+        <fa-icon icon="plus"></fa-icon>
+        <span>New image from local disk</span>
       </button>
     </div>
   </h2>
