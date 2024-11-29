@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
@@ -12,7 +12,7 @@ import { ClientService } from 'app/entities/client/service/client.service';
   templateUrl: './delivery.component.html',
   styleUrl: './delivery.component.scss',
 })
-export class DeliveryComponent {
+export class DeliveryComponent implements OnInit {
   private router = inject(Router);
   private accountService = inject(AccountService);
   street = '';
@@ -20,6 +20,23 @@ export class DeliveryComponent {
   city = '';
 
   constructor(private http: ClientService) {}
+
+  ngOnInit(): void {
+    if (this.accountService.isAuthenticated()) {
+      // récupérer l'adresse du client connecté
+      this.http.findCurrent().subscribe({
+        next: client => {
+          if (client.body) {
+            const address = client.body.address;
+            console.log(address);
+            this.street = address!.split(', ')[0];
+            this.code = address!.split(', ')[1].split(' ')[0];
+            this.city = address!.split(', ')[1].split(' ')[1];
+          }
+        },
+      });
+    }
+  }
 
   onValidateButtonClick(): void {
     if (this.accountService.isAuthenticated()) {
