@@ -16,9 +16,16 @@ public class ComputerDatabaseSimulation extends Simulation {
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .body(RawFileBody("connect.json"))
-                .check(header("Authorization").saveAs("token"))
+                .check(status().is(200))
+                .check(bodyString().saveAs("responseBody"))
+                .check(jsonPath("$.id_token").saveAs("token"))
         )
-        .pause(2);
+        .pause(2)
+        .exec(session -> {
+            //System.out.println("Response Body: " + session.getString("responseBody"));
+            //System.out.println("Token: " + session.getString("token"));
+            return session;
+        });
 
     ChainBuilder validate = exec(http("home").get("/"))
         .pause(2)
@@ -27,8 +34,17 @@ public class ComputerDatabaseSimulation extends Simulation {
                 .post("/api/cart")
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json, text/plain, */*")
-                .header("Authorization", "#{token}")
+                .header("Authorization", "Bearer #{token}")
                 .body(RawFileBody("cart.json"))
+        )
+        .pause(1)
+        .exec(
+            http("send_credit_card")
+                .post("/api/payment")
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json, text/plain, */*")
+                .header("Authorization", "Bearer #{token}")
+                .body(RawFileBody("payment.json"))
         )
         .pause(1);
 
