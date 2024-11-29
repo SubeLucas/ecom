@@ -5,10 +5,11 @@
     </p>
 
     <div class="centered-infos">
-      <img [src]="getImageUrl()" alt="{{ product?.name }}" class="img-product" />
+      <!--<img [src]="getImageUrl()" alt="{{ product?.name }}" class="img-product" />-->
+      <img class="img-product" src="../../content/images/tomate.png" alt="{{ product?.name }}" />
       <p class="title-product">{{ product?.name }}</p>
       <div class="weight-infos">
-        <p>{{ product?.weight }}g/unité</p>
+        <p>{{ product?.weight }}g/pièce</p>
         <p>{{ priceByKg }}€/kg</p>
       </div>
     </div>

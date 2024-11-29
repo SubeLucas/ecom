@@ -69,7 +69,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
     this.handleNavigation();
     this.updateCrumbsCat();
-    console.warn('AAAAAAAAAAAAAA');
   }
 
   private handleNavigation(): void {
@@ -183,7 +182,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
     }
     //Appel apply
-    console.warn(this.selectedCategories);
 
     this.updateCrumbsCat(); // Met à jour le fil d'Ariane
   }
