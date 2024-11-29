@@ -36,7 +36,7 @@ export class ImagesUpdateComponent implements OnInit {
   @HostListener('change', ['$event.target.files']) emitFiles(event: FileList) {
     const file = event && event.item(0);
     this.img_data = file;
-    console.log('file uploaded');
+    console.log('file uploaded', event);
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -70,7 +70,7 @@ export class ImagesUpdateComponent implements OnInit {
         .pipe(finalize(() => console.log('upload finished')))
         .subscribe({
           next: () => console.log('success'),
-          error: () => console.log('error ouin'),
+          error: e => console.log('error ouin', e),
         });
       images.url = 'g envoyé 1 truk';
     }

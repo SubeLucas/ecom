@@ -5,6 +5,8 @@ import com.je3l.repository.ImagesRepository;
 import com.je3l.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -61,10 +63,12 @@ public class ImagesResource {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImages(@RequestParam(value = "file") MultipartFile image) {
+    public ResponseEntity<String> uploadImages(@RequestPart("file") MultipartFile image) {
         try {
-            System.out.println("got the image :ok:");
-            System.out.println(image.getBytes());
+            File inputFile = new File("./img/" + image.getOriginalFilename());
+            FileOutputStream fis = new FileOutputStream(inputFile);
+            fis.write(image.getBytes(), 0, image.getBytes().length);
+            fis.close();
             return ResponseEntity.ok().body(image.getOriginalFilename());
         } catch (Exception e) {
             return ResponseEntity.ok().body("image upload error ");
