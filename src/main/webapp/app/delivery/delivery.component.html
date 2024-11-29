@@ -1,3 +1,28 @@
 <p>delivery works!</p>
 <button id="goto-cart" class="btn btn-primary" [routerLink]="['']">Retour au panier</button>
-<button id="validate-info" class="btn btn-primary" [routerLink]="['/payment']">Valider mes informations</button>
+<form (ngSubmit)="onValidateButtonClick()">
+  <div class="form-group">
+    <label for="street">Adresse postale</label>
+    <input type="text" required maxlength="128" class="form-control" id="street" name="street" [(ngModel)]="street" #rue="ngModel" />
+    <div *ngIf="rue.invalid && (rue.dirty || rue.touched)" class="alert alert-danger">
+      <div *ngIf="rue.errors && rue.errors.required">Ce champ est obligatoire.</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="code">Code postal</label>
+    <input type="text" required maxlength="16" class="form-control" id="code" name="code" [(ngModel)]="code" #codepostal="ngModel" />
+    <div *ngIf="codepostal.invalid && (codepostal.dirty || codepostal.touched)" class="alert alert-danger">
+      <div *ngIf="codepostal.errors && codepostal.errors.required">Ce champ est obligatoire.</div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="city">Ville</label>
+    <input type="text" required maxlength="128" class="form-control" id="city" name="city" [(ngModel)]="city" #ville="ngModel" />
+    <div *ngIf="ville.invalid && (ville.dirty || ville.touched)" class="alert alert-danger">
+      <div *ngIf="ville.errors && ville.errors.required">Ce champ est obligatoire.</div>
+    </div>
+  </div>
+  <div *ngIf="rue.valid && codepostal.valid && ville.valid">
+    <button type="submit">Valider mes informations</button>
+  </div>
+</form>

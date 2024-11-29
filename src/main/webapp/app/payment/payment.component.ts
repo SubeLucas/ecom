@@ -32,7 +32,6 @@ export class PaymentComponent {
   }
 
   onPayButtonClick(): void {
-    console.log('Check formulaire :', this.numCard);
     // envoyer le panier au backend
     this.httpCart.validate(Cart.getCart()).subscribe({
       next: order => {
