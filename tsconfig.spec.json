@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/main/webapp/**/*.ts"],
+  "include": ["src/main/webapp/app/shared/**/*.ts", "src/main/webapp/**/*.ts"],
   "compilerOptions": {
     "composite": true,
     "outDir": "target/out-tsc/spec",
