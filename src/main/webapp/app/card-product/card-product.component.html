@@ -5,7 +5,12 @@
     </p>
 
     <div class="centered-infos">
-      <img [src]="getImageUrl()" alt="{{ product?.name }}" class="img-product" />
+      <img
+        [src]="getImageUrl()"
+        alt="{{ product?.name }}"
+        class="img-product"
+        style="max-width: 150px; max-height: 150px; object-fit: cover"
+      />
       <p class="title-product">{{ product?.name }}</p>
       <div class="weight-infos">
         <p>{{ product?.weight }}g/unité</p>
