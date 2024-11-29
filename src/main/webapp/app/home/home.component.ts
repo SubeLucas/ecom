@@ -74,7 +74,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
     this.handleNavigation();
     this.updateCrumbsCat();
-    console.warn('AAAAAAAAAAAAAA');
   }
 
   private handleNavigation(): void {
@@ -104,23 +103,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.searchSubscription?.unsubscribe();
-  }
-
-  // temporary button handler for cart validation tests
-  onButtonClick(): void {
-    this.httpCart.validate(Cart.getCart()).subscribe(success => {
-      console.log(success);
-    });
-  }
-
-  onAddPommeButtonClick(): void {
-    this.item = new CartItem(4, 1);
-    Cart.addItem(this.item);
-  }
-
-  onAddBananeButtonClick(): void {
-    this.item = new CartItem(9, 3);
-    Cart.addItem(this.item);
   }
 
   isCartEmpty(): boolean {
@@ -191,7 +173,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
     }
     //Appel apply
-    console.warn(this.selectedCategories);
 
     this.updateCrumbsCat(); // Met à jour le fil d'Ariane
   }

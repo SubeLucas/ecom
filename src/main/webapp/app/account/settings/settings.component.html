@@ -128,17 +128,6 @@
             }
           </div>
 
-          @if (languages && languages.length > 0) {
-            <div class="mb-3">
-              <label for="langKey" jhiTranslate="settings.form.language">Language</label>
-              <select class="form-control" id="langKey" name="langKey" formControlName="langKey" data-cy="langKey">
-                @for (language of languages; track $index) {
-                  <option [value]="language">{{ language | findLanguageFromKey }}</option>
-                }
-              </select>
-            </div>
-          }
-
           <button
             type="submit"
             [disabled]="settingsForm.invalid"
@@ -150,6 +139,16 @@
           </button>
         </form>
       }
+
+      <div *ngIf="clientOrders.length > 0">
+        <h3>Client Orders</h3>
+        <ul>
+          <li *ngFor="let order of clientOrders">
+            {{ order.id }} - {{ convertToDate(order.orderDate) | date: 'shortDate' }} - {{ order.status }}
+            <button class="btn btn-primary" (click)="generateReceipt(order.id)">Download Receipt</button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

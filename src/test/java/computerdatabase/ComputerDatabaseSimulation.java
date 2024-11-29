@@ -30,7 +30,7 @@ public class ComputerDatabaseSimulation extends Simulation {
     ChainBuilder validate = exec(http("home").get("/"))
         .pause(2)
         .exec(
-            http("add_apple")
+            http("add_grape")
                 .post("/api/cart")
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json, text/plain, */*")

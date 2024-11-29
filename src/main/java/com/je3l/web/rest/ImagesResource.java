@@ -5,6 +5,8 @@ import com.je3l.repository.ImagesRepository;
 import com.je3l.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
@@ -57,6 +60,19 @@ public class ImagesResource {
         return ResponseEntity.created(new URI("/api/images/" + images.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, images.getId().toString()))
             .body(images);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadImages(@RequestPart("file") MultipartFile image) {
+        try {
+            File inputFile = new File("./img/" + image.getOriginalFilename());
+            FileOutputStream fis = new FileOutputStream(inputFile);
+            fis.write(image.getBytes(), 0, image.getBytes().length);
+            fis.close();
+            return ResponseEntity.ok().body(image.getOriginalFilename());
+        } catch (Exception e) {
+            return ResponseEntity.ok().body("image upload error ");
+        }
     }
 
     /**
