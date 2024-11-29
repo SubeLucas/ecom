@@ -6,6 +6,10 @@ import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { LANGUAGES } from 'app/config/language.constants';
+import { ClientOrderService } from 'app/entities/client-order/service/client-order.service';
+import { IClientOrder } from 'app/entities/client-order/client-order.model';
+import dayjs, { Dayjs } from 'dayjs';
+import { PDFService } from 'app/core/util/PDF.service';
 
 const initialAccount: Account = {} as Account;
 
@@ -18,6 +22,7 @@ const initialAccount: Account = {} as Account;
 export default class SettingsComponent implements OnInit {
   success = signal(false);
   languages = LANGUAGES;
+  clientOrders: IClientOrder[] = [];
 
   settingsForm = new FormGroup({
     firstName: new FormControl(initialAccount.firstName, {
@@ -32,8 +37,6 @@ export default class SettingsComponent implements OnInit {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(5), Validators.maxLength(254), Validators.email],
     }),
-    langKey: new FormControl(initialAccount.langKey, { nonNullable: true }),
-
     activated: new FormControl(initialAccount.activated, { nonNullable: true }),
     authorities: new FormControl(initialAccount.authorities, { nonNullable: true }),
     imageUrl: new FormControl(initialAccount.imageUrl, { nonNullable: true }),
@@ -42,12 +45,18 @@ export default class SettingsComponent implements OnInit {
 
   private accountService = inject(AccountService);
   private translateService = inject(TranslateService);
+  private clientOrderService = inject(ClientOrderService);
+  private pdfService = inject(PDFService);
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => {
       if (account) {
         this.settingsForm.patchValue(account);
       }
+    });
+
+    this.clientOrderService.getClientOrdersByCurrentClient().subscribe(response => {
+      this.clientOrders = response.body!;
     });
   }
 
@@ -59,10 +68,14 @@ export default class SettingsComponent implements OnInit {
       this.success.set(true);
 
       this.accountService.authenticate(account);
-
-      if (account.langKey !== this.translateService.currentLang) {
-        this.translateService.use(account.langKey);
-      }
     });
+  }
+
+  convertToDate(dayjsDate: Dayjs | null | undefined): Date | null {
+    return dayjsDate ? dayjsDate.toDate() : null;
+  }
+
+  generateReceipt(orderId: number): void {
+    this.pdfService.generatePDF(orderId);
   }
 }

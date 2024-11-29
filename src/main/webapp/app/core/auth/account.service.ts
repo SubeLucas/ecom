@@ -53,14 +53,6 @@ export class AccountService {
       this.accountCache$ = this.fetch().pipe(
         tap((account: Account) => {
           this.authenticate(account);
-
-          // After retrieve the account info, the language will be changed to
-          // the user's preferred language configured in the account setting
-          // unless user have choosed other language in the current session
-          if (!this.stateStorageService.getLocale()) {
-            this.translateService.use(account.langKey);
-          }
-
           this.navigateToStoredUrl();
         }),
         shareReplay(),
