@@ -21,7 +21,11 @@
     <div class="centered-infos div-cart">
       <p class="price-product">{{ priceProduct!.toFixed(2).replace('.', ',') }}€</p>
       @if (quantity == 0) {
-        <button class="add-cart-btn" (click)="plusQuantity()">Panier</button>
+        @if (product!.stockQuantity! > 0) {
+          <button class="add-cart-btn" (click)="plusQuantity()">Panier</button>
+        } @else {
+          <label>Indisponible</label>
+        }
       } @else {
         <div class="change-qt">
           <button class="minus-btn" (click)="minusQuantity()">-</button>
@@ -49,7 +53,12 @@
       ><strong>ERREUR : Plus que {{ this.product!.stockQuantity }} pièces en stock.</strong></label
     >
     <div class="main-infos">
-      <img class="img-product-cart" src="../../content/images/tomate.png" alt="tomate rouge" />
+      <img
+        [src]="getImageUrl()"
+        alt="{{ product?.name }}"
+        class="img-product"
+        style="max-width: 150px; max-height: 150px; object-fit: cover"
+      />
       <div class="title-origin-infos">
         <p class="title-product">{{ product?.name }}</p>
         <p class="origin-product">{{ product?.origin }}</p>
