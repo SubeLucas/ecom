@@ -146,6 +146,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   onApplyFilters(): void {
     console.log('filter applied');
     this.selectedCategories = [];
+    this.kindFilteredAliments = [];
     //Récup ce qui est coché niveau catégories
     const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
     for (let i = 0; i < cbListElements.length; i++) {
