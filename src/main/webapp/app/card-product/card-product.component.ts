@@ -75,7 +75,9 @@ export class CardProductComponent {
 
   minusQuantity(): void {
     if (this.quantity !== 0) {
-      this.quantity--;
+      if (!(this.inCart && this.quantity == 1)) {
+        this.quantity--;
+      }
       this.updateTotalPriceProduct();
       if (this.product) {
         Cart.setItemQuantity(this.product.id, this.quantity);
@@ -133,7 +135,7 @@ export class CardProductComponent {
         inputEvtType === 'insertFromPaste' ||
         inputEvtType === 'insertFromDrop')
     ) {
-      if (+el.value < 0) {
+      if (+el.value <= 0) {
         el.value = '1';
       } else if (+el.value > this.maxQuantity) {
         el.value = this.maxQuantity.toString();
