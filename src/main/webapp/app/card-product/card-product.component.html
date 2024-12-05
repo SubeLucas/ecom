@@ -5,12 +5,7 @@
     </p>
 
     <div class="centered-infos">
-      <img
-        [src]="getImageUrl()"
-        alt="{{ product?.name }}"
-        class="img-product"
-        style="max-width: 150px; max-height: 150px; object-fit: cover"
-      />
+      <img [src]="getImageUrl()" alt="{{ product?.name }}" class="img-product" />
       <p class="title-product">{{ product?.name }}</p>
       <div class="weight-infos">
         <p>{{ product?.weight }}g/pièce</p>
@@ -53,12 +48,7 @@
       ><strong>ERREUR : Plus que {{ this.product!.stockQuantity }} pièces en stock.</strong></label
     >
     <div class="main-infos">
-      <img
-        [src]="getImageUrl()"
-        alt="{{ product?.name }}"
-        class="img-product"
-        style="max-width: 150px; max-height: 150px; object-fit: cover"
-      />
+      <img [src]="getImageUrl()" alt="{{ product?.name }}" class="img-product-cart" />
       <div class="title-origin-infos">
         <p class="title-product">{{ product?.name }}</p>
         <p class="origin-product">{{ product?.origin }}</p>

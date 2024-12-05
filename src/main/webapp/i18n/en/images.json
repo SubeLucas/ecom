@@ -3,16 +3,16 @@
     "images": {
       "home": {
         "title": "Images",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Images",
-        "createOrEditLabel": "Create or edit a Images",
-        "notFound": "No Images found"
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Images",
+        "createOrEditLabel": "Créer ou éditer un Images",
+        "notFound": "Aucun Images trouvé"
       },
-      "created": "A new Images is created with identifier {{ param }}",
-      "updated": "A Images is updated with identifier {{ param }}",
-      "deleted": "A Images is deleted with identifier {{ param }}",
+      "created": "Un nouveau Images a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Images avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Images avec l'identifiant {{ param }} a été supprimé",
       "delete": {
-        "question": "Are you sure you want to delete Images {{ id }}?"
+        "question": "Êtes-vous certain de vouloir supprimer le Images {{ id }} ?"
       },
       "detail": {
         "title": "Images"

@@ -2,9 +2,9 @@
   "ecomApp": {
     "EnumStatus": {
       "null": "",
-      "IN_PROGRESS": "IN_PROGRESS",
-      "SHIPPED": "SHIPPED",
-      "CANCELLED": "CANCELLED"
+      "IN_PROGRESS": "EN_COURS",
+      "SHIPPED": "ENVOYÉ",
+      "CANCELLED": "ANNULÉ"
     }
   }
 }
