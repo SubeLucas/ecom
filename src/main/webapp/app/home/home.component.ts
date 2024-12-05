@@ -87,12 +87,17 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(event => {
-      // Si la navigation est vers la page d'accueil ou le catalogue sans filtres
-      if (event.url === '/') {
-        this.onRemoveFilters(); // Réinitialiser les filtres et le fil d'Ariane
-      } else {
-        this.updateCrumbsCat();
+    this.route.url.subscribe(url => {
+      const currentUrl = this.router.url;
+      if (currentUrl.startsWith('?')) {
+        this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(event => {
+          // Si la navigation est vers la page d'accueil ou le catalogue sans filtres
+          if (event.url === '/') {
+            this.onRemoveFilters(); // Réinitialiser les filtres et le fil d'Ariane
+          } else {
+            this.updateCrumbsCat();
+          }
+        });
       }
     });
   }
