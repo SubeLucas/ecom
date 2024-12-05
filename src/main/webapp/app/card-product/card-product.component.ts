@@ -32,11 +32,16 @@ export class CardProductComponent {
   ngOnInit(): void {
     const cart = Cart.getCart();
     if (this.product) {
-      // récupérer la quantite dans le panier, ne jamais permettre plus de maxQuantity
+      // récupérer la quantite dans le panier, ne jamais permettre plus de maxQuantity ou un négatif
       this.quantity = Cart.getItemQuantity(this.product.id);
       if (this.quantity > this.maxQuantity) {
         this.quantity = this.maxQuantity;
         Cart.setItemQuantity(this.product.id, this.maxQuantity);
+        this.quantityChanged.emit();
+      }
+      if (this.quantity < 0) {
+        this.quantity = 0;
+        this.quantityChanged.emit();
       }
       // récupérer le stock pour detecter une trop grosse quantite
       this.alimentsService.getStock(this.product.id).subscribe(response => {
@@ -95,6 +100,7 @@ export class CardProductComponent {
           this.valid = false;
         }
       }
+      this.quantityChanged.emit();
     }
   }
 
