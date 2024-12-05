@@ -141,11 +141,11 @@
       }
 
       <div *ngIf="clientOrders.length > 0">
-        <h3>Client Orders</h3>
+        <h3>Historique de commandes</h3>
         <ul>
           <li *ngFor="let order of clientOrders">
             {{ order.id }} - {{ convertToDate(order.orderDate) | date: 'shortDate' }} - {{ order.status }}
-            <button class="btn btn-primary" (click)="generateReceipt(order.id)">Download Receipt</button>
+            <button class="btn btn-primary" (click)="generateReceipt(order.id)">Télécharger facture</button>
           </li>
         </ul>
       </div>

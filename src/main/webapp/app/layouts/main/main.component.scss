@@ -3,3 +3,14 @@
 div {
   background-color: $baby-powder;
 }
+
+.content {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.container-fluid {
+  flex: 1;
+}
