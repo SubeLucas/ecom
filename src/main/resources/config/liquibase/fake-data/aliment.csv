@@ -7,5 +7,5 @@ id;name;origin;season;color;weight;stock_quantity;price
 6;Poivron;ESPAGNE;126;GREEN;190;211;0.81
 7;Citron;FRANCE;3983;YELLOW;100;54;0.22
 8;Aubergine;FRANCE;120;BLACK;340;83;0.85
-9;Raisin;ESPAGNE;28;PURPLE;4;14300;0.02
+9;Raisin;ESPAGNE;28;PURPLE;150;14300;0.75
 11;Pêche;ITALIE;112;WHITE;145;139;1.10
