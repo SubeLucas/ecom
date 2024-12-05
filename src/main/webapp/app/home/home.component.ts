@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
+import { SharedService } from '../shared/shared.service';
 
 import SharedModule from 'app/shared/shared.module';
 import { AccountService } from 'app/core/auth/account.service';
@@ -18,7 +19,6 @@ import { MenuItem } from 'primeng/api';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
 import { CardProductComponent } from '../card-product/card-product.component';
-import { PDFService } from '../core/util/PDF.service';
 
 @Component({
   standalone: true,
@@ -38,6 +38,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   private accountService = inject(AccountService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private searchSubscription: Subscription | undefined;
 
   private item = new CartItem(0, 0);
   aliments: IAliment[] = [];
@@ -52,7 +53,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private httpCart: CartService,
     private httpAliment: AlimentService,
-    private pdfService: PDFService,
+    private sharedService: SharedService,
   ) {}
 
   ngOnInit(): void {
@@ -65,11 +66,14 @@ export default class HomeComponent implements OnInit, OnDestroy {
       this.aliments = aliments.body != null ? aliments.body : [];
     });
 
+    this.searchSubscription = this.sharedService.searchTriggered$.subscribe(keyword => {
+      this.performSearch(keyword);
+    });
+
     this.breadcrumbItems = [{ label: 'Catalogue' }];
 
     this.handleNavigation();
     this.updateCrumbsCat();
-    console.warn('AAAAAAAAAAAAAA');
   }
 
   private handleNavigation(): void {
@@ -87,6 +91,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
       // Si la navigation est vers la page d'accueil ou le catalogue sans filtres
       if (event.url === '/') {
         this.onRemoveFilters(); // Réinitialiser les filtres et le fil d'Ariane
+      } else {
+        this.updateCrumbsCat();
       }
     });
   }
@@ -98,23 +104,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  // temporary button handler for cart validation tests
-  onButtonClick(): void {
-    this.httpCart.validate(Cart.getCart()).subscribe(success => {
-      console.log(success);
-    });
-  }
-
-  onAddPommeButtonClick(): void {
-    this.item = new CartItem(4, 1);
-    Cart.addItem(this.item);
-  }
-
-  onAddBananeButtonClick(): void {
-    this.item = new CartItem(9, 3);
-    Cart.addItem(this.item);
+    this.searchSubscription?.unsubscribe();
   }
 
   isCartEmpty(): boolean {
@@ -133,8 +123,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.isCatCollapsed.update(isCatCollapsed => !isCatCollapsed);
   }
 
-  onSearch(): void {
-    const keyword = this.searchKeyword.trim().toLowerCase();
+  performSearch(keyword: string): void {
+    keyword = keyword.trim().toLowerCase();
     if (keyword) {
       if (this.kindFilteredAliments.length > 0) {
         this.kindFilteredAliments = this.kindFilteredAliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
@@ -149,6 +139,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   onApplyFilters(): void {
+    console.log('filter applied');
     this.selectedCategories = [];
     //Récup ce qui est coché niveau catégories
     const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
@@ -159,8 +150,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
     }
     //Récup ce qui est indiqué nv prix
     for (const kind of this.selectedCategories) {
-      if (kind === 'Fruits-cb') {
+      if (kind === 'Fruits') {
         if (this.filteredAliments.length > 0) {
+          console.log(this.filteredAliments);
           for (const aliment of this.filteredAliments) {
             if (aliment.id % 2 == 1) this.kindFilteredAliments.push(aliment);
           }
@@ -170,7 +162,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
           }
         }
       }
-      if (kind === 'Légumes-cb') {
+      if (kind === 'Légumes') {
         if (this.filteredAliments.length > 0) {
           for (const aliment of this.filteredAliments) {
             if (aliment.id % 2 == 0) this.kindFilteredAliments.push(aliment);
@@ -183,7 +175,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
     }
     //Appel apply
-    console.warn(this.selectedCategories);
 
     this.updateCrumbsCat(); // Met à jour le fil d'Ariane
   }
@@ -217,7 +208,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: {}, // Aucun paramètre
-        queryParamsHandling: 'merge', // Supprime uniquement les paramètres spécifiés
+        // Supprime uniquement les paramètres spécifiés
       });
       this.breadcrumbItems = [{ label: 'Catalogue', routerLink: './', queryParamsHandling: 'merge' }];
     } else {

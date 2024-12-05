@@ -73,8 +73,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
   scan(): boolean {
     let invalid = false;
-    const cart = Cart.getCart();
-    if (!cart) {
+    if (Cart.isEmpty()) {
       console.log('Cart vide');
       invalid = true;
     }

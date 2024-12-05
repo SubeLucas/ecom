@@ -55,7 +55,7 @@ export class CardProductComponent {
       });
 
       if (this.product.price && this.product.weight) {
-        this.priceByKg = (this.product.price / this.product.weight).toFixed(2);
+        this.priceByKg = (this.product.price / (this.product.weight / 1000)).toFixed(2);
       }
     }
     this.updateTotalPriceProduct();

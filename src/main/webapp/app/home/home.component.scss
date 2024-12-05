@@ -25,12 +25,26 @@ Main page styles
 
 .product-list {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 
 .row {
   background-color: $baby-powder;
+}
+
+::ng-deep p-breadcrumb {
+  li {
+    height: 1em;
+  }
+  a {
+    color: $hunter-green;
+    font-weight: bold;
+  }
+}
+
+nav {
+  margin-bottom: 1em;
 }
 
 .filters {

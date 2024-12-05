@@ -197,4 +197,10 @@ public class ClientOrderResource {
         LOG.debug("REST request to cancel ClientOrder : {}", id);
         orderService.cancelOrder(id);
     }
+
+    @GetMapping("/currentClient/")
+    public List<ClientOrder> getClientOrderByCurrentClient() {
+        LOG.debug("REST request to get all ClientOrders by current client");
+        return clientOrderRepository.findClientHistory();
+    }
 }
