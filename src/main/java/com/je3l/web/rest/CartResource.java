@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ArrayUtils.removeElement;
 
 import com.je3l.domain.Aliment;
 import com.je3l.domain.Client;
+import com.je3l.domain.ClientOrder;
 import com.je3l.repository.AlimentRepository;
 import com.je3l.service.ClientService;
 import com.je3l.service.OrderService;
@@ -49,7 +50,14 @@ public class CartResource {
         Client c = clientService.getCurrentClient();
 
         try {
-            return orderService.addOrder(cartItems, c).getId();
+            ClientOrder order = orderService.addOrder(cartItems, c);
+            if (order != null) {
+                // Si assez de stock
+                return order.getId();
+            }
+            // Erreur pas assez de stock
+            LOG.warn("Stock missing error");
+            return -3L;
         } catch (OptimisticLockException e) {
             LOG.warn("OptimisticLockException occurred", e);
             return -2L;
