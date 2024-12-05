@@ -151,3 +151,19 @@ button:active {
 hr {
   margin-block: 0.8em;
 }
+
+.sort p {
+  margin-left: 0.5em;
+}
+
+select {
+  background-color: $parchment;
+  border: none;
+  border-radius: 10px;
+  padding: 0.35em;
+  transition: 0.2s;
+
+  &:hover {
+    background-color: $vanilla-green;
+  }
+}

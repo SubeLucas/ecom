@@ -152,6 +152,12 @@ export class CardProductComponent {
 
   isSeasonProduct(season: number | null | undefined): boolean {
     if (season === null || undefined) return false;
-    return season === 16795;
+    else {
+      const currentDate = new Date();
+      let currentMonth = currentDate.getMonth() + 1;
+      currentMonth = 2 ** (12 - currentMonth);
+      const result = (currentMonth & season!) === 1;
+      return result;
+    }
   }
 }
