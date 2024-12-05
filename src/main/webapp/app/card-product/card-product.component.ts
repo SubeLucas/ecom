@@ -132,6 +132,7 @@ export class CardProductComponent {
       this.quantity = +el.value;
       if (this.product) {
         Cart.setItemQuantity(this.product.id, this.quantity);
+        this.valid = this.quantity <= this.product.stockQuantity!;
       }
       this.updateTotalPriceProduct();
       this.quantityChanged.emit();
