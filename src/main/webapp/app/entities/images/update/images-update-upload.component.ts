@@ -20,6 +20,8 @@ export class ImagesUpdateComponent implements OnInit {
   isSaving = false;
   images: IImages | null = null;
   img_data: File | null = null;
+  id_alime: number | null = null;
+
   alimentsSharedCollection: IAliment[] = [];
   protected imagesService = inject(ImagesService);
   protected imagesFormService = inject(ImagesFormService);
@@ -28,8 +30,12 @@ export class ImagesUpdateComponent implements OnInit {
   constructor(private http: HttpClient) {}
   @HostListener('change', ['$event.target.files']) emitFiles(event: FileList) {
     const file = event && event.item(0);
-    this.img_data = file;
-    console.log('file uploaded');
+    if (event != undefined) {
+      this.img_data = file;
+      console.log('file uploaded');
+    } else {
+      console.log(this.editForm);
+    }
   }
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: ImagesFormGroup = this.imagesFormService.createImagesFormGroup();
@@ -51,17 +57,15 @@ export class ImagesUpdateComponent implements OnInit {
     const images = this.imagesFormService.getImages(this.editForm);
     if (this.img_data !== null) {
       const formData = new FormData();
-      formData.append('file', this.img_data);
+      formData.append('file', this.img_data, `aliment_${this.editForm?.value.aliment?.id}.png`);
       this.imagesService
         .upload(formData)
-        .pipe(finalize(() => console.log('upload finished')))
+        .pipe(finalize(() => this.onSaveFinalize()))
         .subscribe({
-          next: () => console.log('success'),
-          error: () => console.log('error ouin'),
+          next: v => this.onSaveSuccess(),
+          error: e => this.onSaveError(),
         });
-      images.url = 'g envoyé 1 truk';
-    }
-    if (images.id !== null) {
+    } else if (images.id !== null) {
       this.subscribeToSaveResponse(this.imagesService.update(images));
     } else {
       this.subscribeToSaveResponse(this.imagesService.create(images));
@@ -79,6 +83,7 @@ export class ImagesUpdateComponent implements OnInit {
   protected onSaveError(): void {
     // Api for inheritance.
   }
+
   protected onSaveFinalize(): void {
     this.isSaving = false;
   }

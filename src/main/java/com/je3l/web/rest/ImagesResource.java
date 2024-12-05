@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.zip.GZIPOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,20 +64,22 @@ public class ImagesResource {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImages(@RequestPart("file") MultipartFile image) {
+    public boolean uploadImages(@RequestPart("file") MultipartFile image) {
         try {
-            File inputFile = new File("./img/" + image.getOriginalFilename());
+            File inputFile = new File("/usr/share/nginx/img/" + image.getOriginalFilename() + ".gz");
             FileOutputStream fis = new FileOutputStream(inputFile);
-            fis.write(image.getBytes(), 0, image.getBytes().length);
+            GZIPOutputStream gzipos = new GZIPOutputStream(fis);
+            gzipos.write(image.getBytes(), 0, image.getBytes().length);
+            gzipos.close();
             fis.close();
-            return ResponseEntity.ok().body(image.getOriginalFilename());
+            return true;
         } catch (Exception e) {
-            return ResponseEntity.ok().body("image upload error ");
+            return false;
         }
     }
 
     /**
-     * {@code PUT  /images/:id} : Updates an existing images.
+     * {@code PUT  /images/:id} : Updates an existing IMAGEs.
      *
      * @param id the id of the images to save.
      * @param images the images to update.
