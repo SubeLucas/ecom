@@ -32,8 +32,13 @@ export class PaymentComponent {
   }
 
   onPayButtonClick(): void {
+    // re-limiter les quantités à maxQuantity si un petit malin a changé des valeurs à la main dans localStorage
+    const cart = Cart.getCart();
+    for (const item of cart.cartItems) {
+      item.qt = item.qt > 99 ? 99 : item.qt;
+    }
     // envoyer le panier au backend
-    this.httpCart.validate(Cart.getCart()).subscribe({
+    this.httpCart.validate(cart).subscribe({
       next: order => {
         if (order > 0) {
           console.log('Panier accepté, order n°', order);
@@ -61,13 +66,19 @@ export class PaymentComponent {
               console.error('Erreur lors du paiement', error);
             },
           });
-        } else {
-          console.log('Panier refusé');
+        } else if (order == -1) {
+          console.log('Panier invalide');
+          this.router.navigate(['cart']);
+        } else if (order == -2) {
+          alert('Une erreur est survenue. Veuillez réessayer.');
+        } else if (order == -3) {
+          console.log('Manque de stock');
           this.router.navigate(['cart']);
         }
       },
       error: error => {
         console.error('Erreur lors de la validation du panier', error);
+        this.router.navigate(['cart']);
       },
     });
   }
