@@ -45,7 +45,9 @@
       }
     </div>
   } @else {
-    <label *ngIf="!valid" style="color: red">Plus que {{ this.product!.stockQuantity }} en stock</label>
+    <label *ngIf="!valid" style="color: red"
+      ><strong>ERREUR : Plus que {{ this.product!.stockQuantity }} pièces en stock.</strong></label
+    >
     <div class="main-infos">
       <img class="img-product-cart" src="../../content/images/tomate.png" alt="tomate rouge" />
       <div class="title-origin-infos">

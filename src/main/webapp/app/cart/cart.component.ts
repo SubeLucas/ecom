@@ -48,7 +48,7 @@ export class CartComponent implements OnInit, OnDestroy {
       this.http.find(item.id).subscribe(aliment => {
         if (aliment.body) {
           this.aliments.push(aliment.body);
-          this.stockMap.set(item.id, item.qt);
+          this.stockMap.set(item.id, aliment.body.stockQuantity!);
           if (aliment.body.price) {
             this.totalPrice += aliment.body.price * item.qt;
           }
@@ -72,18 +72,19 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   scan(): boolean {
-    let invalid = false;
+    let valid = true;
     if (Cart.isEmpty()) {
       console.log('Cart vide');
-      invalid = true;
+      valid = false;
     }
     for (const aliment of this.aliments) {
-      const quantity = this.stockMap.get(aliment.id)!;
-      if (quantity > aliment.stockQuantity!) {
-        invalid = true;
+      const quantity = Cart.getItemQuantity(aliment.id);
+      console.log(quantity, this.stockMap.get(aliment.id)!);
+      if (quantity > this.stockMap.get(aliment.id)!) {
+        valid = false;
       }
     }
-    return invalid;
+    return valid;
   }
 
   onButtonClick(): void {
@@ -92,7 +93,10 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onValidateButtonClick(): void {
     if (this.accountService.isAuthenticated()) {
-      this.router.navigate(['delivery']);
+      console.log(this.scan());
+      if (this.scan()) {
+        this.router.navigate(['delivery']);
+      }
     } else {
       this.router.navigate(['login']);
     }
