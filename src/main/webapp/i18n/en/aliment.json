@@ -3,16 +3,16 @@
     "aliment": {
       "home": {
         "title": "Aliments",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Aliment",
-        "createOrEditLabel": "Create or edit a Aliment",
-        "notFound": "No Aliments found"
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Aliment",
+        "createOrEditLabel": "Créer ou éditer un Aliment",
+        "notFound": "Aucun Aliment trouvé"
       },
-      "created": "A new Aliment is created with identifier {{ param }}",
-      "updated": "A Aliment is updated with identifier {{ param }}",
-      "deleted": "A Aliment is deleted with identifier {{ param }}",
+      "created": "Un nouveau Aliment a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Aliment avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Aliment avec l'identifiant {{ param }} a été supprimé",
       "delete": {
-        "question": "Are you sure you want to delete Aliment {{ id }}?"
+        "question": "Êtes-vous certain de vouloir supprimer le Aliment {{ id }} ?"
       },
       "detail": {
         "title": "Aliment"

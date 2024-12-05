@@ -2,17 +2,17 @@
   "ecomApp": {
     "orderLine": {
       "home": {
-        "title": "Order Lines",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Order Line",
-        "createOrEditLabel": "Create or edit a Order Line",
-        "notFound": "No Order Lines found"
+        "title": "OrderLines",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Order Line",
+        "createOrEditLabel": "Créer ou éditer un Order Line",
+        "notFound": "Aucun Order Line trouvé"
       },
-      "created": "A new Order Line is created with identifier {{ param }}",
-      "updated": "A Order Line is updated with identifier {{ param }}",
-      "deleted": "A Order Line is deleted with identifier {{ param }}",
+      "created": "Un nouveau Order Line a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Order Line avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Order Line avec l'identifiant {{ param }} a été supprimé",
       "delete": {
-        "question": "Are you sure you want to delete Order Line {{ id }}?"
+        "question": "Êtes-vous certain de vouloir supprimer le Order Line {{ id }} ?"
       },
       "detail": {
         "title": "Order Line"
