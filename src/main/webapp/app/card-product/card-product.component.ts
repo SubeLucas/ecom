@@ -47,6 +47,9 @@ export class CardProductComponent {
             console.log(`Aliment d'id ${this.product!.id} n'a plus que ${this.product!.stockQuantity} exemplaires en stock`);
             this.valid = false;
           }
+        } else {
+          console.log(`Aliment d'id ${this.product!.id} n'a plus d'exemplaires en stock`);
+          this.valid = false;
         }
       });
 
@@ -141,7 +144,6 @@ export class CardProductComponent {
 
   onBlur(event: Event): void {
     const element = event.target as HTMLInputElement;
-    console.warn(element.value);
     if (element.value == '') {
       element.value = this.quantity.toString();
     }

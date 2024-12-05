@@ -32,7 +32,6 @@ export class CartComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadCartItems();
-    this.scan();
   }
 
   ngOnDestroy(): void {
@@ -104,6 +103,5 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onQuantityChanged(): void {
     this.updateTotalPrice();
-    this.scan();
   }
 }
