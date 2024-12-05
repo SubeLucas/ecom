@@ -8,6 +8,7 @@
   &.not-in-cart {
     padding: 1em 2em;
     max-width: fit-content;
+    min-width: 250px;
   }
 
   &.in-cart {
@@ -33,12 +34,12 @@
 }
 
 .img-product {
-  max-width: 75%;
+  max-width: 60%;
   height: auto;
 }
 
 .img-product-cart {
-  max-width: 30%;
+  max-width: 25%;
   height: auto;
 }
 

@@ -69,7 +69,9 @@
               <td>
                 <a [routerLink]="['/images', images.id, 'view']">{{ images.id }}</a>
               </td>
-              <td>{{ images.url }}</td>
+              <td>
+                <a href="{{ images.url }}">{{ images.url }}</a>
+              </td>
               <td>
                 @if (images.aliment) {
                   <div>

@@ -2,17 +2,17 @@
   "ecomApp": {
     "clientOrder": {
       "home": {
-        "title": "Client Orders",
-        "refreshListLabel": "Refresh list",
-        "createLabel": "Create a new Client Order",
-        "createOrEditLabel": "Create or edit a Client Order",
-        "notFound": "No Client Orders found"
+        "title": "ClientOrders",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Client Order",
+        "createOrEditLabel": "Créer ou éditer un Client Order",
+        "notFound": "Aucun Client Order trouvé"
       },
-      "created": "A new Client Order is created with identifier {{ param }}",
-      "updated": "A Client Order is updated with identifier {{ param }}",
-      "deleted": "A Client Order is deleted with identifier {{ param }}",
+      "created": "Un nouveau Client Order a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Client Order avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Client Order avec l'identifiant {{ param }} a été supprimé",
       "delete": {
-        "question": "Are you sure you want to delete Client Order {{ id }}?"
+        "question": "Êtes-vous certain de vouloir supprimer le Client Order {{ id }} ?"
       },
       "detail": {
         "title": "Client Order"
