@@ -15,6 +15,9 @@ import { ClientService } from 'app/entities/client/service/client.service';
 export class DeliveryComponent implements OnInit {
   private router = inject(Router);
   private accountService = inject(AccountService);
+  day = 1;
+  month = 1;
+  year = 2025;
   street = '';
   code = '';
   city = '';
@@ -40,6 +43,10 @@ export class DeliveryComponent implements OnInit {
 
   onValidateButtonClick(): void {
     if (this.accountService.isAuthenticated()) {
+      // enregistrement de la date de livraison dans le cache
+      localStorage.setItem('deliveryDay', this.day.toString());
+      localStorage.setItem('deliveryMonth', this.month.toString());
+      localStorage.setItem('deliveryYear', this.year.toString());
       // mise à jour adresse de livraison du client connecté
       this.http.findCurrent().subscribe({
         next: client => {
