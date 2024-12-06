@@ -19,6 +19,7 @@ import { MenuItem } from 'primeng/api';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
 import { CardProductComponent } from '../card-product/card-product.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -30,6 +31,7 @@ import { CardProductComponent } from '../card-product/card-product.component';
 export default class HomeComponent implements OnInit, OnDestroy {
   breadcrumbItems: MenuItem[] = []; // Les éléments du fil d'Ariane
   categories: string[] = ['Fruits', 'Légumes'];
+  private titleService = inject(Title);
 
   account = signal<Account | null>(null);
 
@@ -60,6 +62,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.titleService.setTitle('Cueillette');
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
@@ -112,9 +115,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
     /*this.route.url.subscribe(url => {
       console.warn(url)
       const currentUrl = this.router.url;
-       
+
       if (currentUrl.startsWith('?')) {
-        
+
       }
     });
     */

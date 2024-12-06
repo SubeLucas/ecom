@@ -7,6 +7,8 @@ import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../core/auth/account.service';
+import { Title } from '@angular/platform-browser';
+
 @Component({
   selector: 'jhi-cart',
   standalone: true,
@@ -22,6 +24,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private cart: Cart;
   totalPrice = 0;
   private accountService = inject(AccountService);
+  private titleService = inject(Title);
 
   constructor(private http: AlimentService) {
     this.cartSubscription = Cart.getCartChangedObservable().subscribe(() => {
@@ -31,6 +34,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Cueillette - Panier');
     this.loadCartItems();
   }
 

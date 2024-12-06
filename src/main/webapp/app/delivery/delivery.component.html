@@ -1,6 +1,62 @@
 <p>delivery works!</p>
 <button id="goto-cart" class="btn btn-primary" [routerLink]="['/cart']">Retour au panier</button>
 <form (ngSubmit)="onValidateButtonClick()">
+  <p>Date de livraison :</p>
+  <div class="form-group">
+    <label for="day">Jour</label>
+    <input
+      type="number"
+      required
+      minlength="1"
+      min="1"
+      max="31"
+      class="form-control"
+      id="day"
+      name="day"
+      [(ngModel)]="day"
+      #jour="ngModel"
+    />
+    <div *ngIf="jour.invalid && (jour.dirty || jour.touched)" class="alert alert-danger">
+      <div *ngIf="jour.errors && jour.errors.required">Ce champ est obligatoire.</div>
+      <div *ngIf="jour.errors && (jour.errors.min || jour.errors.max)">Valeur incorrecte.</div>
+    </div>
+    <label for="month">Mois</label>
+    <input
+      type="number"
+      required
+      minlength="1"
+      min="1"
+      max="12"
+      class="form-control"
+      id="month"
+      name="month"
+      [(ngModel)]="month"
+      #mois="ngModel"
+    />
+    <div *ngIf="mois.invalid && (mois.dirty || mois.touched)" class="alert alert-danger">
+      <div *ngIf="mois.errors && mois.errors.required">Ce champ est obligatoire.</div>
+      <div *ngIf="mois.errors && (mois.errors.min || mois.errors.max)">Valeur incorrecte.</div>
+    </div>
+    <label for="year">Année</label>
+    <input
+      type="number"
+      required
+      minlength="4"
+      min="2024"
+      max="3000"
+      class="form-control"
+      id="year"
+      name="year"
+      [(ngModel)]="year"
+      #annee="ngModel"
+    />
+    <div *ngIf="annee.invalid && (annee.dirty || annee.touched)" class="alert alert-danger">
+      <div *ngIf="annee.errors && annee.errors.required">Ce champ est obligatoire.</div>
+      <div *ngIf="annee.errors && (annee.errors.min || annee.errors.max)">Valeur incorrecte.</div>
+    </div>
+  </div>
+
+  <p>Lieu de livraison :</p>
   <div class="form-group">
     <label for="street">Adresse postale</label>
     <input type="text" required maxlength="128" class="form-control" id="street" name="street" [(ngModel)]="street" #rue="ngModel" />
@@ -22,7 +78,7 @@
       <div *ngIf="ville.errors && ville.errors.required">Ce champ est obligatoire.</div>
     </div>
   </div>
-  <div *ngIf="rue.valid && codepostal.valid && ville.valid">
+  <div *ngIf="jour.valid && mois.valid && annee.valid && rue.valid && codepostal.valid && ville.valid">
     <button type="submit">Valider mes informations</button>
   </div>
 </form>
