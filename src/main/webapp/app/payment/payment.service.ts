@@ -8,15 +8,15 @@ import { ApplicationConfigService } from 'app/core/config/application-config.ser
 @Injectable({ providedIn: 'root' })
 export class PaymentService {
   protected applicationConfigService = inject(ApplicationConfigService);
-  protected resourceUrl = this.applicationConfigService.getEndpointFor('api/payment');
+  protected resourceUrl = this.applicationConfigService.getEndpointFor('api');
 
   constructor(private http: HttpClient) {}
 
   sendOrder(payment: Payment): Observable<number> {
-    return this.http.post<number>(this.resourceUrl, payment);
+    return this.http.post<number>(`${this.resourceUrl}/cart`, payment);
   }
 
   pay(numCard: string): Observable<boolean> {
-    return this.http.post<boolean>(this.resourceUrl, numCard);
+    return this.http.post<boolean>(`${this.resourceUrl}/payment`, numCard);
   }
 }
