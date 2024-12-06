@@ -4,28 +4,35 @@ import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { AccountService } from 'app/core/auth/account.service';
 import { ClientService } from 'app/entities/client/service/client.service';
+import { MenuItem } from 'primeng/api';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 
 @Component({
   selector: 'jhi-delivery',
   standalone: true,
-  imports: [RouterModule, FormsModule, NgIf],
+  imports: [RouterModule, FormsModule, NgIf, BreadcrumbModule],
   templateUrl: './delivery.component.html',
   styleUrl: './delivery.component.scss',
 })
 export class DeliveryComponent implements OnInit {
   private router = inject(Router);
   private accountService = inject(AccountService);
-  day = 1;
-  month = 1;
-  year = 2025;
+  day = 0;
+  month = 0;
+  year = 0;
   street = '';
   code = '';
   city = '';
+  breadcrumbItems: MenuItem[] = [{ label: 'Mon Panier', routerLink: '../cart' }, { label: 'Informations de Livraison' }];
 
   constructor(private http: ClientService) {}
 
   ngOnInit(): void {
     if (this.accountService.isAuthenticated()) {
+      // récupérer mois et année actuelle
+      const currentDate = new Date();
+      this.month = currentDate.getMonth() + 1;
+      this.year = currentDate.getFullYear();
       // récupérer l'adresse du client connecté
       this.http.findCurrent().subscribe({
         next: client => {

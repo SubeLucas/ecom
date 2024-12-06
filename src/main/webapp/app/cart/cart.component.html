@@ -1,3 +1,7 @@
+<nav>
+  <p-breadcrumb [model]="breadcrumbItems"></p-breadcrumb>
+</nav>
+
 <span class="my-cart-link-home" (click)="onButtonClick()">
   <fa-icon icon="arrow-left"></fa-icon>
   <h2>Mon panier</h2>
@@ -5,7 +9,7 @@
 
 <div>
   <p>{{ aliments.length }} article(s)</p>
-  <button id="empty-cart" (click)="onClearButtonClick()">Vider mon panier</button>
+  <button id="empty-cart" [disabled]="Cart.isEmpty()" (click)="onClearButtonClick()">Vider mon panier</button>
 </div>
 
 <div class="product-list">
@@ -26,5 +30,5 @@
   <h3>Total</h3>
   <p>{{ aliments.length }} article(s)</p>
   <p>{{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
-  <button id="validate-cart" class="normal-btn" (click)="onValidateButtonClick()">Valider mon panier</button>
+  <button id="validate-cart" [disabled]="Cart.isEmpty()" class="normal-btn" (click)="onValidateButtonClick()">Valider mon panier</button>
 </aside>

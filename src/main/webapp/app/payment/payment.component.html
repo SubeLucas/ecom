@@ -1,11 +1,20 @@
-<button id="goto-delivery" class="btn btn-primary" [routerLink]="['/delivery']">Retour au informations de livraison</button>
+<nav>
+  <p-breadcrumb [model]="breadcrumbItems"></p-breadcrumb>
+</nav>
+
 @if (errorMsg != '') {
   <div class="alert alert-danger">
     {{ errorMsg }}
   </div>
 }
-<form autocomplete="off" (ngSubmit)="onPayButtonClick()">
-  <div class="form-group">
+<div *ngIf="lambda.invalid && (lambda.dirty || lambda.touched)" class="alert alert-danger">
+  <div *ngIf="lambda.errors && lambda.errors.required">Ce champ est obligatoire.</div>
+  <div *ngIf="lambda.errors && lambda.errors.minlength">Le numéro doit être composé de 16 chiffres</div>
+</div>
+
+<h2 class="font-weight-bold">Paiement</h2>
+<form autocomplete="off" class="w-50" (ngSubmit)="onPayButtonClick()">
+  <div class="form-group formulaire">
     <label for="numCard">Numéro de carte</label>
     <input
       type="text"
@@ -14,18 +23,14 @@
       minlength="16"
       required
       maxlength="16"
-      class="form-control"
+      class="textInput"
       id="numCard"
       name="numCard"
       [(ngModel)]="numCard"
       #lambda="ngModel"
     />
-    <div *ngIf="lambda.invalid && (lambda.dirty || lambda.touched)" class="alert alert-danger">
-      <div *ngIf="lambda.errors && lambda.errors.required">Ce champ est obligatoire.</div>
-      <div *ngIf="lambda.errors && lambda.errors.minlength">Le numéro doit être composé de 16 chiffres</div>
-    </div>
   </div>
-  <div *ngIf="lambda.valid">
+  <div class="text-center">
     <button type="submit">Payer</button>
   </div>
 </form>

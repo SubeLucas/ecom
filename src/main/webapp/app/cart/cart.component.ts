@@ -7,13 +7,15 @@ import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../core/auth/account.service';
+import { MenuItem } from 'primeng/api';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { Title } from '@angular/platform-browser';
 import SharedModule from 'app/shared/shared.module';
 
 @Component({
   selector: 'jhi-cart',
   standalone: true,
-  imports: [RouterModule, CardProductComponent, NgFor, NgIf, SharedModule],
+  imports: [RouterModule, CardProductComponent, NgFor, NgIf, BreadcrumbModule, SharedModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
@@ -25,6 +27,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private cart: Cart;
   totalPrice = 0;
   private accountService = inject(AccountService);
+  breadcrumbItems: MenuItem[] = [{ label: 'Mon Panier' }]; // Les éléments du fil d'Ariane
   private titleService = inject(Title);
 
   constructor(private http: AlimentService) {
@@ -77,6 +80,7 @@ export class CartComponent implements OnInit, OnDestroy {
         this.totalPrice += aliment.price * item.qt;
       }
     }
+    // this.cartService.updateTotalPrice(this.totalPrice);
     console.log(`New totalPrice: ${this.totalPrice}`);
   }
 
@@ -116,6 +120,8 @@ export class CartComponent implements OnInit, OnDestroy {
     if (confirmClear) {
       this.aliments = [];
       localStorage.setItem('cart', '[]');
+      localStorage.setItem('totalPrice', '0');
+      localStorage.setItem('totalQuantity', '0');
       this.totalPrice = 0;
     }
   }
@@ -123,4 +129,6 @@ export class CartComponent implements OnInit, OnDestroy {
   onQuantityChanged(): void {
     this.updateTotalPrice();
   }
+
+  protected readonly Cart = Cart;
 }
