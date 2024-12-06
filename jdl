@@ -1,0 +1,105 @@
+application {
+  config {
+    applicationType monolith
+    authenticationType jwt
+    baseName ecom
+    buildTool maven
+    cacheProvider ehcache
+    clientFramework angular
+    clientTheme none
+    creationTimestamp 1729778768729
+    databaseType sql
+    devDatabaseType h2Memory
+    enableHibernateCache true
+    enableSwaggerCodegen false
+    enableTranslation true
+    jhipsterVersion "8.7.1"
+    jwtSecretKey "NDVjZGFkYmRjYmMyMjIyZDgwZTA1YjcxZmMyZmU0YjVlMDFkMDQ3MjQ3MWFkZjU1MTc5ZGI1NTk0MzBmMzg3YjY4N2I5MzViMGExY2Y1M2YwMWM5YzQ0MDcyZjM0ZTAyNDE2ZmU4YTY3ZDQ5Y2EzYmJjOGMzYmQ4Mjg1MmNlODE="
+    languages [en, fr]
+    microfrontends []
+    nativeLanguage en
+    packageName com.je3l
+    prodDatabaseType postgresql
+    reactive false
+    searchEngine false
+    serviceDiscoveryType false
+    testFrameworks []
+    websocket false
+    withAdminUi true
+  }
+
+  entities Aliment, Client, ClientOrder, Images, OrderLine
+}
+
+@ChangelogDate("20241024142216")
+entity Aliment {
+  id Long unique
+  name String required
+  origin EnumOrigin required
+  season Integer required
+  color EnumColor required
+  weight BigDecimal required
+  stockQuantity Integer required
+  price BigDecimal required
+}
+/**
+ * ConnectedClient heritage of Client
+ */
+@ChangelogDate("20241024142217")
+entity Client {
+  preferedDay String required
+  address String required
+}
+@ChangelogDate("20241024142219")
+entity ClientOrder {
+  id Long unique
+  orderDate LocalDate required
+  deliveryDate LocalDate required
+  deliveryAddress String required
+  status EnumStatus required
+  totalPrice BigDecimal required
+}
+@ChangelogDate("20241024142218")
+entity Images {
+  url String required
+}
+@ChangelogDate("20241024142220")
+entity OrderLine {
+  quantity Integer required
+  purchasePrice BigDecimal required
+}
+
+enum EnumOrigin {
+  FRANCE,
+  ESPAGNE,
+  ITALIE
+}
+enum EnumColor {
+  RED (Rouge),
+  ORANGE (Orange),
+  YELLOW (Jaune),
+  GREEN (Vert),
+  BLUE (Bleu),
+  PURPLE (Violet),
+  PINK (Rose),
+  BROWN (Marron),
+  WHITE (Blanc),
+  BLACK (Noir)
+}
+enum EnumStatus {
+  IN_PROGRESS,
+  SHIPPED,
+  CANCELLED
+}
+
+relationship OneToMany {
+  Aliment{clientOrders} to OrderLine{aliment}
+  Aliment{images} to Images
+  Client{orders} to ClientOrder{client}
+  ClientOrder{orderLines} to OrderLine{clientOrder}
+}
+relationship ManyToOne {
+  Client{user} to User with builtInEntity
+}
+
+search Aliment, Client, ClientOrder, Images, OrderLine with no

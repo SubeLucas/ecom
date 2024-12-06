@@ -29,9 +29,7 @@ public class AlimentService {
 
     @Transactional
     public boolean removeFromStock(Long id, int n) {
-        //Aliment a = alimentRepository.findById(id).orElse(null); //LockModeType.WRITE ici ?
-        Aliment a = entityManager.find(Aliment.class, id, LockModeType.WRITE);
-
+        Aliment a = entityManager.find(Aliment.class, id, LockModeType.OPTIMISTIC);
         if (a == null) {
             return false;
         }
@@ -39,8 +37,8 @@ public class AlimentService {
             return false;
         }
         a.setStockQuantity(a.getStockQuantity() - n);
-        //a.setVersion(a.getVersion() + 1); //Géré automatiquement
         alimentRepository.save(a);
+        //LOG.debug("Aliment (",a.getName(),") version : " + a.getVersion());
         return true;
     }
 
