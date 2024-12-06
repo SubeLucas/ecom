@@ -19,6 +19,7 @@ import { ClientOrderService } from '../entities/client-order/service/client-orde
 export class PaymentComponent {
   private router = inject(Router);
   numCard = '';
+  errorMsg = '';
 
   constructor(
     private httpPayment: PaymentService,
@@ -50,7 +51,7 @@ export class PaymentComponent {
                 //this.pdfService.generatePDF(order);
                 Cart.clearCart();
               } else {
-                console.log('Numéro de carte refusé');
+                this.errorMsg = 'Numéro de carte refusé';
                 //notifier au backend que la commande doit etre CANCELLED
                 this.clientOrderService.cancel(order).subscribe({
                   next: response => {
@@ -63,7 +64,8 @@ export class PaymentComponent {
               }
             },
             error: error => {
-              console.error('Erreur lors du paiement', error);
+              console.log(error);
+              this.errorMsg = 'Erreur lors du paiement';
             },
           });
         } else if (order == -1) {
@@ -77,7 +79,8 @@ export class PaymentComponent {
         }
       },
       error: error => {
-        console.error('Erreur lors de la validation du panier', error);
+        console.log(error);
+        this.errorMsg = 'Erreur lors de la validation du panier';
         this.router.navigate(['cart']);
       },
     });
