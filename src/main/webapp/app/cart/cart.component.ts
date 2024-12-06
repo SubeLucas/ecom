@@ -7,10 +7,13 @@ import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../core/auth/account.service';
+import { MenuItem } from 'primeng/api';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
+
 @Component({
   selector: 'jhi-cart',
   standalone: true,
-  imports: [RouterModule, CardProductComponent, NgFor, NgIf],
+  imports: [RouterModule, CardProductComponent, NgFor, NgIf, BreadcrumbModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
@@ -22,6 +25,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private cart: Cart;
   totalPrice = 0;
   private accountService = inject(AccountService);
+  breadcrumbItems: MenuItem[] = [{ label: 'Mon Panier' }]; // Les éléments du fil d'Ariane
 
   constructor(private http: AlimentService) {
     this.cartSubscription = Cart.getCartChangedObservable().subscribe(() => {

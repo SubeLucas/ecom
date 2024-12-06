@@ -245,3 +245,8 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
 body {
   background-color: $baby-powder;
 }
+
+.textInput {
+  border-color: $baby-powder;
+  border-radius: 5px;
+}

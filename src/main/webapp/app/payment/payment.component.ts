@@ -3,6 +3,8 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 
+import { MenuItem } from 'primeng/api';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { PaymentService } from '../payment/payment.service';
 import { Cart } from '../cart/cart.model';
 import { CartService } from '../cart/cart.service';
@@ -12,12 +14,17 @@ import { ClientOrderService } from '../entities/client-order/service/client-orde
 @Component({
   selector: 'jhi-payment',
   standalone: true,
-  imports: [RouterModule, FormsModule, NgIf],
+  imports: [RouterModule, FormsModule, NgIf, BreadcrumbModule],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss',
 })
 export class PaymentComponent {
   private router = inject(Router);
+  breadcrumbItems: MenuItem[] = [
+    { label: 'Mon Panier', routerLink: '../cart' },
+    { label: 'Informations de Livraison', routerLink: '../delivery' },
+    { label: 'Paiement' },
+  ]; // Les éléments du fil d'Ariane
   numCard = '';
   errorMsg = '';
 
