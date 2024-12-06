@@ -1,11 +1,11 @@
-<div class="payment-success" style="text-align: center">
-  <h1><b>Merci pour votre achat !</b></h1>
-  <p style="font-size: 24px">Votre commande a bien été prise en compte.</p>
-  <p style="font-size: 24px">Vous pouvez télécharger le document récapitulatif juste ici.</p>
+<div class="payment-success">
+  <h1>Merci pour votre achat !</h1>
+  <p id="cmd-ok">Votre commande a bien été prise en compte.</p>
+  <p>Vous pouvez télécharger le document récapitulatif juste ici.</p>
   <div class="pdf-button-container">
     <button (click)="generateReceipt()">Télécharger ma facture</button>
   </div>
   <div class="home-button-container">
-    <button (click)="goToHome()">Revenir à l'accueil</button>
+    <button class="homeBtn" (click)="goToHome()">Revenir à l'accueil</button>
   </div>
 </div>
