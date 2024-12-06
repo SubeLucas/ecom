@@ -81,10 +81,11 @@ export class CardProductComponent {
     if (this.quantity !== 0) {
       if (!(this.inCart && this.quantity == 1)) {
         this.quantity--;
+        this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
+        this.totalQuantity--;
+        localStorage.setItem('totalQuantity', this.totalQuantity.toString());
       }
-      this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
-      this.totalQuantity--;
-      localStorage.setItem('totalQuantity', this.totalQuantity.toString());
+
       this.updateTotalPriceProduct();
       if (this.product) {
         Cart.setItemQuantity(this.product.id, this.quantity);

@@ -1,4 +1,4 @@
-<button id="empty-cart" class="btn btn-primary" (click)="onClearButtonClick()">Vider mon panier</button>
+<button id="empty-cart" [disabled]="Cart.isEmpty()" class="btn btn-primary" (click)="onClearButtonClick()">Vider mon panier</button>
 <div class="product-list">
   <div *ngFor="let aliment of aliments">
     <jhi-card-product
@@ -13,4 +13,4 @@
   <p>Total Price: {{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
 </div>
 <button id="goto-home" class="btn btn-primary" (click)="onButtonClick()" [routerLink]="['']">Catalogue</button>
-<button id="validate-cart" class="btn btn-primary" (click)="onValidateButtonClick()">Valider mon panier</button>
+<button id="validate-cart" [disabled]="Cart.isEmpty()" class="btn btn-primary" (click)="onValidateButtonClick()">Valider mon panier</button>
