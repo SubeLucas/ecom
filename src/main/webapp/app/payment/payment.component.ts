@@ -5,9 +5,8 @@ import { NgIf } from '@angular/common';
 
 import { PaymentService } from '../payment/payment.service';
 import { Cart } from '../cart/cart.model';
-import { CartService } from '../cart/cart.service';
-import { PDFService } from 'app/core/util/PDF.service';
 import { ClientOrderService } from '../entities/client-order/service/client-order.service';
+import { Payment } from './payment.model';
 
 @Component({
   selector: 'jhi-payment',
@@ -22,8 +21,6 @@ export class PaymentComponent {
 
   constructor(
     private httpPayment: PaymentService,
-    private httpCart: CartService,
-    //private pdfService: PDFService,
     private clientOrderService: ClientOrderService,
   ) {}
 
@@ -37,8 +34,18 @@ export class PaymentComponent {
     for (const item of cart.cartItems) {
       item.qt = item.qt > 99 ? 99 : item.qt;
     }
-    // envoyer le panier au backend
-    this.httpCart.validate(cart).subscribe({
+    // envoyer la commande au backend
+    if (!localStorage.getItem('deliveryYear') || !localStorage.getItem('deliveryMonth') || !localStorage.getItem('deliveryDay')) {
+      alert('Date de livraison erronée');
+      this.router.navigate(['delivery']);
+    }
+    const deliveryDate = [
+      JSON.parse(localStorage.getItem('deliveryYear')!),
+      JSON.parse(localStorage.getItem('deliveryMonth')!),
+      JSON.parse(localStorage.getItem('deliveryDay')!),
+    ];
+    const payment = new Payment(cart, deliveryDate);
+    this.httpPayment.sendOrder(payment).subscribe({
       next: order => {
         if (order > 0) {
           console.log('Panier accepté, order n°', order);
@@ -47,7 +54,6 @@ export class PaymentComponent {
               if (success) {
                 console.log('Numéro de carte accepté');
                 this.router.navigate(['/payment-success'], { queryParams: { order: order } });
-                //this.pdfService.generatePDF(order);
                 Cart.clearCart();
               } else {
                 console.log('Numéro de carte refusé');
@@ -74,10 +80,14 @@ export class PaymentComponent {
         } else if (order == -3) {
           console.log('Manque de stock');
           this.router.navigate(['cart']);
+        } else if (order == -4) {
+          alert('Date de livraison refusée');
+          this.router.navigate(['delivery']);
         }
       },
       error: error => {
         console.error('Erreur lors de la validation du panier', error);
+        alert('Erreur lors de la validation du panier');
         this.router.navigate(['cart']);
       },
     });
