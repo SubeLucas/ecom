@@ -1,3 +1,9 @@
 {
-  "cartItems": [{ "id": 9, "qt": 1 }]
+  "cart": {
+    "cartItems": [
+      { "id": 1, "qt": 1 },
+      { "id": 2, "qt": 1 }
+    ]
+  },
+  "deliveryDate": [2025, 1, 1]
 }
