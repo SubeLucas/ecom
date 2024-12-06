@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ArrayUtils.removeElement;
 
 import com.je3l.domain.Aliment;
 import com.je3l.domain.Client;
+import com.je3l.domain.ClientOrder;
 import com.je3l.repository.AlimentRepository;
 import com.je3l.service.ClientService;
 import com.je3l.service.OrderService;
@@ -13,6 +14,7 @@ import com.je3l.service.dto.CartItem;
 import com.je3l.web.rest.errors.BadRequestAlertException;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,15 +43,26 @@ public class CartResource {
     @PostMapping("")
     public Long validateCart(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException, Exception {
         CartItem[] cartItems = cartDTO.getCartItems();
+        LocalDate deliveryDate = cartDTO.getDeliveryDate();
         if (!checkCart(cartItems)) {
             return -1L;
+        }
+        if (!checkDeliveryDate(deliveryDate)) {
+            return -4L;
         }
         cartItems = fuseDouble(cartItems);
 
         Client c = clientService.getCurrentClient();
 
         try {
-            return orderService.addOrder(cartItems, c).getId();
+            ClientOrder order = orderService.addOrder(cartItems, c, deliveryDate);
+            if (order != null) {
+                // Si assez de stock
+                return order.getId();
+            }
+            // Erreur pas assez de stock
+            LOG.warn("Stock missing error");
+            return -3L;
         } catch (OptimisticLockException e) {
             LOG.warn("OptimisticLockException occurred", e);
             return -2L;
@@ -92,5 +105,9 @@ public class CartResource {
         }
 
         return fusedCartItems;
+    }
+
+    private boolean checkDeliveryDate(LocalDate date) {
+        return LocalDate.now().isBefore(date);
     }
 }

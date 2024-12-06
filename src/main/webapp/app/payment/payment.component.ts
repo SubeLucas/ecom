@@ -5,9 +5,8 @@ import { NgIf } from '@angular/common';
 
 import { PaymentService } from '../payment/payment.service';
 import { Cart } from '../cart/cart.model';
-import { CartService } from '../cart/cart.service';
-import { PDFService } from 'app/core/util/PDF.service';
 import { ClientOrderService } from '../entities/client-order/service/client-order.service';
+import { Payment } from './payment.model';
 
 @Component({
   selector: 'jhi-payment',
@@ -19,11 +18,10 @@ import { ClientOrderService } from '../entities/client-order/service/client-orde
 export class PaymentComponent {
   private router = inject(Router);
   numCard = '';
+  errorMsg = '';
 
   constructor(
     private httpPayment: PaymentService,
-    private httpCart: CartService,
-    //private pdfService: PDFService,
     private clientOrderService: ClientOrderService,
   ) {}
 
@@ -32,8 +30,23 @@ export class PaymentComponent {
   }
 
   onPayButtonClick(): void {
-    // envoyer le panier au backend
-    this.httpCart.validate(Cart.getCart()).subscribe({
+    // re-limiter les quantités à maxQuantity si un petit malin a changé des valeurs à la main dans localStorage
+    const cart = Cart.getCart();
+    for (const item of cart.cartItems) {
+      item.qt = item.qt > 99 ? 99 : item.qt;
+    }
+    // envoyer la commande au backend
+    if (!localStorage.getItem('deliveryYear') || !localStorage.getItem('deliveryMonth') || !localStorage.getItem('deliveryDay')) {
+      alert('Date de livraison erronée');
+      this.router.navigate(['delivery']);
+    }
+    const deliveryDate = [
+      JSON.parse(localStorage.getItem('deliveryYear')!),
+      JSON.parse(localStorage.getItem('deliveryMonth')!),
+      JSON.parse(localStorage.getItem('deliveryDay')!),
+    ];
+    const payment = new Payment(cart, deliveryDate);
+    this.httpPayment.sendOrder(payment).subscribe({
       next: order => {
         if (order > 0) {
           console.log('Panier accepté, order n°', order);
@@ -42,10 +55,9 @@ export class PaymentComponent {
               if (success) {
                 console.log('Numéro de carte accepté');
                 this.router.navigate(['/payment-success'], { queryParams: { order: order } });
-                //this.pdfService.generatePDF(order);
                 Cart.clearCart();
               } else {
-                console.log('Numéro de carte refusé');
+                this.errorMsg = 'Numéro de carte refusé';
                 //notifier au backend que la commande doit etre CANCELLED
                 this.clientOrderService.cancel(order).subscribe({
                   next: response => {
@@ -58,16 +70,27 @@ export class PaymentComponent {
               }
             },
             error: error => {
-              console.error('Erreur lors du paiement', error);
+              console.log(error);
+              this.errorMsg = 'Erreur lors du paiement';
             },
           });
-        } else {
-          console.log('Panier refusé');
+        } else if (order == -1) {
+          console.log('Panier invalide');
           this.router.navigate(['cart']);
+        } else if (order == -2) {
+          alert('Une erreur est survenue. Veuillez réessayer.');
+        } else if (order == -3) {
+          console.log('Manque de stock');
+          this.router.navigate(['cart']);
+        } else if (order == -4) {
+          alert('Date de livraison refusée');
+          this.router.navigate(['delivery']);
         }
       },
       error: error => {
-        console.error('Erreur lors de la validation du panier', error);
+        console.log(error);
+        this.errorMsg = 'Erreur lors de la validation du panier';
+        this.router.navigate(['cart']);
       },
     });
   }

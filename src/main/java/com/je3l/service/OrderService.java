@@ -36,13 +36,13 @@ public class OrderService {
     }
 
     @Transactional
-    public ClientOrder addOrder(CartItem[] order, Client c) {
+    public ClientOrder addOrder(CartItem[] order, Client c, LocalDate deliveryDate) {
         BigDecimal totalPrice = BigDecimal.valueOf(0);
         ClientOrder co = new ClientOrder()
             .client(c)
             .status(EnumStatus.IN_PROGRESS)
             .orderDate(LocalDate.now())
-            .deliveryDate(LocalDate.now().plusDays(3))
+            .deliveryDate(deliveryDate)
             .deliveryAddress(c.getAddress())
             .totalPrice(totalPrice);
 
@@ -57,7 +57,8 @@ public class OrderService {
                 .purchasePrice(aliment.getPrice().multiply(BigDecimal.valueOf(qt)))
                 .clientOrder(co);
             if (!alimentService.decStock(aliment.getId(), qt)) {
-                throw new RuntimeException("Not enough stock for aliment: " + aliment.getName());
+                LOG.error("Not enough stock for aliment: " + aliment.getName());
+                return null;
             }
             orderLineRepository.save(ol);
             totalPrice = totalPrice.add(aliment.getPrice().multiply(BigDecimal.valueOf(qt)));

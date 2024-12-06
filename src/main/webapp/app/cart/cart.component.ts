@@ -7,6 +7,8 @@ import { IAliment } from 'app/entities/aliment/aliment.model';
 import { NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../core/auth/account.service';
+import { Title } from '@angular/platform-browser';
+
 @Component({
   selector: 'jhi-cart',
   standalone: true,
@@ -22,6 +24,7 @@ export class CartComponent implements OnInit, OnDestroy {
   private cart: Cart;
   totalPrice = 0;
   private accountService = inject(AccountService);
+  private titleService = inject(Title);
 
   constructor(private http: AlimentService) {
     this.cartSubscription = Cart.getCartChangedObservable().subscribe(() => {
@@ -31,8 +34,8 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle('Cueillette - Panier');
     this.loadCartItems();
-    this.scan();
   }
 
   ngOnDestroy(): void {
@@ -45,17 +48,22 @@ export class CartComponent implements OnInit, OnDestroy {
     this.totalPrice = 0;
     this.cart = Cart.getCart();
     for (const item of this.cart.cartItems) {
-      this.http.find(item.id).subscribe(aliment => {
-        if (aliment.body) {
-          this.aliments.push(aliment.body);
-          this.stockMap.set(item.id, aliment.body.stockQuantity!);
-          if (aliment.body.price) {
-            this.totalPrice += aliment.body.price * item.qt;
+      if (item.qt > 0) {
+        this.http.find(item.id).subscribe(aliment => {
+          if (aliment.body) {
+            this.aliments.push(aliment.body);
+            this.stockMap.set(item.id, aliment.body.stockQuantity!);
+            if (aliment.body.price) {
+              this.totalPrice += aliment.body.price * item.qt;
+            }
+          } else {
+            console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
           }
-        } else {
-          console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
-        }
-      });
+        });
+      }
+      if (item.qt == 0) {
+        Cart.removeItem(item.id);
+      }
     }
   }
 
@@ -114,6 +122,5 @@ export class CartComponent implements OnInit, OnDestroy {
 
   onQuantityChanged(): void {
     this.updateTotalPrice();
-    this.scan();
   }
 }

@@ -34,11 +34,16 @@ export class CardProductComponent {
   ngOnInit(): void {
     const cart = Cart.getCart();
     if (this.product) {
-      // récupérer la quantite dans le panier, ne jamais permettre plus de maxQuantity
+      // récupérer la quantite dans le panier, ne jamais permettre plus de maxQuantity ou un négatif
       this.quantity = Cart.getItemQuantity(this.product.id);
       if (this.quantity > this.maxQuantity) {
         this.quantity = this.maxQuantity;
         Cart.setItemQuantity(this.product.id, this.maxQuantity);
+        this.quantityChanged.emit();
+      }
+      if (this.quantity < 0) {
+        this.quantity = 0;
+        this.quantityChanged.emit();
       }
       // récupérer le stock pour detecter une trop grosse quantite
       this.alimentsService.getStock(this.product.id).subscribe(response => {
@@ -49,6 +54,9 @@ export class CardProductComponent {
             console.log(`Aliment d'id ${this.product!.id} n'a plus que ${this.product!.stockQuantity} exemplaires en stock`);
             this.valid = false;
           }
+        } else {
+          console.log(`Aliment d'id ${this.product!.id} n'a plus d'exemplaires en stock`);
+          this.valid = false;
         }
       });
 
@@ -71,7 +79,9 @@ export class CardProductComponent {
 
   minusQuantity(): void {
     if (this.quantity !== 0) {
-      this.quantity--;
+      if (!(this.inCart && this.quantity == 1)) {
+        this.quantity--;
+      }
       this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
       this.totalQuantity--;
       localStorage.setItem('totalQuantity', this.totalQuantity.toString());
@@ -102,6 +112,7 @@ export class CardProductComponent {
           this.valid = false;
         }
       }
+      this.quantityChanged.emit();
     }
   }
 
@@ -127,8 +138,6 @@ export class CardProductComponent {
     this.quantityChanged.emit();
   }
 
-  // updateTotalPrice(): void {}
-
   onInputChange(event: Event): void {
     const el = event.target as HTMLInputElement;
     const inputEvt = event as InputEvent;
@@ -144,7 +153,7 @@ export class CardProductComponent {
         inputEvtType === 'insertFromPaste' ||
         inputEvtType === 'insertFromDrop')
     ) {
-      if (+el.value < 0) {
+      if (+el.value <= 0) {
         el.value = '1';
       } else if (+el.value > this.maxQuantity) {
         el.value = this.maxQuantity.toString();
@@ -165,7 +174,6 @@ export class CardProductComponent {
 
   onBlur(event: Event): void {
     const element = event.target as HTMLInputElement;
-    console.warn(element.value);
     if (element.value == '') {
       element.value = this.quantity.toString();
     }

@@ -19,6 +19,7 @@ import { MenuItem } from 'primeng/api';
 import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
 import { CardProductComponent } from '../card-product/card-product.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -30,6 +31,7 @@ import { CardProductComponent } from '../card-product/card-product.component';
 export default class HomeComponent implements OnInit, OnDestroy {
   breadcrumbItems: MenuItem[] = []; // Les éléments du fil d'Ariane
   categories: string[] = ['Fruits', 'Légumes'];
+  private titleService = inject(Title);
 
   account = signal<Account | null>(null);
 
@@ -42,13 +44,17 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   private item = new CartItem(0, 0);
   aliments: IAliment[] = [];
+  searchedAliments: IAliment[] = [];
   filteredAliments: IAliment[] = [];
-  kindFilteredAliments: IAliment[] = [];
+  sortedAliments: IAliment[] = [];
+  sortedSearchedAliments: IAliment[] = [];
+  sortedFilteredAliments: IAliment[] = [];
   searchKeyword = '';
 
   isCatCollapsed = signal(false);
-  isSelected = false;
+  isSorted = false;
   selectedCategories: string[] = [];
+  noProduct = false;
 
   constructor(
     private httpCart: CartService,
@@ -57,6 +63,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.titleService.setTitle('Cueillette');
     this.accountService
       .getAuthenticationState()
       .pipe(takeUntil(this.destroy$))
@@ -73,7 +80,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.breadcrumbItems = [{ label: 'Catalogue' }];
 
     this.handleNavigation();
-    this.updateCrumbsCat();
+    this.updateCrumbs();
   }
 
   private handleNavigation(): void {
@@ -85,19 +92,22 @@ export default class HomeComponent implements OnInit, OnDestroy {
       } else {
         this.selectedCategories = [];
       }
+      const searchParam = params['search'];
+      if (searchParam) {
+        // If search in url
+        this.searchKeyword = searchParam;
+      } else {
+        this.searchKeyword = '';
+      }
+      this.updateCrumbs();
     });
 
-    this.route.url.subscribe(url => {
-      const currentUrl = this.router.url;
-      if (currentUrl.startsWith('?')) {
-        this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(event => {
-          // Si la navigation est vers la page d'accueil ou le catalogue sans filtres
-          if (event.url === '/') {
-            this.onRemoveFilters(); // Réinitialiser les filtres et le fil d'Ariane
-          } else {
-            this.updateCrumbsCat();
-          }
-        });
+    this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(event => {
+      // Si la navigation est vers la page d'accueil ou le catalogue sans filtres
+
+      if (event.url === '/') {
+        this.onResetSearch();
+        this.onRemoveFilters(); // Réinitialiser les filtres et le fil d'Ariane
       }
     });
   }
@@ -129,24 +139,26 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   performSearch(keyword: string): void {
+    this.noProduct = false;
     keyword = keyword.trim().toLowerCase();
     if (keyword) {
-      if (this.kindFilteredAliments.length > 0) {
-        this.kindFilteredAliments = this.kindFilteredAliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
-        if (this.kindFilteredAliments.length == 0) alert('Aucune produit trouvé !');
-      } else {
-        this.filteredAliments = this.aliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
-        if (this.filteredAliments.length == 0) alert('Aucune produit trouvé !');
+      if (this.filteredAliments.length > 0) {
+        this.onRemoveFilters();
       }
+      this.searchedAliments = this.aliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
+      if (this.searchedAliments.length == 0) {
+        this.noProduct = true;
+      }
+      this.searchKeyword = keyword;
+      this.updateCrumbs(); // Met à jour le fil d'Ariane
     } else {
-      this.filteredAliments = this.aliments;
+      this.onResetSearch();
     }
   }
 
   onApplyFilters(): void {
-    console.log('filter applied');
     this.selectedCategories = [];
-    this.kindFilteredAliments = [];
+    this.filteredAliments = [];
     //Récup ce qui est coché niveau catégories
     const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
     for (let i = 0; i < cbListElements.length; i++) {
@@ -154,35 +166,27 @@ export default class HomeComponent implements OnInit, OnDestroy {
         this.selectedCategories.push(cbListElements[i].name);
       }
     }
+
+    if (this.searchedAliments.length > 0) {
+      this.searchedAliments = [];
+    }
+
     //Récup ce qui est indiqué nv prix
     for (const kind of this.selectedCategories) {
       if (kind === 'Fruits') {
-        if (this.filteredAliments.length > 0) {
-          console.log(this.filteredAliments);
-          for (const aliment of this.filteredAliments) {
-            if (aliment.id % 2 == 1) this.kindFilteredAliments.push(aliment);
-          }
-        } else {
-          for (const aliment of this.aliments) {
-            if (aliment.id % 2 == 1) this.kindFilteredAliments.push(aliment);
-          }
+        for (const aliment of this.aliments) {
+          if (aliment.id % 2 == 1) this.filteredAliments.push(aliment);
         }
       }
       if (kind === 'Légumes') {
-        if (this.filteredAliments.length > 0) {
-          for (const aliment of this.filteredAliments) {
-            if (aliment.id % 2 == 0) this.kindFilteredAliments.push(aliment);
-          }
-        } else {
-          for (const aliment of this.aliments) {
-            if (aliment.id % 2 == 0) this.kindFilteredAliments.push(aliment);
-          }
+        for (const aliment of this.aliments) {
+          if (aliment.id % 2 == 0) this.filteredAliments.push(aliment);
         }
       }
     }
     //Appel apply
 
-    this.updateCrumbsCat(); // Met à jour le fil d'Ariane
+    this.updateCrumbs(); // Met à jour le fil d'Ariane
   }
 
   onRemoveFilters(): void {
@@ -192,9 +196,19 @@ export default class HomeComponent implements OnInit, OnDestroy {
       cbListElements[i].checked = false;
     }
     this.selectedCategories = [];
+    this.filteredAliments = [];
     //Réinit prix
 
-    this.updateCrumbsCat(); // Met à jour le fil d'Ariane
+    this.updateCrumbs(); // Met à jour le fil d'Ariane
+  }
+
+  onResetSearch(): void {
+    //réinit search
+    this.searchKeyword = '';
+    this.searchedAliments = [];
+    this.noProduct = false;
+
+    this.updateCrumbs(); // Met à jour le fil d'Ariane
   }
 
   printCrumbCatLabel(): string {
@@ -207,17 +221,10 @@ export default class HomeComponent implements OnInit, OnDestroy {
     return categoriesLabel;
   }
 
-  updateCrumbsCat(): void {
+  updateCrumbs(): void {
     // Met à jour le fil d'Ariane quand une catégorie est sélectionnée ou non
 
-    if (this.selectedCategories.length === 0) {
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: {}, // Aucun paramètre
-        // Supprime uniquement les paramètres spécifiés
-      });
-      this.breadcrumbItems = [{ label: 'Catalogue', routerLink: './', queryParamsHandling: 'merge' }];
-    } else {
+    if (this.selectedCategories.length > 0) {
       const categoriesLabel = this.printCrumbCatLabel();
       const joinItems = this.selectedCategories.join(',');
       this.router.navigate([], { relativeTo: this.route, queryParams: { category: joinItems } });
@@ -231,6 +238,25 @@ export default class HomeComponent implements OnInit, OnDestroy {
           queryParamsHandling: 'merge',
         },
       ];
+    } else if (this.searchKeyword != '') {
+      this.router.navigate([], { relativeTo: this.route, queryParams: { search: this.searchKeyword } });
+
+      this.breadcrumbItems = [
+        { label: 'Catalogue', routerLink: './', command: () => this.onResetSearch() },
+        {
+          label: `Recherche : ${this.searchKeyword}`,
+          routerLink: './',
+          queryParams: { search: this.searchKeyword }, // Plusieurs catégories comme paramètre
+          queryParamsHandling: 'merge',
+        },
+      ];
+    } else {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {}, // Aucun paramètre
+        // Supprime uniquement les paramètres spécifiés
+      });
+      this.breadcrumbItems = [{ label: 'Catalogue', routerLink: './', queryParamsHandling: 'merge' }];
     }
   }
 
@@ -241,41 +267,48 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
   onSortChange(event: Event): void {
     const selectedValue = (event.target as HTMLSelectElement).value;
-
+    this.sortedAliments = [];
+    this.sortedFilteredAliments = [];
+    this.sortedSearchedAliments = [];
     switch (selectedValue) {
+      case 'default':
+        this.isSorted = false;
+        this.sortedAliments = [];
+        this.sortedFilteredAliments = [];
+        this.sortedSearchedAliments = [];
+        break;
       case 'ordered_price':
-        if (this.kindFilteredAliments.length > 0) {
-          this.kindFilteredAliments = this.kindFilteredAliments
-            .filter(aliment => aliment.price != null)
-            .sort((a, b) => a.price! - b.price!);
-        } else if (this.filteredAliments.length > 0) {
-          this.filteredAliments = this.filteredAliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
+        this.isSorted = true;
+        if (this.filteredAliments.length > 0) {
+          this.sortedFilteredAliments = this.filteredAliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
+        } else if (this.searchedAliments.length > 0) {
+          this.sortedSearchedAliments = this.searchedAliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
         } else {
-          this.aliments = this.aliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
+          this.sortedAliments = this.aliments.filter(aliment => aliment.price != null).sort((a, b) => a.price! - b.price!);
         }
         break;
       case 'unordered_price':
-        if (this.kindFilteredAliments.length > 0) {
-          this.kindFilteredAliments = this.kindFilteredAliments
-            .filter(aliment => aliment.price != null)
-            .sort((a, b) => b.price! - a.price!);
-        } else if (this.filteredAliments.length > 0) {
-          this.filteredAliments = this.filteredAliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
+        this.isSorted = true;
+        if (this.filteredAliments.length > 0) {
+          this.sortedFilteredAliments = this.filteredAliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
+        } else if (this.searchedAliments.length > 0) {
+          this.sortedSearchedAliments = this.searchedAliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
         } else {
-          this.aliments = this.aliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
+          this.sortedAliments = this.aliments.filter(aliment => aliment.price != null).sort((a, b) => b.price! - a.price!);
         }
         break;
       case 'alpha':
-        if (this.kindFilteredAliments.length > 0) {
-          this.kindFilteredAliments = this.kindFilteredAliments
+        this.isSorted = true;
+        if (this.filteredAliments.length > 0) {
+          this.sortedFilteredAliments = this.filteredAliments
             .filter(aliment => aliment.name != null)
             .sort((a, b) => a.name!.localeCompare(b.name!));
-        } else if (this.filteredAliments.length > 0) {
-          this.filteredAliments = this.filteredAliments
+        } else if (this.searchedAliments.length > 0) {
+          this.sortedSearchedAliments = this.searchedAliments
             .filter(aliment => aliment.name != null)
             .sort((a, b) => a.name!.localeCompare(b.name!));
         } else {
-          this.aliments = this.aliments.filter(aliment => aliment.name != null).sort((a, b) => a.name!.localeCompare(b.name!));
+          this.sortedAliments = this.aliments.filter(aliment => aliment.name != null).sort((a, b) => a.name!.localeCompare(b.name!));
         }
     }
   }
