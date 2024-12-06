@@ -68,6 +68,7 @@ export class CartComponent implements OnInit, OnDestroy {
         this.totalPrice += aliment.price * item.qt;
       }
     }
+    // this.cartService.updateTotalPrice(this.totalPrice);
     console.log(`New totalPrice: ${this.totalPrice}`);
   }
 

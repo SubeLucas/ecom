@@ -254,7 +254,7 @@
           <a class="nav-link" (click)="cart()">
             <span>
               <fa-icon icon="basket-shopping"></fa-icon>
-              Panier
+              Panier( {{ localStorage.getItem('totalQuantity') }} ) {{ localStorage.getItem('totalPrice') }}€
             </span>
           </a>
         </li>

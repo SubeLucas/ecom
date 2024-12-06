@@ -24,6 +24,8 @@ export class CardProductComponent {
   priceByKg: string | undefined;
 
   totalPriceProduct = this.quantity * this.priceProduct!;
+  totalPrice = 0;
+  totalQuantity = 0;
   imagesService = inject(ImagesService);
   alimentsService = inject(AlimentService);
   public image: IImages | null = null;
@@ -58,7 +60,9 @@ export class CardProductComponent {
         this.priceByKg = (this.product.price / (this.product.weight / 1000)).toFixed(2);
       }
     }
-    this.updateTotalPriceProduct();
+    // this.updateTotalPriceProduct();
+    this.totalPriceProduct = this.quantity * this.priceProduct!;
+    this.quantityChanged.emit();
   }
 
   getImageUrl(): string {
@@ -68,6 +72,9 @@ export class CardProductComponent {
   minusQuantity(): void {
     if (this.quantity !== 0) {
       this.quantity--;
+      this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
+      this.totalQuantity--;
+      localStorage.setItem('totalQuantity', this.totalQuantity.toString());
       this.updateTotalPriceProduct();
       if (this.product) {
         Cart.setItemQuantity(this.product.id, this.quantity);
@@ -85,6 +92,9 @@ export class CardProductComponent {
   plusQuantity(): void {
     if (this.quantity < this.maxQuantity) {
       this.quantity++;
+      this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
+      this.totalQuantity++;
+      localStorage.setItem('totalQuantity', this.totalQuantity.toString());
       this.updateTotalPriceProduct();
       if (this.product) {
         Cart.setItemQuantity(this.product.id, this.quantity);
@@ -96,7 +106,10 @@ export class CardProductComponent {
   }
 
   deleteArticleFromCart(): void {
+    this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
+    this.totalQuantity -= this.quantity;
     this.quantity = 0;
+    localStorage.setItem('totalQuantity', this.totalQuantity.toString());
     this.updateTotalPriceProduct();
     if (this.product) {
       Cart.removeItem(this.product.id);
@@ -105,9 +118,16 @@ export class CardProductComponent {
   }
 
   updateTotalPriceProduct(): void {
+    this.totalPrice = parseFloat(localStorage.getItem('totalPrice')!) || 0;
+    this.totalPrice -= isNaN(this.totalPriceProduct) ? 0 : this.totalPriceProduct;
     this.totalPriceProduct = this.quantity * this.priceProduct!;
+    this.totalPrice += this.totalPriceProduct;
+    localStorage.setItem('totalPrice', this.totalPrice.toFixed(2));
+    // localStorage.setItem('totalQuantity', this.totalQuantity.toString());
     this.quantityChanged.emit();
   }
+
+  // updateTotalPrice(): void {}
 
   onInputChange(event: Event): void {
     const el = event.target as HTMLInputElement;
@@ -129,7 +149,11 @@ export class CardProductComponent {
       } else if (+el.value > this.maxQuantity) {
         el.value = this.maxQuantity.toString();
       }
+      this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
+      this.totalQuantity -= this.quantity;
       this.quantity = +el.value;
+      this.totalQuantity += this.quantity;
+      localStorage.setItem('totalQuantity', this.totalQuantity.toString());
       if (this.product) {
         Cart.setItemQuantity(this.product.id, this.quantity);
         this.valid = this.quantity <= this.product.stockQuantity!;
