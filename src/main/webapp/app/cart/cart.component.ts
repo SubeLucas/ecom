@@ -76,6 +76,7 @@ export class CartComponent implements OnInit, OnDestroy {
         this.totalPrice += aliment.price * item.qt;
       }
     }
+    // this.cartService.updateTotalPrice(this.totalPrice);
     console.log(`New totalPrice: ${this.totalPrice}`);
   }
 
@@ -115,6 +116,8 @@ export class CartComponent implements OnInit, OnDestroy {
     if (confirmClear) {
       this.aliments = [];
       localStorage.setItem('cart', '[]');
+      localStorage.setItem('totalPrice', '0');
+      localStorage.setItem('totalQuantity', '0');
       this.totalPrice = 0;
     }
   }
@@ -122,4 +125,6 @@ export class CartComponent implements OnInit, OnDestroy {
   onQuantityChanged(): void {
     this.updateTotalPrice();
   }
+
+  protected readonly Cart = Cart;
 }

@@ -1,6 +1,6 @@
 <nav data-cy="my-navbar" class="navbar navbar-dark navbar-expand-md">
   <div class="container-fluid">
-    <a class="navbar-brand logo" routerLink="/" (click)="collapseNavbar()">
+    <a class="navbar-brand logo" href="/" (click)="collapseNavbar()">
       <span class="logo-img"></span>
       <span class="navbar-title">Cueillette</span>
     </a>
@@ -254,7 +254,7 @@
           <a class="nav-link" (click)="cart()">
             <span>
               <fa-icon icon="basket-shopping"></fa-icon>
-              Panier
+              Panier( {{ localStorage.getItem('totalQuantity') }} ) {{ localStorage.getItem('totalPrice') }}€
             </span>
           </a>
         </li>

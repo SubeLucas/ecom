@@ -1,0 +1,40 @@
+@import '../../../content/scss/colors.scss';
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 25px;
+  overflow: hidden;
+  border: none;
+  width: 60%;
+}
+
+.search-input {
+  width: 100%;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 25px;
+}
+
+.search-btn {
+  position: absolute;
+  background-color: white;
+  color: $vanilla-green;
+  border: none;
+  padding: 10px;
+  right: 0px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn i {
+  font-size: 18px;
+}

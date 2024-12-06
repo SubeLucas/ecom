@@ -54,6 +54,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   isCatCollapsed = signal(false);
   isSorted = false;
   selectedCategories: string[] = [];
+  noProduct = false;
 
   constructor(
     private httpCart: CartService,
@@ -70,7 +71,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
     this.httpAliment.all().subscribe(aliments => {
       this.aliments = aliments.body != null ? aliments.body : [];
-      console.warn('aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
     });
 
     this.searchSubscription = this.sharedService.searchTriggered$.subscribe(keyword => {
@@ -102,25 +102,14 @@ export default class HomeComponent implements OnInit, OnDestroy {
       this.updateCrumbs();
     });
 
-    //TODO Si clic accueil liste aliments pas maj
     this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(event => {
       // Si la navigation est vers la page d'accueil ou le catalogue sans filtres
+
       if (event.url === '/') {
-        console.warn('fffffffffffffffffffff');
         this.onResetSearch();
         this.onRemoveFilters(); // Réinitialiser les filtres et le fil d'Ariane
       }
     });
-
-    /*this.route.url.subscribe(url => {
-      console.warn(url)
-      const currentUrl = this.router.url;
-
-      if (currentUrl.startsWith('?')) {
-
-      }
-    });
-    */
   }
 
   login(): void {
@@ -150,6 +139,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   performSearch(keyword: string): void {
+    this.noProduct = false;
     keyword = keyword.trim().toLowerCase();
     if (keyword) {
       if (this.filteredAliments.length > 0) {
@@ -157,19 +147,16 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
       this.searchedAliments = this.aliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
       if (this.searchedAliments.length == 0) {
-        alert('Aucun produit trouvé !');
-      } else {
-        this.searchKeyword = keyword;
-        this.updateCrumbs(); // Met à jour le fil d'Ariane
+        this.noProduct = true;
       }
+      this.searchKeyword = keyword;
+      this.updateCrumbs(); // Met à jour le fil d'Ariane
     } else {
-      this.searchKeyword = '';
-      this.searchedAliments = [];
+      this.onResetSearch();
     }
   }
 
   onApplyFilters(): void {
-    console.log('filter applied');
     this.selectedCategories = [];
     this.filteredAliments = [];
     //Récup ce qui est coché niveau catégories
@@ -219,6 +206,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
     //réinit search
     this.searchKeyword = '';
     this.searchedAliments = [];
+    this.noProduct = false;
 
     this.updateCrumbs(); // Met à jour le fil d'Ariane
   }

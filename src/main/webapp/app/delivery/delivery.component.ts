@@ -15,9 +15,9 @@ import { ClientService } from 'app/entities/client/service/client.service';
 export class DeliveryComponent implements OnInit {
   private router = inject(Router);
   private accountService = inject(AccountService);
-  day = 1;
-  month = 1;
-  year = 2025;
+  day = 0;
+  month = 0;
+  year = 0;
   street = '';
   code = '';
   city = '';
@@ -26,6 +26,10 @@ export class DeliveryComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.accountService.isAuthenticated()) {
+      // récupérer mois et année actuelle
+      const currentDate = new Date();
+      this.month = currentDate.getMonth() + 1;
+      this.year = currentDate.getFullYear();
       // récupérer l'adresse du client connecté
       this.http.findCurrent().subscribe({
         next: client => {
