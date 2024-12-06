@@ -23,7 +23,7 @@
         }
       } @else {
         <div class="change-qt">
-          <button class="minus-btn" (click)="minusQuantity()">-</button>
+          <button class="negative-btn minus-btn" (click)="minusQuantity()">-</button>
           <!--TODO add blocage type nb (mozilla)-->
           <input
             type="number"
@@ -39,7 +39,7 @@
             maxlength="2"
             size="2"
           />
-          <button class="plus-btn" (click)="plusQuantity()">+</button>
+          <button class="normal-btn plus-btn" (click)="plusQuantity()">+</button>
         </div>
       }
     </div>
@@ -54,7 +54,7 @@
         <p class="origin-product">{{ product?.origin }}</p>
       </div>
       <div class="weight-infos-cart">
-        <p>{{ 'poids:' + product?.weight + 'g' }}</p>
+        <p>{{ product?.weight }}g/pièce</p>
         <p>{{ priceByKg }}€/kg</p>
         <!--<p>{{ product?.price != null && product?.weight != null ? (product.price / product.weight) }}</p>-->
       </div>
@@ -63,7 +63,7 @@
     <div class="qtt-infos div-cart">
       <p class="price-product">{{ totalPriceProduct.toFixed(2).replace('.', ',') }}€</p>
       <div class="change-qt">
-        <button class="minus-btn" (click)="minusQuantity()">-</button>
+        <button class="negative-btn minus-btn" (click)="minusQuantity()">-</button>
         <!--TODO add blocage type nb (mozilla)-->
         <input
           type="number"
@@ -79,9 +79,11 @@
           maxlength="2"
           size="2"
         />
-        <button class="plus-btn" (click)="plusQuantity()">+</button>
+        <button class="normal-btn plus-btn" (click)="plusQuantity()">+</button>
       </div>
-      <button class="del-btn" (click)="deleteArticleFromCart()">del</button>
+      <button class="del-btn" (click)="deleteArticleFromCart()">
+        <img src="../../content/images/bin.png" alt="delete-aliment" class="icon-bin" />
+      </button>
     </div>
   }
 </div>

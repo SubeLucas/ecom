@@ -82,44 +82,8 @@ nav {
   }
 }
 
-button {
-  //font-size: 19px;
-
-  border-radius: 10px;
-  padding: 0.5em;
-  transition: 0.2s;
-}
-
-button:active {
-  position: relative;
-  top: 1px;
-}
-
-#apply-filters {
-  background-color: $yellow-green;
-  border: 1px solid $yellow-green;
-
-  &:hover {
-    background-color: $vanilla-green;
-  }
-
-  &:active {
-    background-color: $asparagus;
-  }
-}
-
 #remove-filters {
   margin-top: 1em;
-  background-color: $rosy-brown;
-  border: 1px solid $rosy-brown;
-
-  &:hover {
-    background-color: $rosy-brown-hover;
-  }
-
-  &:active {
-    background-color: $bittersweet-shimmer;
-  }
 }
 
 .collapsible {

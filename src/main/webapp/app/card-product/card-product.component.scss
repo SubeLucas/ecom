@@ -43,6 +43,11 @@
   height: auto;
 }
 
+.icon-bin {
+  max-width: 50%;
+  height: auto;
+}
+
 .title-origin-infos {
   margin-right: 3em;
 }
@@ -118,4 +123,28 @@ input[type='number'] {
 
 input {
   width: 1.7em;
+}
+
+.del-btn {
+  border: none;
+  cursor: pointer;
+  appearance: none;
+  background-color: inherit;
+}
+
+button.minus-btn,
+button.plus-btn {
+  padding: revert;
+  border-radius: 50%;
+  width: 1.75em;
+  text-align: center;
+  font-weight: bold;
+}
+
+.plus-btn {
+  margin-left: 0.25em;
+}
+
+.minus-btn {
+  margin-right: 0.25em;
 }

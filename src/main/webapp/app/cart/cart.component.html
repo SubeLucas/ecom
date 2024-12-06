@@ -1,16 +1,30 @@
-<button id="empty-cart" class="btn btn-primary" (click)="onClearButtonClick()">Vider mon panier</button>
+<span class="my-cart-link-home" (click)="onButtonClick()">
+  <fa-icon icon="arrow-left"></fa-icon>
+  <h2>Mon panier</h2>
+</span>
+
+<div>
+  <p>{{ aliments.length }} article(s)</p>
+  <button id="empty-cart" (click)="onClearButtonClick()">Vider mon panier</button>
+</div>
+
 <div class="product-list">
-  <div *ngFor="let aliment of aliments">
-    <jhi-card-product
-      [product]="aliment"
-      [priceProduct]="aliment.price"
-      [inCart]="true"
-      (quantityChanged)="onQuantityChanged()"
-    ></jhi-card-product>
-  </div>
+  @if (aliments.length > 0) {
+    <div *ngFor="let aliment of aliments">
+      <jhi-card-product
+        [product]="aliment"
+        [priceProduct]="aliment.price"
+        [inCart]="true"
+        (quantityChanged)="onQuantityChanged()"
+      ></jhi-card-product>
+    </div>
+  } @else {
+    <p>Votre panier est vide.</p>
+  }
 </div>
-<div class="total-price">
-  <p>Total Price: {{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
-</div>
-<button id="goto-home" class="btn btn-primary" (click)="onButtonClick()" [routerLink]="['']">Catalogue</button>
-<button id="validate-cart" class="btn btn-primary" (click)="onValidateButtonClick()">Valider mon panier</button>
+<aside>
+  <h3>Total</h3>
+  <p>{{ aliments.length }} article(s)</p>
+  <p>{{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
+  <button id="validate-cart" class="normal-btn" (click)="onValidateButtonClick()">Valider mon panier</button>
+</aside>

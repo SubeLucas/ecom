@@ -8,11 +8,12 @@ import { NgFor, NgIf } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../core/auth/account.service';
 import { Title } from '@angular/platform-browser';
+import SharedModule from 'app/shared/shared.module';
 
 @Component({
   selector: 'jhi-cart',
   standalone: true,
-  imports: [RouterModule, CardProductComponent, NgFor, NgIf],
+  imports: [RouterModule, CardProductComponent, NgFor, NgIf, SharedModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
