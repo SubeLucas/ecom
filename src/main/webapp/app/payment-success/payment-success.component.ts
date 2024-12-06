@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PDFService } from 'app/core/util/PDF.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-payment-success',
@@ -11,6 +12,7 @@ import { PDFService } from 'app/core/util/PDF.service';
 })
 export class PaymentSuccessComponent implements OnInit {
   order: number | undefined;
+  private titleService = inject(Title);
   constructor(
     private pdfService: PDFService,
     private route: ActivatedRoute,
@@ -18,6 +20,7 @@ export class PaymentSuccessComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.titleService.setTitle('Commande validée');
     this.route.queryParams.subscribe(params => {
       this.order = params['order'];
     });

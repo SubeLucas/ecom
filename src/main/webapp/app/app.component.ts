@@ -30,5 +30,7 @@ export default class AppComponent {
     this.iconLibrary.addIcons(...fontAwesomeIcons);
     this.dpConfig.minDate = { year: dayjs().subtract(100, 'year').year(), month: 1, day: 1 };
     if (!localStorage.getItem('cart')) localStorage.setItem('cart', '[]');
+    if (!localStorage.getItem('totalPrice')) localStorage.setItem('totalPrice', '0');
+    if (!localStorage.getItem('totalQuantity')) localStorage.setItem('totalQuantity', '0');
   }
 }

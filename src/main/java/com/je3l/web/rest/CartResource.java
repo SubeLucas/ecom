@@ -14,6 +14,7 @@ import com.je3l.service.dto.CartItem;
 import com.je3l.web.rest.errors.BadRequestAlertException;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,15 +43,19 @@ public class CartResource {
     @PostMapping("")
     public Long validateCart(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException, Exception {
         CartItem[] cartItems = cartDTO.getCartItems();
+        LocalDate deliveryDate = cartDTO.getDeliveryDate();
         if (!checkCart(cartItems)) {
             return -1L;
+        }
+        if (!checkDeliveryDate(deliveryDate)) {
+            return -4L;
         }
         cartItems = fuseDouble(cartItems);
 
         Client c = clientService.getCurrentClient();
 
         try {
-            ClientOrder order = orderService.addOrder(cartItems, c);
+            ClientOrder order = orderService.addOrder(cartItems, c, deliveryDate);
             if (order != null) {
                 // Si assez de stock
                 return order.getId();
@@ -100,5 +105,9 @@ public class CartResource {
         }
 
         return fusedCartItems;
+    }
+
+    private boolean checkDeliveryDate(LocalDate date) {
+        return LocalDate.now().isBefore(date);
     }
 }

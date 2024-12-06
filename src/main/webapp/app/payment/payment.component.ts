@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
@@ -7,9 +7,9 @@ import { MenuItem } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { PaymentService } from '../payment/payment.service';
 import { Cart } from '../cart/cart.model';
-import { CartService } from '../cart/cart.service';
-import { PDFService } from 'app/core/util/PDF.service';
 import { ClientOrderService } from '../entities/client-order/service/client-order.service';
+import { Payment } from './payment.model';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-payment',
@@ -18,7 +18,7 @@ import { ClientOrderService } from '../entities/client-order/service/client-orde
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss',
 })
-export class PaymentComponent {
+export class PaymentComponent implements OnInit {
   private router = inject(Router);
   breadcrumbItems: MenuItem[] = [
     { label: 'Mon Panier', routerLink: '../cart' },
@@ -27,13 +27,16 @@ export class PaymentComponent {
   ]; // Les éléments du fil d'Ariane
   numCard = '';
   errorMsg = '';
+  private titleService = inject(Title);
 
   constructor(
     private httpPayment: PaymentService,
-    private httpCart: CartService,
-    //private pdfService: PDFService,
     private clientOrderService: ClientOrderService,
   ) {}
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Cueillette - Paiement');
+  }
 
   onButtonClick(): void {
     this.router.navigate(['cart']);
@@ -45,8 +48,18 @@ export class PaymentComponent {
     for (const item of cart.cartItems) {
       item.qt = item.qt > 99 ? 99 : item.qt;
     }
-    // envoyer le panier au backend
-    this.httpCart.validate(cart).subscribe({
+    // envoyer la commande au backend
+    if (!localStorage.getItem('deliveryYear') || !localStorage.getItem('deliveryMonth') || !localStorage.getItem('deliveryDay')) {
+      alert('Date de livraison erronée');
+      this.router.navigate(['delivery']);
+    }
+    const deliveryDate = [
+      JSON.parse(localStorage.getItem('deliveryYear')!),
+      JSON.parse(localStorage.getItem('deliveryMonth')!),
+      JSON.parse(localStorage.getItem('deliveryDay')!),
+    ];
+    const payment = new Payment(cart, deliveryDate);
+    this.httpPayment.sendOrder(payment).subscribe({
       next: order => {
         if (order > 0) {
           console.log('Panier accepté, order n°', order);
@@ -55,7 +68,6 @@ export class PaymentComponent {
               if (success) {
                 console.log('Numéro de carte accepté');
                 this.router.navigate(['/payment-success'], { queryParams: { order: order } });
-                //this.pdfService.generatePDF(order);
                 Cart.clearCart();
               } else {
                 this.errorMsg = 'Numéro de carte refusé';
@@ -83,6 +95,9 @@ export class PaymentComponent {
         } else if (order == -3) {
           console.log('Manque de stock');
           this.router.navigate(['cart']);
+        } else if (order == -4) {
+          alert('Date de livraison refusée');
+          this.router.navigate(['delivery']);
         }
       },
       error: error => {

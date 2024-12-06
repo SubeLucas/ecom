@@ -10,6 +10,7 @@ import { ClientOrderService } from 'app/entities/client-order/service/client-ord
 import { IClientOrder } from 'app/entities/client-order/client-order.model';
 import dayjs, { Dayjs } from 'dayjs';
 import { PDFService } from 'app/core/util/PDF.service';
+import { Title } from '@angular/platform-browser';
 
 const initialAccount: Account = {} as Account;
 
@@ -23,6 +24,7 @@ export default class SettingsComponent implements OnInit {
   success = signal(false);
   languages = LANGUAGES;
   clientOrders: IClientOrder[] = [];
+  private titleService = inject(Title);
 
   settingsForm = new FormGroup({
     firstName: new FormControl(initialAccount.firstName, {
@@ -49,6 +51,7 @@ export default class SettingsComponent implements OnInit {
   private pdfService = inject(PDFService);
 
   ngOnInit(): void {
+    this.titleService.setTitle('Cueillette - info client');
     this.accountService.identity().subscribe(account => {
       if (account) {
         this.settingsForm.patchValue(account);

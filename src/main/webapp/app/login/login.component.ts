@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import SharedModule from 'app/shared/shared.module';
 import { LoginService } from 'app/login/login.service';
 import { AccountService } from 'app/core/auth/account.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -16,6 +17,7 @@ export default class LoginComponent implements OnInit, AfterViewInit {
   username = viewChild.required<ElementRef>('username');
 
   authenticationError = signal(false);
+  private titleService = inject(Title);
 
   loginForm = new FormGroup({
     username: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
@@ -28,6 +30,7 @@ export default class LoginComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
 
   ngOnInit(): void {
+    this.titleService.setTitle('Cueillette - Connexion');
     // if already authenticated then navigate to home page
     this.accountService.identity().subscribe(() => {
       if (this.accountService.isAuthenticated()) {

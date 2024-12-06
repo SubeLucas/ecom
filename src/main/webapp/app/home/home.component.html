@@ -45,24 +45,30 @@
       </select>
     </div>
     <div class="product-list">
-      @if (isSorted) {
-        <div
-          *ngFor="
-            let aliment of sortedFilteredAliments.length > 0
-              ? sortedFilteredAliments
-              : sortedSearchedAliments.length > 0
-                ? sortedSearchedAliments
-                : sortedAliments
-          "
-        >
-          <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
-        </div>
+      @if (noProduct) {
+        <p>Aucun produit ne correspond à votre recherche.</p>
       } @else {
-        <div
-          *ngFor="let aliment of filteredAliments.length > 0 ? filteredAliments : searchedAliments.length > 0 ? searchedAliments : aliments"
-        >
-          <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
-        </div>
+        @if (isSorted) {
+          <div
+            *ngFor="
+              let aliment of sortedFilteredAliments.length > 0
+                ? sortedFilteredAliments
+                : sortedSearchedAliments.length > 0
+                  ? sortedSearchedAliments
+                  : sortedAliments
+            "
+          >
+            <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
+          </div>
+        } @else {
+          <div
+            *ngFor="
+              let aliment of filteredAliments.length > 0 ? filteredAliments : searchedAliments.length > 0 ? searchedAliments : aliments
+            "
+          >
+            <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
+          </div>
+        }
       }
     </div>
   </div>
