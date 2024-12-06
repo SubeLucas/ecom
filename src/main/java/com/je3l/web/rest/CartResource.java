@@ -108,6 +108,6 @@ public class CartResource {
     }
 
     private boolean checkDeliveryDate(LocalDate date) {
-        return LocalDate.now().isAfter(date);
+        return LocalDate.now().isBefore(date);
     }
 }
