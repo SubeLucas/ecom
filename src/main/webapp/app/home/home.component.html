@@ -38,20 +38,32 @@
     <div class="sort">
       <p>Trier par :</p>
       <select id="sort-select" (change)="onSortChange($event)">
-        <option value="default">Défaut</option>
+        <option value="default">Pertinence</option>
         <option value="ordered_price">Prix croissant</option>
         <option value="unordered_price">Prix décroissant</option>
         <option value="alpha">Ordre alphabétique</option>
       </select>
     </div>
     <div class="product-list">
-      <div
-        *ngFor="
-          let aliment of kindFilteredAliments.length > 0 ? kindFilteredAliments : filteredAliments.length > 0 ? filteredAliments : aliments
-        "
-      >
-        <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
-      </div>
+      @if (isSorted) {
+        <div
+          *ngFor="
+            let aliment of sortedFilteredAliments.length > 0
+              ? sortedFilteredAliments
+              : sortedSearchedAliments.length > 0
+                ? sortedSearchedAliments
+                : sortedAliments
+          "
+        >
+          <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
+        </div>
+      } @else {
+        <div
+          *ngFor="let aliment of filteredAliments.length > 0 ? filteredAliments : searchedAliments.length > 0 ? searchedAliments : aliments"
+        >
+          <jhi-card-product [product]="aliment" [priceProduct]="aliment.price"></jhi-card-product>
+        </div>
+      }
     </div>
   </div>
 </div>

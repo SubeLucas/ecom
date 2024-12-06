@@ -44,17 +44,22 @@ export class CartComponent implements OnInit, OnDestroy {
     this.totalPrice = 0;
     this.cart = Cart.getCart();
     for (const item of this.cart.cartItems) {
-      this.http.find(item.id).subscribe(aliment => {
-        if (aliment.body) {
-          this.aliments.push(aliment.body);
-          this.stockMap.set(item.id, aliment.body.stockQuantity!);
-          if (aliment.body.price) {
-            this.totalPrice += aliment.body.price * item.qt;
+      if (item.qt > 0) {
+        this.http.find(item.id).subscribe(aliment => {
+          if (aliment.body) {
+            this.aliments.push(aliment.body);
+            this.stockMap.set(item.id, aliment.body.stockQuantity!);
+            if (aliment.body.price) {
+              this.totalPrice += aliment.body.price * item.qt;
+            }
+          } else {
+            console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
           }
-        } else {
-          console.log(`ERREUR : impossible de récupérer l'aliment d'id ${item.id}`);
-        }
-      });
+        });
+      }
+      if (item.qt == 0) {
+        Cart.removeItem(item.id);
+      }
     }
   }
 

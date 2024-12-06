@@ -66,8 +66,13 @@ export class PaymentComponent {
               console.error('Erreur lors du paiement', error);
             },
           });
-        } else {
-          console.log('Panier refusé');
+        } else if (order == -1) {
+          console.log('Panier invalide');
+          this.router.navigate(['cart']);
+        } else if (order == -2) {
+          alert('Une erreur est survenue. Veuillez réessayer.');
+        } else if (order == -3) {
+          console.log('Manque de stock');
           this.router.navigate(['cart']);
         }
       },
