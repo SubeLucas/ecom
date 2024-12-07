@@ -54,6 +54,9 @@ nav {
   padding: 0.8em 1em;
   height: fit-content;
   max-width: 300px;
+  button {
+    font-size: 0.9rem;
+  }
 }
 
 .filter-top {
@@ -61,10 +64,6 @@ nav {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.8em;
-
-  & > button {
-    font-size: 0.9rem;
-  }
 }
 
 .filters p {
