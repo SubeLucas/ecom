@@ -44,12 +44,7 @@
 }
 
 .img-product-cart {
-  max-width: 25%;
-  height: auto;
-}
-
-.icon-bin {
-  max-width: 50%;
+  max-width: 20%;
   height: auto;
 }
 
@@ -82,7 +77,7 @@
   color: grey;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 
 .origin-product {
@@ -141,6 +136,7 @@ input {
   cursor: pointer;
   appearance: none;
   background-color: inherit;
+  padding: 0;
 }
 
 button.minus-btn,

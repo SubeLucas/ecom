@@ -50,6 +50,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   sortedSearchedAliments: IAliment[] = [];
   sortedFilteredAliments: IAliment[] = [];
   searchKeyword = '';
+  actualSort = '';
 
   isCatCollapsed = signal(false);
   isSorted = false;
@@ -99,7 +100,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
       } else {
         this.searchKeyword = '';
       }
-      this.updateCrumbs();
     });
 
     this.router.events.pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd)).subscribe(event => {
@@ -139,13 +139,16 @@ export default class HomeComponent implements OnInit, OnDestroy {
   }
 
   performSearch(keyword: string): void {
+    this.onResetSort(true);
     this.noProduct = false;
     keyword = keyword.trim().toLowerCase();
     if (keyword) {
       if (this.filteredAliments.length > 0) {
         this.onRemoveFilters();
       }
-      this.searchedAliments = this.aliments.filter(aliment => aliment.name?.toLowerCase().includes(keyword));
+      this.searchedAliments = this.aliments
+        .filter(aliment => aliment.name?.toLowerCase().includes(keyword))
+        .sort((a, b) => a.name!.localeCompare(b.name!));
       if (this.searchedAliments.length == 0) {
         this.noProduct = true;
       }
@@ -159,6 +162,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
   onApplyFilters(): void {
     this.selectedCategories = [];
     this.filteredAliments = [];
+
     //Récup ce qui est coché niveau catégories
     const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
     for (let i = 0; i < cbListElements.length; i++) {
@@ -171,22 +175,75 @@ export default class HomeComponent implements OnInit, OnDestroy {
       this.searchedAliments = [];
     }
 
-    //Récup ce qui est indiqué nv prix
-    for (const kind of this.selectedCategories) {
-      if (kind === 'Fruits') {
-        for (const aliment of this.aliments) {
-          if (aliment.id % 2 == 1) this.filteredAliments.push(aliment);
+    if (this.sortedAliments.length > 0) {
+      this.sortedFilteredAliments = [];
+      console.warn('aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      console.warn(this.selectedCategories);
+      console.warn(this.categories);
+      if (!this.isArraysEqual(this.categories, this.selectedCategories)) {
+        console.warn('bbbbbbbbbbbb');
+
+        for (const kind of this.selectedCategories) {
+          if (kind === 'Fruits') {
+            for (const aliment of this.sortedAliments) {
+              if (aliment.id % 2 == 1) this.sortedFilteredAliments.push(aliment);
+            }
+          }
+          if (kind === 'Légumes') {
+            for (const aliment of this.sortedAliments) {
+              if (aliment.id % 2 == 0) this.sortedFilteredAliments.push(aliment);
+            }
+          }
         }
       }
-      if (kind === 'Légumes') {
-        for (const aliment of this.aliments) {
-          if (aliment.id % 2 == 0) this.filteredAliments.push(aliment);
+    } else if (this.sortedFilteredAliments.length > 0) {
+      this.onSortChange(this.actualSort);
+      if (!this.isArraysEqual(this.categories, this.selectedCategories)) {
+        console.warn('bwwwwwwwwwwwwwwwwwwwwwwwwwwww');
+        for (const kind of this.selectedCategories) {
+          if (kind === 'Fruits') {
+            for (const aliment of this.sortedAliments) {
+              if (aliment.id % 2 == 1) this.sortedFilteredAliments.push(aliment);
+            }
+          }
+          if (kind === 'Légumes') {
+            for (const aliment of this.sortedAliments) {
+              if (aliment.id % 2 == 0) this.sortedFilteredAliments.push(aliment);
+            }
+          }
+        }
+      }
+    } else {
+      for (const kind of this.selectedCategories) {
+        if (kind === 'Fruits') {
+          for (const aliment of this.aliments) {
+            if (aliment.id % 2 == 1) this.filteredAliments.push(aliment);
+          }
+        }
+        if (kind === 'Légumes') {
+          for (const aliment of this.aliments) {
+            if (aliment.id % 2 == 0) this.filteredAliments.push(aliment);
+          }
         }
       }
     }
+    //Récup ce qui est indiqué nv prix
     //Appel apply
 
     this.updateCrumbs(); // Met à jour le fil d'Ariane
+    console.warn(this.aliments);
+    console.warn(this.searchedAliments);
+    console.warn(this.filteredAliments);
+    console.warn(this.sortedAliments);
+    console.warn(this.sortedSearchedAliments);
+    console.warn(this.sortedFilteredAliments);
+  }
+
+  isArraysEqual(array1: string[], array2: string[]): boolean {
+    if (array1.length !== array2.length) {
+      return false;
+    }
+    return array1.every(element => array2.includes(element)) && array2.every(element => array1.includes(element));
   }
 
   onRemoveFilters(): void {
@@ -194,6 +251,9 @@ export default class HomeComponent implements OnInit, OnDestroy {
     const cbListElements = document.getElementsByClassName('cb-cat') as HTMLCollectionOf<HTMLInputElement>;
     for (let i = 0; i < cbListElements.length; i++) {
       cbListElements[i].checked = false;
+    }
+    if (this.isSorted) {
+      this.onSortChange(this.actualSort);
     }
     this.selectedCategories = [];
     this.filteredAliments = [];
@@ -265,17 +325,16 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.breadcrumbItems = [{ label: 'Catalogue' }, { label: `Recherche : ${query}` }];
   }
 
-  onSortChange(event: Event): void {
+  onSortEvent(event: Event): void {
     const selectedValue = (event.target as HTMLSelectElement).value;
-    this.sortedAliments = [];
-    this.sortedFilteredAliments = [];
-    this.sortedSearchedAliments = [];
+    this.onSortChange(selectedValue);
+  }
+
+  onSortChange(selectedValue: string): void {
+    this.onResetSort(false);
     switch (selectedValue) {
       case 'default':
-        this.isSorted = false;
-        this.sortedAliments = [];
-        this.sortedFilteredAliments = [];
-        this.sortedSearchedAliments = [];
+        this.onResetSort(false);
         break;
       case 'ordered_price':
         this.isSorted = true;
@@ -311,5 +370,27 @@ export default class HomeComponent implements OnInit, OnDestroy {
           this.sortedAliments = this.aliments.filter(aliment => aliment.name != null).sort((a, b) => a.name!.localeCompare(b.name!));
         }
     }
+
+    this.actualSort = selectedValue;
+
+    console.warn(this.aliments);
+    console.warn(this.searchedAliments);
+    console.warn(this.filteredAliments);
+    console.warn(this.sortedAliments);
+    console.warn(this.sortedSearchedAliments);
+    console.warn(this.sortedFilteredAliments);
+  }
+
+  onResetSort(resetUI: boolean): void {
+    if (resetUI) {
+      const selectElem = document.getElementById('sort-select') as HTMLSelectElement;
+      console.warn(selectElem.selectedIndex);
+      selectElem.selectedIndex = 0;
+    }
+
+    this.isSorted = false;
+    this.sortedAliments = [];
+    this.sortedFilteredAliments = [];
+    this.sortedSearchedAliments = [];
   }
 }

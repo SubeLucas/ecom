@@ -12,14 +12,30 @@
 
 .my-cart-link-home {
   display: flex;
+  margin-bottom: 1em;
+  h2 {
+    cursor: pointer;
+  }
 }
 
 .cart-infos {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .above-list {
   display: flex;
+  justify-content: space-between;
+  padding-inline: 0.75em;
+
+  & h4 {
+    padding-left: 1em;
+  }
+}
+
+.list {
+  min-width: 100px;
+  flex-grow: 2;
 }
 
 #empty-cart {
@@ -33,6 +49,9 @@
 
 .content-cart {
   display: flex;
+  justify-content: space-around;
+  font-size: 1.1em;
+  margin: 1em 0;
 }
 
 .total-price {
@@ -41,9 +60,29 @@
 }
 
 aside {
-  background-color: aquamarine;
+  max-width: 350px;
+  margin-left: 1em;
 }
+
+.ticket {
+  background-color: white;
+  text-align: center;
+  padding: 0.8em 1em;
+  height: fit-content;
+}
+
 h3,
 h4 {
   font-weight: bold;
+}
+
+fa-icon {
+  cursor: pointer;
+  font-size: 1.75em;
+  color: grey;
+  margin-right: 0.5em;
+}
+
+.info-empty {
+  margin-top: 1em;
 }

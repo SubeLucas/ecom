@@ -2,16 +2,18 @@
   <p-breadcrumb [model]="breadcrumbItems"></p-breadcrumb>
 </nav>
 
-<div class="my-cart-link-home" (click)="onButtonClick()">
-  <fa-icon icon="arrow-left"></fa-icon>
-  <h2>Mon panier</h2>
+<div class="my-cart-link-home">
+  <fa-icon icon="arrow-left" (click)="onButtonClick()"></fa-icon>
+  <h2 (click)="onButtonClick()">Mon panier</h2>
 </div>
 
 <div class="cart-infos">
   <div class="list">
     <div class="above-list">
       <h4>{{ aliments.length }} article(s)</h4>
-      <button id="empty-cart" [disabled]="Cart.isEmpty()" (click)="onClearButtonClick()">Vider mon panier</button>
+      @if (!Cart.isEmpty()) {
+        <button id="empty-cart" [disabled]="Cart.isEmpty()" (click)="onClearButtonClick()">Vider mon panier</button>
+      }
     </div>
 
     <div class="product-list">
@@ -25,20 +27,25 @@
           ></jhi-card-product>
         </div>
       } @else {
-        <p>Votre panier est vide.</p>
+        <p class="info-empty">Votre panier est vide.</p>
       }
     </div>
   </div>
 
   <aside>
     <img src="../../content/images/ticket-top.png" alt="ticket-top" />
-    <h3>Total</h3>
-    <div class="content-cart">
-      <p>{{ aliments.length }} article(s)</p>
-      <p class="total-price">{{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
+    <div class="ticket">
+      <h3>Total</h3>
+      <div class="content-cart">
+        <p>{{ aliments.length }} article(s)</p>
+        <p class="total-price">{{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
+      </div>
+
+      <button id="validate-cart" [disabled]="Cart.isEmpty()" class="normal-btn" (click)="onValidateButtonClick()">
+        Valider mon panier
+      </button>
     </div>
 
-    <button id="validate-cart" [disabled]="Cart.isEmpty()" class="normal-btn" (click)="onValidateButtonClick()">Valider mon panier</button>
     <img src="../../content/images/ticket-bottom.png" alt="ticket-bottom" />
   </aside>
 </div>
