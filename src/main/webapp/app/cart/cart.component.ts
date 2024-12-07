@@ -119,9 +119,7 @@ export class CartComponent implements OnInit, OnDestroy {
     const confirmClear = confirm('Êtes-vous sûr de vouloir vider le panier ?');
     if (confirmClear) {
       this.aliments = [];
-      localStorage.setItem('cart', '[]');
-      localStorage.setItem('totalPrice', '0');
-      localStorage.setItem('totalQuantity', '0');
+      Cart.clearCart();
       this.totalPrice = 0;
     }
   }

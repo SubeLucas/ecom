@@ -129,6 +129,8 @@ export class Cart {
 
   static clearCart(): void {
     localStorage.setItem('cart', JSON.stringify([]));
+    localStorage.setItem('totalPrice', '0');
+    localStorage.setItem('totalQuantity', '0');
     this.cartChanged.next();
   }
 }
