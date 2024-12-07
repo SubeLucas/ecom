@@ -56,6 +56,8 @@ export class PaymentComponent {
                 console.log('Numéro de carte accepté');
                 this.router.navigate(['/payment-success'], { queryParams: { order: order } });
                 Cart.clearCart();
+                localStorage.setItem('totalPrice', '0');
+                localStorage.setItem('totalQuantity', '0');
               } else {
                 this.errorMsg = 'Numéro de carte refusé';
                 //notifier au backend que la commande doit etre CANCELLED
