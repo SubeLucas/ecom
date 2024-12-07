@@ -12,6 +12,11 @@
   a {
     color: $hunter-green;
   }
+
+  .dropdown-item:hover {
+    background-color: $hunter-green;
+    color: $baby-powder;
+  }
 }
 
 jhi-searchbar {

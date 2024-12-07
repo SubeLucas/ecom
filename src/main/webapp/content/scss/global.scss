@@ -245,3 +245,44 @@ angular-cli removes postcss-rtl processed inline css, processed rules must be ad
 body {
   background-color: $baby-powder;
 }
+
+button {
+  border-radius: 10px;
+  padding: 0.5em;
+  transition: 0.2s;
+  &:active {
+    position: relative;
+    top: 1px;
+  }
+}
+
+.normal-btn {
+  background-color: $yellow-green;
+  border: 1px solid $yellow-green;
+
+  &:hover {
+    background-color: $vanilla-green;
+  }
+
+  &:active {
+    background-color: $asparagus;
+  }
+}
+
+.negative-btn {
+  background-color: $rosy-brown;
+  border: 1px solid $rosy-brown;
+
+  &:hover {
+    background-color: $rosy-brown-hover;
+  }
+
+  &:active {
+    background-color: $bittersweet-shimmer;
+  }
+}
+
+.textInput {
+  border-color: $baby-powder;
+  border-radius: 5px;
+}

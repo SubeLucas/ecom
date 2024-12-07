@@ -1,4 +1,7 @@
-<p>delivery works!</p>
+<nav>
+  <p-breadcrumb [model]="breadcrumbItems"></p-breadcrumb>
+</nav>
+
 <button id="goto-cart" class="btn btn-primary" [routerLink]="['/cart']">Retour au panier</button>
 <form (ngSubmit)="onValidateButtonClick()">
   <p>Date de livraison :</p>

@@ -38,8 +38,18 @@
   height: auto;
 }
 
+.prod-oos {
+  filter: grayscale(0.9);
+  opacity: 0.4;
+}
+
 .img-product-cart {
   max-width: 25%;
+  height: auto;
+}
+
+.icon-bin {
+  max-width: 50%;
   height: auto;
 }
 
@@ -77,6 +87,7 @@
 
 .origin-product {
   font-style: italic;
+  margin: 0;
 }
 
 .div-cart {
@@ -84,6 +95,11 @@
   justify-content: space-between;
   align-items: center;
   font-weight: bold;
+}
+
+div[class='centered-infos div-cart'] {
+  align-items: flex-end;
+  height: 2.5em;
 }
 
 .price-product {
@@ -118,4 +134,53 @@ input[type='number'] {
 
 input {
   width: 1.7em;
+}
+
+.del-btn {
+  border: none;
+  cursor: pointer;
+  appearance: none;
+  background-color: inherit;
+}
+
+button.minus-btn,
+button.plus-btn {
+  padding: revert;
+  border-radius: 50%;
+  width: 1.75em;
+  text-align: center;
+  font-weight: bold;
+}
+
+.plus-btn {
+  margin-left: 0.25em;
+  background-color: $vanilla-green;
+  border: 1px solid $vanilla-green;
+  &:hover {
+    background-color: $yellow-green;
+  }
+
+  &:active {
+    background-color: $asparagus;
+  }
+}
+
+.minus-btn {
+  margin-right: 0.25em;
+}
+
+.add-cart-btn {
+  max-width: fit-content;
+  background-color: $vanilla-green;
+  border: 1px solid $vanilla-green;
+  box-shadow: 0px 5px 10px 0 rgba(0, 0, 0, 0.2);
+  padding: 0.25em;
+
+  &:hover {
+    background-color: $yellow-green;
+  }
+
+  &:active {
+    background-color: $asparagus;
+  }
 }

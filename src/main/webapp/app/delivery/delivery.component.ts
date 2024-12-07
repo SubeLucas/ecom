@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { AccountService } from 'app/core/auth/account.service';
 import { ClientService } from 'app/entities/client/service/client.service';
+import { MenuItem } from 'primeng/api';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 
 @Component({
   selector: 'jhi-delivery',
   standalone: true,
-  imports: [RouterModule, FormsModule, NgIf],
+  imports: [RouterModule, FormsModule, NgIf, BreadcrumbModule],
   templateUrl: './delivery.component.html',
   styleUrl: './delivery.component.scss',
 })
@@ -21,6 +23,7 @@ export class DeliveryComponent implements OnInit {
   street = '';
   code = '';
   city = '';
+  breadcrumbItems: MenuItem[] = [{ label: 'Mon Panier', routerLink: '../cart' }, { label: 'Informations de Livraison' }];
 
   constructor(private http: ClientService) {}
 

@@ -1,0 +1,49 @@
+@import '../../content/scss/colors.scss';
+
+::ng-deep p-breadcrumb {
+  li {
+    height: 1em;
+  }
+  a {
+    color: $hunter-green;
+    font-weight: bold;
+  }
+}
+
+.my-cart-link-home {
+  display: flex;
+}
+
+.cart-infos {
+  display: flex;
+}
+
+.above-list {
+  display: flex;
+}
+
+#empty-cart {
+  color: $bittersweet-shimmer;
+  text-decoration: underline;
+  border: none;
+  cursor: pointer;
+  appearance: none;
+  background-color: inherit;
+}
+
+.content-cart {
+  display: flex;
+}
+
+.total-price {
+  color: $asparagus;
+  font-weight: bold;
+}
+
+aside {
+  background-color: aquamarine;
+}
+h3,
+h4 {
+  font-weight: bold;
+}

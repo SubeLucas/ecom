@@ -1,0 +1,24 @@
+@import '../../content/scss/colors.scss';
+
+::ng-deep p-breadcrumb {
+  li {
+    height: 1em;
+  }
+  a {
+    color: $hunter-green;
+    font-weight: bold;
+  }
+}
+
+.formulaire {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  grid-gap: 5%;
+
+  label {
+    text-align: right;
+  }
+  label:after {
+    content: ':';
+  }
+}

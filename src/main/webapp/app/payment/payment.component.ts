@@ -1,29 +1,42 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 
+import { MenuItem } from 'primeng/api';
+import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { PaymentService } from '../payment/payment.service';
 import { Cart } from '../cart/cart.model';
 import { ClientOrderService } from '../entities/client-order/service/client-order.service';
 import { Payment } from './payment.model';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-payment',
   standalone: true,
-  imports: [RouterModule, FormsModule, NgIf],
+  imports: [RouterModule, FormsModule, NgIf, BreadcrumbModule],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss',
 })
-export class PaymentComponent {
+export class PaymentComponent implements OnInit {
   private router = inject(Router);
+  breadcrumbItems: MenuItem[] = [
+    { label: 'Mon Panier', routerLink: '../cart' },
+    { label: 'Informations de Livraison', routerLink: '../delivery' },
+    { label: 'Paiement' },
+  ]; // Les éléments du fil d'Ariane
   numCard = '';
   errorMsg = '';
+  private titleService = inject(Title);
 
   constructor(
     private httpPayment: PaymentService,
     private clientOrderService: ClientOrderService,
   ) {}
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Cueillette - Paiement');
+  }
 
   onButtonClick(): void {
     this.router.navigate(['cart']);

@@ -1,16 +1,44 @@
-<button id="empty-cart" [disabled]="Cart.isEmpty()" class="btn btn-primary" (click)="onClearButtonClick()">Vider mon panier</button>
-<div class="product-list">
-  <div *ngFor="let aliment of aliments">
-    <jhi-card-product
-      [product]="aliment"
-      [priceProduct]="aliment.price"
-      [inCart]="true"
-      (quantityChanged)="onQuantityChanged()"
-    ></jhi-card-product>
+<nav>
+  <p-breadcrumb [model]="breadcrumbItems"></p-breadcrumb>
+</nav>
+
+<div class="my-cart-link-home" (click)="onButtonClick()">
+  <fa-icon icon="arrow-left"></fa-icon>
+  <h2>Mon panier</h2>
+</div>
+
+<div class="cart-infos">
+  <div class="list">
+    <div class="above-list">
+      <h4>{{ aliments.length }} article(s)</h4>
+      <button id="empty-cart" [disabled]="Cart.isEmpty()" (click)="onClearButtonClick()">Vider mon panier</button>
+    </div>
+
+    <div class="product-list">
+      @if (aliments.length > 0) {
+        <div *ngFor="let aliment of aliments">
+          <jhi-card-product
+            [product]="aliment"
+            [priceProduct]="aliment.price"
+            [inCart]="true"
+            (quantityChanged)="onQuantityChanged()"
+          ></jhi-card-product>
+        </div>
+      } @else {
+        <p>Votre panier est vide.</p>
+      }
+    </div>
   </div>
+
+  <aside>
+    <img src="../../content/images/ticket-top.png" alt="ticket-top" />
+    <h3>Total</h3>
+    <div class="content-cart">
+      <p>{{ aliments.length }} article(s)</p>
+      <p class="total-price">{{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
+    </div>
+
+    <button id="validate-cart" [disabled]="Cart.isEmpty()" class="normal-btn" (click)="onValidateButtonClick()">Valider mon panier</button>
+    <img src="../../content/images/ticket-bottom.png" alt="ticket-bottom" />
+  </aside>
 </div>
-<div class="total-price">
-  <p>Total Price: {{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
-</div>
-<button id="goto-home" class="btn btn-primary" (click)="onButtonClick()" [routerLink]="['']">Catalogue</button>
-<button id="validate-cart" [disabled]="Cart.isEmpty()" class="btn btn-primary" (click)="onValidateButtonClick()">Valider mon panier</button>

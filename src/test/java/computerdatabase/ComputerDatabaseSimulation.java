@@ -41,10 +41,10 @@ public class ComputerDatabaseSimulation extends Simulation {
         .exec(
             http("send_credit_card")
                 .post("/api/payment")
-                .header("Content-Type", "application/json")
+                .header("Content-Type", "text/plain")
                 .header("Accept", "application/json, text/plain, */*")
                 .header("Authorization", "Bearer #{token}")
-                .body(RawFileBody("payment.json"))
+                .body(StringBody("5155123456789108"))
         )
         .pause(1);
 
@@ -52,6 +52,6 @@ public class ComputerDatabaseSimulation extends Simulation {
     ScenarioBuilder my_scenario = scenario("validate_cart").exec(connect_as_user, validate);
 
     {
-        setUp(my_scenario.injectOpen(constantUsersPerSec(3).during(60))).protocols(http_protocol);
+        setUp(my_scenario.injectOpen(constantUsersPerSec(30).during(60))).protocols(http_protocol);
     }
 }
