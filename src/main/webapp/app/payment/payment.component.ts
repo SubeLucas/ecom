@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 
 import { MenuItem } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
@@ -10,11 +10,18 @@ import { Cart } from '../cart/cart.model';
 import { ClientOrderService } from '../entities/client-order/service/client-order.service';
 import { Payment } from './payment.model';
 import { Title } from '@angular/platform-browser';
+import { AlimentService } from 'app/entities/aliment/service/aliment.service';
+import { IAliment } from 'app/entities/aliment/aliment.model';
+
+interface AlimentWithQuantity {
+  aliment: IAliment;
+  quantity: number;
+}
 
 @Component({
   selector: 'jhi-payment',
   standalone: true,
-  imports: [RouterModule, FormsModule, NgIf, BreadcrumbModule],
+  imports: [RouterModule, FormsModule, NgIf, BreadcrumbModule, NgFor],
   templateUrl: './payment.component.html',
   styleUrl: './payment.component.scss',
 })
@@ -32,14 +39,43 @@ export class PaymentComponent implements OnInit {
   expDate = '';
   ccv = '';
   private titleService = inject(Title);
+  aliments: IAliment[] = [];
+  alimentsWithQuantityInCart: AlimentWithQuantity[] = [];
+  alimentsInCart: IAliment[] = [];
+  alimentsIdInCart: number[] = [];
+  alimentsQuantityInCart: number[] = [];
 
   constructor(
     private httpPayment: PaymentService,
     private clientOrderService: ClientOrderService,
+    private httpAliment: AlimentService,
   ) {}
 
   ngOnInit(): void {
     this.titleService.setTitle('Cueillette - Paiement');
+    this.httpAliment.all().subscribe(aliments => {
+      this.aliments = aliments.body != null ? aliments.body : [];
+
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      cart.forEach((item: { id: number; qt: number }) => {
+        this.alimentsIdInCart.push(item.id);
+        this.alimentsQuantityInCart.push(item.qt);
+      });
+      console.log(this.alimentsIdInCart);
+      this.alimentsInCart = this.aliments
+        .filter(aliment => this.alimentsIdInCart.includes(aliment.id))
+        .sort((a, b) => {
+          return this.alimentsIdInCart.indexOf(a.id) - this.alimentsIdInCart.indexOf(b.id);
+        });
+      console.log(this.alimentsInCart);
+      for (let i = 0; i < this.alimentsInCart.length; i++) {
+        this.alimentsWithQuantityInCart.push({
+          aliment: this.alimentsInCart[i],
+          quantity: this.alimentsQuantityInCart[i],
+        });
+      }
+      console.log(this.alimentsWithQuantityInCart);
+    });
   }
 
   onButtonClick(): void {

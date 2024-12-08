@@ -121,11 +121,10 @@
       <div class="ticket">
         <h3>Total</h3>
 
-        <!-- TODO
-        <div *ngFor="     " class="content-cart">
-          <p>{{ nom de laliment }} ({{ sa quantité dans le panier }})</p>
-          <p class="price-articles"> {{ prix de larticle au * sa quantité dans le panier }}€</p>
-        </div>-->
+        <div *ngFor="let item of alimentsWithQuantityInCart" class="content-cart">
+          <p>{{ item.aliment.name }} ({{ item.quantity }})</p>
+          <p class="price-articles">{{ (item.aliment.price! * item.quantity).toFixed(2) }}€</p>
+        </div>
         <div class="total-content-cart">
           <p>{{ localStorage.getItem('totalQuantity') }} article(s)</p>
           <p class="total-price">{{ localStorage.getItem('totalPrice')?.replace('.', ',') }}€</p>
