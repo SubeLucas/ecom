@@ -37,8 +37,8 @@
     <div class="ticket">
       <h3>Total</h3>
       <div class="content-cart">
-        <p>{{ aliments.length }} article(s)</p>
-        <p class="total-price">{{ totalPrice.toFixed(2).replace('.', ',') }}€</p>
+        <p>{{ localStorage.getItem('totalQuantity') }} article(s)</p>
+        <p class="total-price">{{ localStorage.getItem('totalPrice')?.replace('.', ',') }}€</p>
       </div>
 
       <button id="validate-cart" [disabled]="Cart.isEmpty()" class="normal-btn" (click)="onValidateButtonClick()">

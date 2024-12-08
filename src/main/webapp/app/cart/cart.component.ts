@@ -27,8 +27,10 @@ export class CartComponent implements OnInit, OnDestroy {
   private cart: Cart;
   totalPrice = 0;
   private accountService = inject(AccountService);
-  breadcrumbItems: MenuItem[] = [{ label: 'Mon Panier' }]; // Les éléments du fil d'Ariane
+  breadcrumbItems: MenuItem[] = [{ label: 'Mon panier' }]; // Les éléments du fil d'Ariane
   private titleService = inject(Title);
+
+  protected readonly localStorage = localStorage;
 
   constructor(private http: AlimentService) {
     this.cartSubscription = Cart.getCartChangedObservable().subscribe(() => {

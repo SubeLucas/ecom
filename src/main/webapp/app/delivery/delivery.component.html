@@ -2,86 +2,202 @@
   <p-breadcrumb [model]="breadcrumbItems"></p-breadcrumb>
 </nav>
 
-<button id="goto-cart" class="btn btn-primary" [routerLink]="['/cart']">Retour au panier</button>
-<form (ngSubmit)="onValidateButtonClick()">
-  <p>Date de livraison :</p>
-  <div class="form-group">
-    <label for="day">Jour</label>
-    <input
-      type="number"
-      required
-      minlength="1"
-      min="1"
-      max="31"
-      class="form-control"
-      id="day"
-      name="day"
-      [(ngModel)]="day"
-      #jour="ngModel"
-    />
-    <div *ngIf="jour.invalid && (jour.dirty || jour.touched)" class="alert alert-danger">
-      <div *ngIf="jour.errors && jour.errors.required">Ce champ est obligatoire.</div>
-      <div *ngIf="jour.errors && (jour.errors.min || jour.errors.max)">Valeur incorrecte.</div>
-    </div>
-    <label for="month">Mois</label>
-    <input
-      type="number"
-      required
-      minlength="1"
-      min="1"
-      max="12"
-      class="form-control"
-      id="month"
-      name="month"
-      [(ngModel)]="month"
-      #mois="ngModel"
-    />
-    <div *ngIf="mois.invalid && (mois.dirty || mois.touched)" class="alert alert-danger">
-      <div *ngIf="mois.errors && mois.errors.required">Ce champ est obligatoire.</div>
-      <div *ngIf="mois.errors && (mois.errors.min || mois.errors.max)">Valeur incorrecte.</div>
-    </div>
-    <label for="year">Année</label>
-    <input
-      type="number"
-      required
-      minlength="4"
-      min="2024"
-      max="3000"
-      class="form-control"
-      id="year"
-      name="year"
-      [(ngModel)]="year"
-      #annee="ngModel"
-    />
-    <div *ngIf="annee.invalid && (annee.dirty || annee.touched)" class="alert alert-danger">
-      <div *ngIf="annee.errors && annee.errors.required">Ce champ est obligatoire.</div>
-      <div *ngIf="annee.errors && (annee.errors.min || annee.errors.max)">Valeur incorrecte.</div>
-    </div>
-  </div>
+<div class="delivery-info">
+  <form (ngSubmit)="onValidateButtonClick()">
+    <div class="form">
+      <h3>Renseigner mes informations</h3>
+      <div class="delivery-form">
+        <!--NOM-->
+        <div *ngIf="lastNameField.invalid && (lastNameField.dirty || lastNameField.touched)" class="error-message">
+          <div *ngIf="lastNameField.errors?.required">Ce champ est obligatoire.</div>
+          <div *ngIf="lastNameField.errors?.pattern">Ce champ ne peut contenir que des lettres.</div>
+        </div>
+        <div class="form-group">
+          <label for="lastName" class="required">Nom</label>
+          <input
+            type="text"
+            required
+            id="lastName"
+            name="lastName"
+            placeholder="Nom"
+            [(ngModel)]="lastName"
+            #lastNameField="ngModel"
+            pattern="^[^0-9]*$"
+          />
+        </div>
 
-  <p>Lieu de livraison :</p>
-  <div class="form-group">
-    <label for="street">Adresse postale</label>
-    <input type="text" required maxlength="128" class="form-control" id="street" name="street" [(ngModel)]="street" #rue="ngModel" />
-    <div *ngIf="rue.invalid && (rue.dirty || rue.touched)" class="alert alert-danger">
-      <div *ngIf="rue.errors && rue.errors.required">Ce champ est obligatoire.</div>
+        <!--PRENOM-->
+        <div *ngIf="firstNameField.invalid && (firstNameField.dirty || firstNameField.touched)" class="error-message">
+          <div *ngIf="firstNameField.errors?.required">Ce champ est obligatoire.</div>
+          <div *ngIf="firstNameField.errors?.pattern">Ce champ ne peut contenir que des lettres.</div>
+        </div>
+        <div class="form-group">
+          <label for="firstName" class="required">Prénom</label>
+          <input
+            type="text"
+            required
+            id="firstName"
+            name="firstName"
+            placeholder="Prénom"
+            [(ngModel)]="firstName"
+            #firstNameField="ngModel"
+            pattern="^[^0-9]*$"
+            [class]="{
+              invalid: firstNameField.invalid && (firstNameField.dirty || firstNameField.touched),
+            }"
+          />
+        </div>
+
+        <!--MAIL-->
+        <div *ngIf="emailField.invalid && (emailField.dirty || emailField.touched)" class="error-message">
+          <div *ngIf="emailField.errors?.required">Ce champ est obligatoire.</div>
+          <div *ngIf="emailField.errors?.email">L’adresse email saisie n’est pas valide.</div>
+        </div>
+        <div class="form-group">
+          <label for="email" class="required">Adresse email</label>
+          <input
+            type="email"
+            required
+            email
+            id="email"
+            name="email"
+            placeholder="prenom.nom@email.com"
+            [(ngModel)]="email"
+            #emailField="ngModel"
+            [class]="{
+              invalid: emailField.invalid && (emailField.dirty || emailField.touched),
+            }"
+          />
+        </div>
+
+        <h4>Adresse de livraison</h4>
+
+        <!--RUE-->
+        <div *ngIf="streetField.invalid && (streetField.dirty || streetField.touched)" class="error-message">
+          <div *ngIf="streetField.errors && streetField.errors.required">Ce champ est obligatoire.</div>
+        </div>
+        <div class="form-group">
+          <label for="street" class="required">Adresse postale</label>
+          <input
+            type="text"
+            required
+            maxlength="128"
+            placeholder="1 rue de la chimie"
+            id="street"
+            name="street"
+            [(ngModel)]="street"
+            #streetField="ngModel"
+            [class]="{
+              invalid: streetField.invalid && (streetField.dirty || streetField.touched),
+            }"
+          />
+        </div>
+
+        <!--CP-->
+
+        <div *ngIf="postalField.invalid && (postalField.dirty || postalField.touched)" class="error-message">
+          <div *ngIf="postalField.errors && postalField.errors.required">Ce champ est obligatoire.</div>
+          <!--<div *ngIf="postalField.errors?.pattern">Ce champ ne peut contenir que des chiffres.</div>-->
+          <div *ngIf="postalField.errors?.minlength || postalField.errors?.maxlength || postalField.errors?.pattern">
+            Le code postal doit être composé de 5 chiffres.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="code" class="required">Code postal</label>
+          <input
+            type="text"
+            required
+            minlength="5"
+            maxlength="5"
+            placeholder="92000"
+            id="code"
+            name="code"
+            [(ngModel)]="code"
+            #postalField="ngModel"
+            pattern="^[0-9]*$"
+            [class]="{
+              invalid: postalField.invalid && (postalField.dirty || postalField.touched),
+            }"
+          />
+        </div>
+
+        <!--VILLE-->
+        <div *ngIf="cityField.invalid && (cityField.dirty || cityField.touched)" class="error-message">
+          <div *ngIf="cityField.errors && cityField.errors.required">Ce champ est obligatoire.</div>
+        </div>
+        <div class="form-group">
+          <label for="city" class="required">Ville</label>
+          <input
+            type="text"
+            required
+            maxlength="128"
+            placeholder="Paris"
+            id="city"
+            name="city"
+            [(ngModel)]="city"
+            #cityField="ngModel"
+            [class]="{
+              invalid: cityField.invalid && (cityField.dirty || cityField.touched),
+            }"
+          />
+        </div>
+
+        <h4>Date de livraison</h4>
+
+        <!--DATE-->
+        <div *ngIf="dateField.invalid && (dateField.dirty || dateField.touched)" class="error-message">
+          <div *ngIf="dateField.errors?.required">Ce champ est obligatoire.</div>
+          <div *ngIf="dateField.errors?.min">Délais minimum : 2 jours.</div>
+          <div *ngIf="dateField.errors?.max">Pas de livraison à une date supérieure à 1 mois.</div>
+        </div>
+        <div class="form-group">
+          <label for="date" class="required">Livré(e) le</label>
+          <input
+            type="date"
+            required
+            id="date"
+            name="date"
+            [(ngModel)]="selectedDate"
+            #dateField="ngModel"
+            [min]="minDate"
+            [max]="maxDate"
+            placeholder="Sélectionnez une date"
+            [class]="{
+              invalid: dateField.invalid && (dateField.dirty || dateField.touched),
+            }"
+          />
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="form-group">
-    <label for="code">Code postal</label>
-    <input type="text" required maxlength="16" class="form-control" id="code" name="code" [(ngModel)]="code" #codepostal="ngModel" />
-    <div *ngIf="codepostal.invalid && (codepostal.dirty || codepostal.touched)" class="alert alert-danger">
-      <div *ngIf="codepostal.errors && codepostal.errors.required">Ce champ est obligatoire.</div>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="city">Ville</label>
-    <input type="text" required maxlength="128" class="form-control" id="city" name="city" [(ngModel)]="city" #ville="ngModel" />
-    <div *ngIf="ville.invalid && (ville.dirty || ville.touched)" class="alert alert-danger">
-      <div *ngIf="ville.errors && ville.errors.required">Ce champ est obligatoire.</div>
-    </div>
-  </div>
-  <div *ngIf="jour.valid && mois.valid && annee.valid && rue.valid && codepostal.valid && ville.valid">
-    <button type="submit">Valider mes informations</button>
-  </div>
-</form>
+
+    <aside>
+      <img src="../../content/images/ticket-top.png" alt="ticket-top" />
+      <div class="ticket">
+        <h3>Total</h3>
+
+        <!-- TODO
+        <div *ngFor="     " class="content-cart">
+          <p>{{ nom de laliment }} ({{ sa quantité dans le panier }})</p>
+          <p class="price-articles"> {{ prix de larticle au * sa quantité dans le panier }}€</p>
+        </div>-->
+        <div class="total-content-cart">
+          <p>{{ localStorage.getItem('totalQuantity') }} article(s)</p>
+          <p class="total-price">{{ localStorage.getItem('totalPrice')?.replace('.', ',') }}€</p>
+        </div>
+
+        <button
+          id="validate-cart"
+          [disabled]="
+            !(firstNameField.valid && lastNameField.valid && dateField.valid && streetField.valid && postalField.valid && cityField.valid)
+          "
+          class="normal-btn"
+          type="submit"
+        >
+          Valider mes informations
+        </button>
+      </div>
+
+      <img src="../../content/images/ticket-bottom.png" alt="ticket-bottom" />
+    </aside>
+  </form>
+</div>

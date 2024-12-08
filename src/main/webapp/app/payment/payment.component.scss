@@ -10,15 +10,119 @@
   }
 }
 
-.formulaire {
-  display: grid;
-  grid-template-columns: max-content max-content;
-  grid-gap: 5%;
+h3,
+h4 {
+  font-weight: bold;
+}
+
+h3 {
+  margin-bottom: 0.75em;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.form {
+  min-width: 600px;
+  padding: 1.7em;
+}
+
+.payment-form {
+  padding-left: 1.2em;
+}
+
+.form-group {
+  width: 100%;
+  display: flex;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  align-items: baseline;
+  //margin-top: 1.7em;
 
   label {
-    text-align: right;
+    flex: 0 0 150px;
   }
-  label:after {
-    content: ':';
+
+  input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 2px solid #ccc; // Bordure grise par défaut
+    border-radius: 15px;
+    transition: border-color 0.2s;
+
+    // Quand tape
+    &:focus {
+      outline: none;
+      border-color: $asparagus;
+    }
+
+    // Si valide après focus
+    &.ng-valid.ng-touched:not(:focus) {
+      border-color: #ccc;
+    }
+
+    // Si invalide après focus
+    &.ng-invalid.ng-touched:not(:focus),
+    &.invalid {
+      border-color: $fire-engine-red;
+    }
+
+    &::placeholder {
+      color: #aaa;
+    }
   }
+}
+
+#expDate,
+#ccv {
+  width: fit-content;
+}
+
+.required:after {
+  content: ' *';
+  color: $fire-engine-red;
+}
+
+.error-message {
+  color: $fire-engine-red;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+aside {
+  max-width: 350px;
+  margin-left: 1em;
+}
+
+.ticket {
+  background-color: white;
+  text-align: center;
+  padding: 0.8em 1em;
+  height: fit-content;
+}
+
+.content-cart {
+  display: flex;
+  justify-content: space-around;
+  padding-inline: 1.1em;
+}
+
+.price-articles {
+  font-weight: bold;
+}
+
+.total-content-cart {
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.1em;
+  margin-bottom: 1em;
+}
+
+.total-price {
+  color: $asparagus;
+  font-weight: bold;
 }

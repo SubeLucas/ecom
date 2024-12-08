@@ -19,14 +19,18 @@ import { Title } from '@angular/platform-browser';
   styleUrl: './payment.component.scss',
 })
 export class PaymentComponent implements OnInit {
+  protected readonly localStorage = localStorage;
   private router = inject(Router);
   breadcrumbItems: MenuItem[] = [
-    { label: 'Mon Panier', routerLink: '../cart' },
-    { label: 'Informations de Livraison', routerLink: '../delivery' },
+    { label: 'Mon panier', routerLink: '../cart' },
+    { label: 'Informations de livraison', routerLink: '../delivery' },
     { label: 'Paiement' },
   ]; // Les éléments du fil d'Ariane
   numCard = '';
   errorMsg = '';
+  owner = '';
+  expDate = '';
+  ccv = '';
   private titleService = inject(Title);
 
   constructor(
