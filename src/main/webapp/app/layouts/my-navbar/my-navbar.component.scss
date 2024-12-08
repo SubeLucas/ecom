@@ -19,6 +19,30 @@
   }
 }
 
+.container-fluid {
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  margin-left: 0.2em;
+}
+
+.cart-info {
+  margin: 0;
+}
+
 jhi-searchbar {
-  width: 60%;
+  width: 40%;
+}
+
+.price-cart {
+  font-weight: bold;
+}
+
+fa-icon + span {
+  color: black;
+  + p {
+    color: black;
+  }
 }

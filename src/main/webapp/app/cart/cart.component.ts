@@ -4,18 +4,16 @@ import { Cart } from './cart.model';
 import { AlimentService } from '../entities/aliment/service/aliment.service';
 import { CardProductComponent } from '../card-product/card-product.component';
 import { IAliment } from 'app/entities/aliment/aliment.model';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { AccountService } from '../core/auth/account.service';
-import { MenuItem } from 'primeng/api';
-import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { Title } from '@angular/platform-browser';
 import SharedModule from 'app/shared/shared.module';
 
 @Component({
   selector: 'jhi-cart',
   standalone: true,
-  imports: [RouterModule, CardProductComponent, NgFor, NgIf, BreadcrumbModule, SharedModule],
+  imports: [RouterModule, CardProductComponent, NgFor, SharedModule],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
 })
@@ -27,7 +25,6 @@ export class CartComponent implements OnInit, OnDestroy {
   private cart: Cart;
   totalPrice = 0;
   private accountService = inject(AccountService);
-  breadcrumbItems: MenuItem[] = [{ label: 'Mon panier' }]; // Les éléments du fil d'Ariane
   private titleService = inject(Title);
 
   protected readonly localStorage = localStorage;

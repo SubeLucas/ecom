@@ -44,7 +44,7 @@
               (cardNumberField.errors.minlength || cardNumberField.errors.maxlength || cardNumberField.errors.pattern)
             "
           >
-            Le numéro doit être composé de 16 chiffres
+            Le numéro doit être composé de 16 chiffres.
           </div>
         </div>
         <div class="form-group">
@@ -93,7 +93,9 @@
         <!--CCV-->
         <div *ngIf="ccvField.invalid && (ccvField.dirty || ccvField.touched)" class="error-message">
           <div *ngIf="ccvField.errors?.required">Ce champ est obligatoire.</div>
-          <div *ngIf="ccvField.errors?.pattern">Ce champ ne peut contenir que des chiffres.</div>
+          <div *ngIf="ccvField.errors?.pattern || ccvField.errors?.minlength || ccvField.errors?.maxlength">
+            Le code doit être composé de 3 chiffres.
+          </div>
         </div>
         <div class="form-group">
           <label for="ccv" class="required">CCV</label>
@@ -123,7 +125,7 @@
 
         <div *ngFor="let item of alimentsWithQuantityInCart" class="content-cart">
           <p>{{ item.aliment.name }} ({{ item.quantity }})</p>
-          <p class="price-articles">{{ (item.aliment.price! * item.quantity).toFixed(2) }}€</p>
+          <p class="price-articles">{{ (item.aliment.price! * item.quantity).toFixed(2).replace('.', ',') }}€</p>
         </div>
         <div class="total-content-cart">
           <p>{{ localStorage.getItem('totalQuantity') }} article(s)</p>

@@ -177,7 +177,7 @@
 
         <div *ngFor="let item of alimentsWithQuantityInCart" class="content-cart">
           <p>{{ item.aliment.name }} ({{ item.quantity }})</p>
-          <p class="price-articles">{{ (item.aliment.price! * item.quantity).toFixed(2) }}€</p>
+          <p class="price-articles">{{ (item.aliment.price! * item.quantity).toFixed(2).replace('.', ',') }}€</p>
         </div>
         <div class="total-content-cart">
           <p>{{ localStorage.getItem('totalQuantity') }} article(s)</p>

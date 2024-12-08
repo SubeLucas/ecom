@@ -1,7 +1,7 @@
 @import '../../content/scss/colors.scss';
 
 .card-product {
-  background-color: greenyellow;
+  background-color: white;
   border-radius: 25px;
   margin: 0.5em;
 
@@ -179,4 +179,12 @@ button.plus-btn {
   &:active {
     background-color: $asparagus;
   }
+}
+
+.error-msg {
+  text-align: right;
+  color: $fire-engine-red;
+  margin-top: 1em;
+  margin-bottom: 0;
+  margin-inline: 1.5em;
 }
