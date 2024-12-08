@@ -84,6 +84,9 @@ export class CardProductComponent {
         this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
         this.totalQuantity--;
         localStorage.setItem('totalQuantity', this.totalQuantity.toString());
+      } else {
+        this.deleteArticleFromCart();
+        return;
       }
 
       this.updateTotalPriceProduct();
@@ -101,20 +104,21 @@ export class CardProductComponent {
   }
 
   plusQuantity(): void {
-    if (this.quantity < this.maxQuantity) {
-      this.quantity++;
-      this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
-      this.totalQuantity++;
-      localStorage.setItem('totalQuantity', this.totalQuantity.toString());
-      this.updateTotalPriceProduct();
-      if (this.product) {
-        Cart.setItemQuantity(this.product.id, this.quantity);
-        if (this.valid && this.quantity > this.product.stockQuantity!) {
-          this.valid = false;
-        }
-      }
-      this.quantityChanged.emit();
+    this.quantity++;
+    if (this.quantity > this.product!.stockQuantity!) {
+      this.quantity--;
+      return;
     }
+    if (this.quantity > this.maxQuantity) {
+      this.quantity--;
+      return;
+    }
+    this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
+    this.totalQuantity++;
+    localStorage.setItem('totalQuantity', this.totalQuantity.toString());
+    this.updateTotalPriceProduct();
+    Cart.setItemQuantity(this.product!.id, this.quantity);
+    this.quantityChanged.emit();
   }
 
   deleteArticleFromCart(): void {
@@ -155,8 +159,13 @@ export class CardProductComponent {
         inputEvtType === 'insertFromDrop')
     ) {
       if (+el.value <= 0) {
-        el.value = '1';
-      } else if (+el.value > this.maxQuantity) {
+        this.deleteArticleFromCart();
+        return;
+      }
+      if (+el.value > this.product!.stockQuantity!) {
+        el.value = this.product!.stockQuantity!.toString();
+      }
+      if (+el.value > this.maxQuantity) {
         el.value = this.maxQuantity.toString();
       }
       this.totalQuantity = localStorage.getItem('totalQuantity') ? parseInt(localStorage.getItem('totalQuantity')!) : 0;
@@ -164,10 +173,8 @@ export class CardProductComponent {
       this.quantity = +el.value;
       this.totalQuantity += this.quantity;
       localStorage.setItem('totalQuantity', this.totalQuantity.toString());
-      if (this.product) {
-        Cart.setItemQuantity(this.product.id, this.quantity);
-        this.valid = this.quantity <= this.product.stockQuantity!;
-      }
+      Cart.setItemQuantity(this.product!.id, this.quantity);
+      this.valid = this.quantity <= this.product!.stockQuantity!;
       this.updateTotalPriceProduct();
       this.quantityChanged.emit();
     }
