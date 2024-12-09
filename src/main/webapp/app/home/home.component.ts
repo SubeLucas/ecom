@@ -15,8 +15,6 @@ import { AlimentService } from 'app/entities/aliment/service/aliment.service';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { MenuItem } from 'primeng/api';
 
-// temporary imports for cart validation tests
-import { CartService } from '../cart/cart.service';
 import { Cart, CartItem } from '../cart/cart.model';
 import { CardProductComponent } from '../card-product/card-product.component';
 import { Title } from '@angular/platform-browser';
@@ -58,7 +56,6 @@ export default class HomeComponent implements OnInit, OnDestroy {
   noProduct = false;
 
   constructor(
-    private httpCart: CartService,
     private httpAliment: AlimentService,
     private sharedService: SharedService,
   ) {}
@@ -72,6 +69,21 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
     this.httpAliment.all().subscribe(aliments => {
       this.aliments = aliments.body != null ? aliments.body : [];
+      const rawAliments = aliments.body != null ? aliments.body : [];
+
+      // Tri aliments : ceux de saison en 1er
+      this.aliments = rawAliments.sort((a, b) => {
+        const isASeason = this.isSeasonProduct(a.season);
+        const isBSeason = this.isSeasonProduct(b.season);
+
+        if (isASeason && !isBSeason) {
+          return -1; // `a` saison, donc avant `b`
+        } else if (!isASeason && isBSeason) {
+          return 1; // `b` saison, donc avant `a`
+        } else {
+          return 0; // pas changement d'ordre entre `a` et `b`
+        }
+      });
     });
 
     this.searchSubscription = this.sharedService.searchTriggered$.subscribe(keyword => {
@@ -171,61 +183,75 @@ export default class HomeComponent implements OnInit, OnDestroy {
       }
     }
 
+    //Je le laisse pour montrer à quel point je me suis embêtée pour rien :))
+    // if (this.sortedAliments.length > 0) {
+    //   this.sortedFilteredAliments = [];
+    //   if (!this.isArraysEqual(this.categories, this.selectedCategories)) {
+    //     for (const kind of this.selectedCategories) {
+    //       if (kind === 'Fruits') {
+    //         for (const aliment of this.sortedAliments) {
+    //           if (aliment.id % 2 == 1) this.sortedFilteredAliments.push(aliment);
+    //         }
+    //       }
+    //       if (kind === 'Légumes') {
+    //         for (const aliment of this.sortedAliments) {
+    //           if (aliment.id % 2 == 0) this.sortedFilteredAliments.push(aliment);
+    //         }
+    //       }
+    //     }
+    //   }
+    // } else if (this.sortedFilteredAliments.length > 0) {
+    //   this.onSortChange(this.actualSort);
+    //   if (!this.isArraysEqual(this.categories, this.selectedCategories)) {
+    //     for (const kind of this.selectedCategories) {
+    //       if (kind === 'Fruits') {
+    //         for (const aliment of this.sortedAliments) {
+    //           if (aliment.id % 2 == 1) this.sortedFilteredAliments.push(aliment);
+    //         }
+    //       }
+    //       if (kind === 'Légumes') {
+    //         for (const aliment of this.sortedAliments) {
+    //           if (aliment.id % 2 == 0) this.sortedFilteredAliments.push(aliment);
+    //         }
+    //       }
+    //     }
+    //   }
+    // } else {
+    //   for (const kind of this.selectedCategories) {
+    //     if (kind === 'Fruits') {
+    //       for (const aliment of this.aliments) {
+    //         if (aliment.id % 2 == 1) this.filteredAliments.push(aliment);
+    //       }
+    //     }
+    //     if (kind === 'Légumes') {
+    //       for (const aliment of this.aliments) {
+    //         if (aliment.id % 2 == 0) this.filteredAliments.push(aliment);
+    //       }
+    //     }
+    //   }
+    // }
+
+    let alimentsToIterate = [];
     if (this.searchedAliments.length > 0) {
-      this.searchedAliments = [];
+      alimentsToIterate = this.searchedAliments;
+    } else {
+      alimentsToIterate = this.aliments;
     }
 
-    if (this.sortedAliments.length > 0) {
-      this.sortedFilteredAliments = [];
-      console.warn('aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-      console.warn(this.selectedCategories);
-      console.warn(this.categories);
-      if (!this.isArraysEqual(this.categories, this.selectedCategories)) {
-        console.warn('bbbbbbbbbbbb');
-
-        for (const kind of this.selectedCategories) {
-          if (kind === 'Fruits') {
-            for (const aliment of this.sortedAliments) {
-              if (aliment.id % 2 == 1) this.sortedFilteredAliments.push(aliment);
-            }
-          }
-          if (kind === 'Légumes') {
-            for (const aliment of this.sortedAliments) {
-              if (aliment.id % 2 == 0) this.sortedFilteredAliments.push(aliment);
-            }
-          }
+    for (const kind of this.selectedCategories) {
+      if (kind === 'Fruits') {
+        for (const aliment of alimentsToIterate) {
+          if (aliment.id % 2 == 1) this.filteredAliments.push(aliment);
         }
       }
-    } else if (this.sortedFilteredAliments.length > 0) {
+      if (kind === 'Légumes') {
+        for (const aliment of alimentsToIterate) {
+          if (aliment.id % 2 == 0) this.filteredAliments.push(aliment);
+        }
+      }
+    }
+    if (this.isSorted) {
       this.onSortChange(this.actualSort);
-      if (!this.isArraysEqual(this.categories, this.selectedCategories)) {
-        console.warn('bwwwwwwwwwwwwwwwwwwwwwwwwwwww');
-        for (const kind of this.selectedCategories) {
-          if (kind === 'Fruits') {
-            for (const aliment of this.sortedAliments) {
-              if (aliment.id % 2 == 1) this.sortedFilteredAliments.push(aliment);
-            }
-          }
-          if (kind === 'Légumes') {
-            for (const aliment of this.sortedAliments) {
-              if (aliment.id % 2 == 0) this.sortedFilteredAliments.push(aliment);
-            }
-          }
-        }
-      }
-    } else {
-      for (const kind of this.selectedCategories) {
-        if (kind === 'Fruits') {
-          for (const aliment of this.aliments) {
-            if (aliment.id % 2 == 1) this.filteredAliments.push(aliment);
-          }
-        }
-        if (kind === 'Légumes') {
-          for (const aliment of this.aliments) {
-            if (aliment.id % 2 == 0) this.filteredAliments.push(aliment);
-          }
-        }
-      }
     }
     //Récup ce qui est indiqué nv prix
     //Appel apply
@@ -284,7 +310,8 @@ export default class HomeComponent implements OnInit, OnDestroy {
   updateCrumbs(): void {
     // Met à jour le fil d'Ariane quand une catégorie est sélectionnée ou non
 
-    if (this.selectedCategories.length > 0) {
+    //Peu optimisé
+    if (this.selectedCategories.length > 0 && this.searchKeyword == '') {
       const categoriesLabel = this.printCrumbCatLabel();
       const joinItems = this.selectedCategories.join(',');
       this.router.navigate([], { relativeTo: this.route, queryParams: { category: joinItems } });
@@ -298,7 +325,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
           queryParamsHandling: 'merge',
         },
       ];
-    } else if (this.searchKeyword != '') {
+    } else if (this.selectedCategories.length < 1 && this.searchKeyword != '') {
       this.router.navigate([], { relativeTo: this.route, queryParams: { search: this.searchKeyword } });
 
       this.breadcrumbItems = [
@@ -307,6 +334,27 @@ export default class HomeComponent implements OnInit, OnDestroy {
           label: `Recherche : ${this.searchKeyword}`,
           routerLink: './',
           queryParams: { search: this.searchKeyword }, // Plusieurs catégories comme paramètre
+          queryParamsHandling: 'merge',
+        },
+      ];
+    } else if (this.selectedCategories.length > 0 && this.searchKeyword != '') {
+      this.router.navigate([], { relativeTo: this.route, queryParams: { search: this.searchKeyword } });
+      const categoriesLabel = this.printCrumbCatLabel();
+      const joinItems = this.selectedCategories.join(',');
+
+      this.breadcrumbItems = [
+        { label: 'Catalogue', routerLink: './', command: () => this.onResetAll() },
+        {
+          label: `Recherche : ${this.searchKeyword}`,
+          routerLink: './',
+          command: () => this.onRemoveFilters(),
+          queryParams: { search: this.searchKeyword }, // Plusieurs catégories comme paramètre
+          queryParamsHandling: 'merge',
+        },
+        {
+          label: categoriesLabel,
+          routerLink: './',
+          queryParams: { category: joinItems }, // Plusieurs catégories comme paramètre
           queryParamsHandling: 'merge',
         },
       ];
@@ -392,5 +440,21 @@ export default class HomeComponent implements OnInit, OnDestroy {
     this.sortedAliments = [];
     this.sortedFilteredAliments = [];
     this.sortedSearchedAliments = [];
+  }
+
+  isSeasonProduct(season: number | null | undefined): boolean {
+    if (season === null || undefined) return false;
+    else {
+      const currentDate = new Date();
+      let currentMonth = currentDate.getMonth() + 1;
+      currentMonth = 2 ** (12 - currentMonth);
+      const result = (currentMonth & season!) === 1;
+      return result;
+    }
+  }
+
+  onResetAll(): void {
+    this.onRemoveFilters();
+    this.onResetSearch();
   }
 }

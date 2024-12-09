@@ -11,14 +11,13 @@
       <img [src]="getImageUrl()" alt="{{ product?.name }}" class="img-product" [ngClass]="{ 'prod-oos': product!.stockQuantity! < 1 }" />
 
       <!--<img src="../../content/images/aliment_{{product?.id}}.png" alt="{{ product?.name }}" class="img-product" [ngClass]="{'prod-oos' : product!.stockQuantity! < 1}" />-->
-
       <p class="title-product">{{ product?.name }}</p>
       <div class="weight-infos">
         <p>{{ product?.weight }}g/pièce</p>
         <p>{{ priceByKg }}€/kg</p>
       </div>
     </div>
-    <p class="origin-product">{{ product?.origin }}</p>
+    <p class="origin-product">{{ product?.origin | titlecase }}</p>
     <div class="centered-infos div-cart">
       <p class="price-product">{{ priceProduct!.toFixed(2).replace('.', ',') }}€</p>
       @if (quantity == 0) {
@@ -58,7 +57,7 @@
       <!--<img src="../../content/images/aliment_{{product?.id}}.png" alt="{{ product?.name }}" class="img-product-cart" />-->
       <div class="title-origin-infos">
         <p class="title-product">{{ product?.name }}</p>
-        <p class="origin-product">{{ product?.origin }}</p>
+        <p class="origin-product">{{ product?.origin | titlecase }}</p>
       </div>
       <div class="weight-infos-cart">
         <p>{{ product?.weight }}g/pièce</p>

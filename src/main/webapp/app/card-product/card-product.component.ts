@@ -5,11 +5,12 @@ import { AlimentService } from 'app/entities/aliment/service/aliment.service';
 import { Cart } from '../cart/cart.model';
 import { IImages } from 'app/entities/images/images.model';
 import { ImagesService } from 'app/entities/images/service/images.service';
+import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'jhi-card-product',
   standalone: true,
-  imports: [NgClass, NgIf],
+  imports: [NgClass, NgIf, TitleCasePipe],
   templateUrl: './card-product.component.html',
   styleUrls: ['./card-product.component.scss'],
 })
@@ -50,7 +51,6 @@ export class CardProductComponent {
         if (response.body) {
           this.product!.stockQuantity = response.body;
           if (this.quantity > this.product!.stockQuantity) {
-            // TODO afficher un message dans la page panier
             console.log(`Aliment d'id ${this.product!.id} n'a plus que ${this.product!.stockQuantity} exemplaires en stock`);
             this.valid = false;
           }

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgModel } from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
 import { AccountService } from 'app/core/auth/account.service';
 import { ClientService } from 'app/entities/client/service/client.service';
@@ -134,6 +134,18 @@ export class DeliveryComponent implements OnInit {
       this.router.navigate(['payment']);
     } else {
       this.router.navigate(['login']);
+    }
+  }
+
+  validateDate(dateField: NgModel): void {
+    dateField.control.setErrors(null);
+    const dateValue = this.selectedDate;
+    if (dateValue < this.minDate) {
+      dateField.control.setErrors({ min: true });
+    } else if (dateValue > this.maxDate) {
+      dateField.control.setErrors({ max: true });
+    } else {
+      dateField.control.setErrors(null); // Réinitialise les erreurs si tout est OK
     }
   }
 }

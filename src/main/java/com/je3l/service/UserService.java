@@ -154,7 +154,7 @@ public class UserService {
 
         Client newClient = new Client();
         newClient.setUser(newUser);
-        newClient.setAddress("Your address here");
+        newClient.setAddress("");
         newClient.setPreferedDay("Your preferred day for delivery here");
         clientRepository.save(newClient);
         LOG.debug("Created Information for Client: {}", newClient);

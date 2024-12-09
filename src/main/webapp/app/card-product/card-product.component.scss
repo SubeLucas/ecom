@@ -71,6 +71,9 @@
   display: flex;
   justify-content: space-between;
   color: grey;
+  & p {
+    font-size: 1.05em;
+  }
 }
 
 .weight-infos-cart {

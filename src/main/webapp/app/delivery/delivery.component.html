@@ -157,6 +157,8 @@
             required
             id="date"
             name="date"
+            [ngModelOptions]="{ updateOn: 'change' }"
+            (change)="validateDate(dateField)"
             [(ngModel)]="selectedDate"
             #dateField="ngModel"
             [min]="minDate"
@@ -187,7 +189,15 @@
         <button
           id="validate-cart"
           [disabled]="
-            !(firstNameField.valid && lastNameField.valid && dateField.valid && streetField.valid && postalField.valid && cityField.valid)
+            !(
+              firstNameField.valid &&
+              lastNameField.valid &&
+              emailField.valid &&
+              dateField.valid &&
+              streetField.valid &&
+              postalField.valid &&
+              cityField.valid
+            )
           "
           class="normal-btn"
           type="submit"
