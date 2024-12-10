@@ -41,7 +41,7 @@ export default class RegisterComponent implements AfterViewInit {
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(50),
-        Validators.pattern('^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$'),
+        Validators.pattern('^[A-Za-z]+(?:[-][A-Za-z]+)*$'),
       ],
     }),
     lastName: new FormControl('', {
@@ -50,7 +50,7 @@ export default class RegisterComponent implements AfterViewInit {
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(50),
-        Validators.pattern('^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$'),
+        Validators.pattern('^[A-Za-z]+(?:[-][A-Za-z]+)*$'),
       ],
     }),
     email: new FormControl('', {
