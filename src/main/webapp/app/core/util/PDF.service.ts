@@ -5,6 +5,7 @@ import { ClientOrderService } from '../../entities/client-order/service/client-o
 import { OrderLineService } from '../../entities/order-line/service/order-line.service';
 import { IOrderLine } from '../../entities/order-line/order-line.model';
 import { AlimentService } from '../../entities/aliment/service/aliment.service';
+import { AccountService } from 'app/core/auth/account.service';
 import { IAliment } from '../../entities/aliment/aliment.model';
 
 import { forkJoin, Observable } from 'rxjs';
@@ -17,6 +18,7 @@ export class PDFService {
   private clientOrderService = inject(ClientOrderService);
   private orderLineService = inject(OrderLineService);
   private alimentService = inject(AlimentService);
+  private accountService = inject(AccountService);
 
   // id du ClientOrder
   generatePDF(id: number): void {
@@ -26,7 +28,8 @@ export class PDFService {
     forkJoin({
       clientOrder: this.clientOrderService.find(id).pipe(map(response => response.body!)),
       orderLines: this.orderLineService.findByClientOrder(id).pipe(map(response => response.body!)),
-    }).subscribe(({ clientOrder, orderLines }) => {
+      account: this.accountService.identity(),
+    }).subscribe(({ clientOrder, orderLines, account }) => {
       // Titre principal
       doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
@@ -98,6 +101,16 @@ export class PDFService {
           doc.text(`User ID: ${clientOrder.client.user.id}`, 10, y);
           y += 10;
         }
+      }
+
+      // Informations supplémentaires du client
+      if (account) {
+        doc.text(`First Name: ${account.firstName}`, 10, y);
+        y += 10;
+        doc.text(`Last Name: ${account.lastName}`, 10, y);
+        y += 10;
+        doc.text(`Email: ${account.email}`, 10, y);
+        y += 10;
       }
 
       // Ligne de séparation
