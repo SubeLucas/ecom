@@ -40,32 +40,48 @@ public class CartResource {
     @Autowired
     private ClientService clientService;
 
+    /**
+     * Create a new ClientOrder and all OrderLine associated with the cartDTO given.
+     * @param cartDTO
+     * @return The ClientOrder id created with the cart, -1L invalid cart, -2L lock error, -3L not enouth stock on one of the aliment, -4L invalide delivery date
+     * @throws BadRequestAlertException
+     * @throws Exception
+     */
     @PostMapping("")
     public Long validateCart(@Valid @RequestBody CartDTO cartDTO) throws BadRequestAlertException, Exception {
         CartItem[] cartItems = cartDTO.getCartItems();
         LocalDate deliveryDate = cartDTO.getDeliveryDate();
         if (!checkCart(cartItems)) {
-            return -1L;
+            return -1L; // erreur panier
         }
         if (!checkDeliveryDate(deliveryDate)) {
-            return -4L;
+            return -4L; // erreur date
         }
         cartItems = fuseDouble(cartItems);
 
         Client c = clientService.getCurrentClient();
 
         try {
-            ClientOrder order = orderService.addOrder(cartItems, c, deliveryDate);
-            if (order != null) {
-                // Si assez de stock
-                return order.getId();
+            // -1L if not enouth stock
+            // -2L if the aliment doesn't exist
+            // -3L if can't get the lock
+            // 0L if the aliment is removed from stock
+            Long orderid = orderService.addOrder(cartItems, c, deliveryDate);
+            if (orderid == -1L) {
+                LOG.warn("Not enough stock");
+                return -3L; // erreur stock
+            } else if (orderid == -2L) {
+                LOG.warn("Aliment not found");
+                return -1L; // erreur panier invalide
+            } else if (orderid == -3L) {
+                LOG.warn("Can't get the lock");
+                return -2L; // erreur verrou
             }
-            // Erreur pas assez de stock
-            LOG.warn("Stock missing error");
-            return -3L;
+            LOG.debug("Order successfully added with id {}", orderid);
+            return orderid;
         } catch (OptimisticLockException e) {
             LOG.warn("OptimisticLockException occurred", e);
-            return -2L;
+            return -2L; // erreur verrou
         }
     }
 
