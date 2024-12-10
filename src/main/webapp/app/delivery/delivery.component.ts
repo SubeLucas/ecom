@@ -63,7 +63,14 @@ export class DeliveryComponent implements OnInit {
       maxDate.setMonth(currentDate.getMonth() + 1);
       this.maxDate = maxDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
 
-      // récupérer l'adresse du client connecté
+      // récupérer les infos du client connecté
+      this.accountService.identity().subscribe(account => {
+        if (account) {
+          this.firstName = account.firstName!;
+          this.lastName = account.lastName!;
+          this.email = account.email!;
+        }
+      });
       this.http.findCurrent().subscribe({
         next: client => {
           if (client.body) {
