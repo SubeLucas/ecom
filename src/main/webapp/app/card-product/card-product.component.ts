@@ -137,8 +137,10 @@ export class CardProductComponent {
     this.totalPrice = parseFloat(localStorage.getItem('totalPrice')!) || 0;
     this.totalPrice -= isNaN(this.totalPriceProduct) ? 0 : this.totalPriceProduct;
     this.totalPriceProduct = this.quantity * this.priceProduct!;
+    this.totalPriceProduct = parseFloat(this.totalPriceProduct.toFixed(2)); //js
     this.totalPrice += this.totalPriceProduct;
-    localStorage.setItem('totalPrice', this.totalPrice.toFixed(2));
+    this.totalPrice = parseFloat(this.totalPrice.toFixed(2)); // on est jamais assez sûr.es avec le js
+    localStorage.setItem('totalPrice', this.totalPrice.toString());
     // localStorage.setItem('totalQuantity', this.totalQuantity.toString());
     this.quantityChanged.emit();
   }

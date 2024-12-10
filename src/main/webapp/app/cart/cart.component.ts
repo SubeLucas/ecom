@@ -115,7 +115,7 @@ export class CartComponent implements OnInit, OnDestroy {
   }
 
   onClearButtonClick(): void {
-    const confirmClear = confirm('Êtes-vous sûr de vouloir vider le panier ?');
+    const confirmClear = confirm('Êtes-vous sûr de vouloir vider votre panier ?');
     if (confirmClear) {
       this.aliments = [];
       Cart.clearCart();
