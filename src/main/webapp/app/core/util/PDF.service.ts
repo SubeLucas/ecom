@@ -33,33 +33,33 @@ export class PDFService {
       // Titre principal
       doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
-      doc.text('Client Order Details', 10, y);
+      doc.text('Details de votre facture Cueillette', 10, y);
       y += 15;
 
       // Sous-titre pour les détails de la commande
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.text('Order Information', 10, y);
+      doc.text('Information de la commande', 10, y);
       y += 10;
 
       // Détails de la commande
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-      doc.text(`Order ID: ${clientOrder.id}`, 10, y);
+      doc.text(`ID de la commande: ${clientOrder.id}`, 10, y);
       y += 10;
 
       if (clientOrder.orderDate) {
-        doc.text(`Order Date: ${clientOrder.orderDate.format('YYYY-MM-DD')}`, 10, y);
+        doc.text(`Date de la commande: ${clientOrder.orderDate.format('YYYY-MM-DD')}`, 10, y);
         y += 10;
       }
 
       if (clientOrder.deliveryDate) {
-        doc.text(`Delivery Date: ${clientOrder.deliveryDate.format('YYYY-MM-DD')}`, 10, y);
+        doc.text(`Date de livraison: ${clientOrder.deliveryDate.format('YYYY-MM-DD')}`, 10, y);
         y += 10;
       }
 
       if (clientOrder.deliveryAddress) {
-        doc.text(`Delivery Address: ${clientOrder.deliveryAddress}`, 10, y);
+        doc.text(`Adresse de livraison: ${clientOrder.deliveryAddress}`, 10, y);
         y += 10;
       }
 
@@ -69,7 +69,7 @@ export class PDFService {
       }
 
       if (clientOrder.totalPrice !== null) {
-        doc.text(`Total Price: ${clientOrder.totalPrice} €`, 10, y);
+        doc.text(`Prix total: ${clientOrder.totalPrice} €`, 10, y);
         y += 10;
       }
 
@@ -80,36 +80,24 @@ export class PDFService {
       // Sous-titre pour les détails du client
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.text('Client Information', 10, y);
+      doc.text('Information du client', 10, y);
       y += 10;
 
       // Détails du client
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
       if (clientOrder.client) {
-        doc.text(`Client ID: ${clientOrder.client.id}`, 10, y);
+        doc.text(`ID du client: ${clientOrder.client.id}`, 10, y);
         y += 10;
-        if (clientOrder.client.preferedDay) {
-          doc.text(`Preferred Day: ${clientOrder.client.preferedDay}`, 10, y);
-          y += 10;
-        }
-        if (clientOrder.client.address) {
-          doc.text(`Client Address: ${clientOrder.client.address}`, 10, y);
-          y += 10;
-        }
-        if (clientOrder.client.user) {
-          doc.text(`User ID: ${clientOrder.client.user.id}`, 10, y);
-          y += 10;
-        }
       }
 
       // Informations supplémentaires du client
       if (account) {
-        doc.text(`First Name: ${account.firstName}`, 10, y);
+        doc.text(`Prénom: ${account.firstName}`, 10, y);
         y += 10;
-        doc.text(`Last Name: ${account.lastName}`, 10, y);
+        doc.text(`Nom: ${account.lastName}`, 10, y);
         y += 10;
-        doc.text(`Email: ${account.email}`, 10, y);
+        doc.text(`Mail: ${account.email}`, 10, y);
         y += 10;
       }
 
@@ -120,7 +108,7 @@ export class PDFService {
       // Sous-titre pour les détails des lignes de commande
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.text('Order Lines', 10, y);
+      doc.text('Détails des produits', 10, y);
       y += 10;
 
       // Détails des lignes de commande
@@ -134,16 +122,16 @@ export class PDFService {
       forkJoin(alimentObservables).subscribe(aliments => {
         orderLines.forEach((orderLine, index) => {
           const aliment = aliments[index];
-          doc.text(`Aliment: ${aliment.name}`, 10, y);
+          doc.text(`Produit: ${aliment.name}`, 10, y);
           y += 10;
-          doc.text(`Quantity: ${orderLine.quantity}`, 10, y);
+          doc.text(`Quantité: ${orderLine.quantity}`, 10, y);
           y += 10;
-          doc.text(`Purchase Price: ${orderLine.purchasePrice} €`, 10, y);
+          doc.text(`Prix d'achat: ${orderLine.purchasePrice} €`, 10, y);
           y += 15; // Ajouter un peu plus d'espace entre les lignes de commande
         });
 
         // Sauvegarde du PDF
-        doc.save('receipt.pdf');
+        doc.save('facture_cueillette.pdf');
       });
     });
   }
