@@ -27,23 +27,35 @@ public class AlimentService {
         this.alimentRepository = ar;
     }
 
+    /**
+     *
+     * @param id : id of the aliment
+     * @param n : quantity to remove
+     * @return -1L if not enouth stock, -2L if the aliment doesn't exist, 0L if the aliment is removed from stock'
+     */
     @Transactional
-    public boolean removeFromStock(Long id, int n) {
+    public Long removeFromStock(Long id, int n) {
         Aliment a = entityManager.find(Aliment.class, id, LockModeType.OPTIMISTIC);
         if (a == null) {
-            return false;
+            return -2L;
         }
         if (a.getStockQuantity() - n < 0) {
-            return false;
+            return -1L;
         }
         a.setStockQuantity(a.getStockQuantity() - n);
         alimentRepository.save(a);
         //LOG.debug("Aliment (",a.getName(),") version : " + a.getVersion());
-        return true;
+        return 0L;
     }
 
+    /**
+     * Try to get the write lock for the given aliment to decrease the stock quantity.
+     * @param alimentId : id of the aliment
+     * @param nbProduct : quantity to remove
+     * @return -1L if not enouth stock, -2L if the aliment doesn't exist,-3L if can't get the lock,0L if the aliment is removed from stock
+     */
     @Transactional
-    public boolean decStock(Long alimentId, int nbProduct) {
+    public Long decStock(Long alimentId, int nbProduct) {
         int attempt = 0;
         while (attempt < 3) {
             try {
@@ -55,7 +67,7 @@ public class AlimentService {
             }
         }
         // Trop d’essais, on abandonne
-        return false;
+        return -3L;
     }
 
     @Transactional
