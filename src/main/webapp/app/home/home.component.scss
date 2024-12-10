@@ -64,12 +64,15 @@ nav {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.8em;
-}
 
-.filters p {
-  font-weight: bold;
-  font-size: 1.25rem;
-  margin: 0;
+  & p {
+    font-weight: bold;
+    font-size: 1.25rem;
+    margin: 0;
+  }
+  & button {
+    font-size: 0.95rem;
+  }
 }
 
 .sort {

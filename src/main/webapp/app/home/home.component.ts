@@ -84,6 +84,7 @@ export default class HomeComponent implements OnInit, OnDestroy {
           return 0; // pas changement d'ordre entre `a` et `b`
         }
       });
+      this.updateCart();
     });
 
     this.searchSubscription = this.sharedService.searchTriggered$.subscribe(keyword => {
@@ -94,6 +95,23 @@ export default class HomeComponent implements OnInit, OnDestroy {
 
     this.handleNavigation();
     this.updateCrumbs();
+  }
+
+  //Maj totaux du cart
+  private updateCart(): void {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let totalQuantity = 0;
+    let totalPrice = 0;
+
+    cart.forEach((item: { id: number; qt: number }) => {
+      const aliment = this.aliments.find(a => a.id === item.id);
+      if (aliment) {
+        totalQuantity += item.qt;
+        totalPrice += item.qt * aliment.price!;
+      }
+    });
+    localStorage.setItem('totalPrice', totalPrice.toFixed(2).toString());
+    localStorage.setItem('totalQuantity', totalQuantity.toString());
   }
 
   private handleNavigation(): void {
