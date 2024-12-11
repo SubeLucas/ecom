@@ -18,7 +18,7 @@
         @let urlRef = editForm.get('url')!;
         <div class="mb-3">
           <label class="form-label" for="field_url" jhiTranslate="ecomApp.images.url">Url</label>
-          <input type="text" class="form-control" name="url" id="field_url" data-cy="url" formControlName="url" />
+          <input type="text" class="form-control" name="url" id="field_url" data-cy="url" [(ngModel)]="defaultUrl" formControlName="url" />
           @if (urlRef.invalid && (urlRef.dirty || urlRef.touched)) {
             <div>
               @if (editForm.get('url')?.errors?.required) {

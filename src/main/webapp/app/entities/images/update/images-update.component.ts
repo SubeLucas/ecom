@@ -22,6 +22,7 @@ import { ImagesFormGroup, ImagesFormService } from './images-form.service';
 export class ImagesUpdateComponent implements OnInit {
   isSaving = false;
   images: IImages | null = null;
+  defaultUrl = 'http://localhost/aliment_<id>.png';
 
   alimentsSharedCollection: IAliment[] = [];
 
@@ -30,7 +31,6 @@ export class ImagesUpdateComponent implements OnInit {
   protected alimentService = inject(AlimentService);
   protected activatedRoute = inject(ActivatedRoute);
 
-  // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: ImagesFormGroup = this.imagesFormService.createImagesFormGroup();
 
   compareAliment = (o1: IAliment | null, o2: IAliment | null): boolean => this.alimentService.compareAliment(o1, o2);
@@ -44,6 +44,9 @@ export class ImagesUpdateComponent implements OnInit {
 
       this.loadRelationshipsOptions();
     });
+
+    // Initialiser le champ url avec la valeur par défaut
+    this.editForm.get('url')?.setValue(this.defaultUrl);
   }
 
   previousState(): void {
