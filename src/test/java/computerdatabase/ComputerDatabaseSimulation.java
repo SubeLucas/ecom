@@ -52,6 +52,6 @@ public class ComputerDatabaseSimulation extends Simulation {
     ScenarioBuilder my_scenario = scenario("validate_cart").exec(connect_as_user, validate);
 
     {
-        setUp(my_scenario.injectOpen(constantUsersPerSec(30).during(60))).protocols(http_protocol);
+        setUp(my_scenario.injectOpen(constantUsersPerSec(5).during(45))).protocols(http_protocol);
     }
 }

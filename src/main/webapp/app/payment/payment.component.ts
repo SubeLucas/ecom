@@ -149,4 +149,10 @@ export class PaymentComponent implements OnInit {
       },
     });
   }
+
+  onInputChange() {
+    if (this.expDate.length === 2) {
+      this.expDate = this.expDate + '/';
+    }
+  }
 }
