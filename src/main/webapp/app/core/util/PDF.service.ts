@@ -24,6 +24,7 @@ export class PDFService {
   generatePDF(id: number): void {
     const doc = new jsPDF();
     let y = 10;
+    const pageHeight = doc.internal.pageSize.getHeight();
 
     forkJoin({
       clientOrder: this.clientOrderService.find(id).pipe(map(response => response.body!)),
@@ -128,6 +129,12 @@ export class PDFService {
           y += 10;
           doc.text(`Prix d'achat: ${orderLine.purchasePrice} €`, 10, y);
           y += 15; // Ajouter un peu plus d'espace entre les lignes de commande
+
+          // Vérifier si on dépasse la hauteur de la page
+          if (y > pageHeight - 20) {
+            doc.addPage();
+            y = 10; // Réinitialiser la position y
+          }
         });
 
         // Sauvegarde du PDF
