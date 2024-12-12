@@ -51,11 +51,9 @@ export class CardProductComponent {
         if (response.body) {
           this.product!.stockQuantity = response.body;
           if (this.quantity > this.product!.stockQuantity) {
-            console.log(`Aliment d'id ${this.product!.id} n'a plus que ${this.product!.stockQuantity} exemplaires en stock`);
             this.valid = false;
           }
         } else {
-          console.log(`Aliment d'id ${this.product!.id} n'a plus d'exemplaires en stock`);
           this.valid = false;
         }
       });
@@ -140,7 +138,7 @@ export class CardProductComponent {
     this.totalPriceProduct = parseFloat(this.totalPriceProduct.toFixed(2)); //js
     this.totalPrice += this.totalPriceProduct;
     this.totalPrice = parseFloat(this.totalPrice.toFixed(2)); // on est jamais assez sûr.es avec le js
-    localStorage.setItem('totalPrice', this.totalPrice.toString());
+    localStorage.setItem('totalPrice', this.totalPrice.toFixed(2));
     // localStorage.setItem('totalQuantity', this.totalQuantity.toString());
     this.quantityChanged.emit();
   }
