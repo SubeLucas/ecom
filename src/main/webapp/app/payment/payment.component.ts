@@ -94,9 +94,9 @@ export class PaymentComponent implements OnInit {
       this.router.navigate(['delivery']);
     }
     const deliveryDate = [
-      JSON.parse(localStorage.getItem('deliveryYear')!),
-      JSON.parse(localStorage.getItem('deliveryMonth')!),
-      JSON.parse(localStorage.getItem('deliveryDay')!),
+      Number(localStorage.getItem('deliveryYear')!),
+      Number(localStorage.getItem('deliveryMonth')!),
+      Number(localStorage.getItem('deliveryDay')!),
     ];
     const payment = new Payment(cart, deliveryDate);
     this.httpPayment.sendOrder(payment).subscribe({
