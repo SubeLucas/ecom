@@ -6,7 +6,7 @@
 <div class="cart-infos">
   <div class="list">
     <div class="above-list">
-      <h4>{{ aliments.length }} article(s)</h4>
+      <h4>{{ localStorage.getItem('totalQuantity') }} article(s)</h4>
       @if (!Cart.isEmpty()) {
         <button id="empty-cart" [disabled]="Cart.isEmpty()" (click)="onClearButtonClick()">Vider mon panier</button>
       }
